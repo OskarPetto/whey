@@ -9,6 +9,7 @@ struct Utf8
     uint16_t byteCount;
     uint16_t characterCount;
 
+    uint64_t hash;
 };
 
 struct Utf8 *utf8FromBytes(uint8_t *bytes, uint32_t *index);
