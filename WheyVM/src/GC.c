@@ -1,6 +1,26 @@
 #include "GC.h"
 
-#define hashFromObject(o) (((uintptr_t) o) >> 5)
 
+struct GC{
 
+    int stuff ;
+    int anotherStuff;
+};
+
+static struct GC* getGC()
+{
+    static struct GC* instance = NULL;
+
+    if (instance == NULL)
+    {
+        //INIT
+    }
+
+    return instance;
+}
+
+void gcAddObject(struct Object *object)
+{
+    
+}
 

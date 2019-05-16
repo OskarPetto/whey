@@ -5,6 +5,10 @@
 #include "Whey.h"
 #include "Utf8.h"
 
+#define CONSTANT_INTEGER           0x00
+#define CONSTANT_FLOATING_POINT    0x01
+#define CONSTANT_UTF8              0x02 
+
 struct Constant
 {
     uint8_t type;

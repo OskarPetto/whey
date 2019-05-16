@@ -9,6 +9,7 @@
         "sstream": "c",
         "type_traits": "c",
         "tuple": "c",
-        "utility": "c"
+        "utility": "c",
+        "pair.h": "c"
     }
 }

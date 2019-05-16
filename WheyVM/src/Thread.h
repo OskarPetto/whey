@@ -6,7 +6,9 @@
 
 struct Thread 
 {
-    struct Object operandStack[WHEY_SIZE_OPERAND_STACK];
+    struct Object operandStack;
+    struct Object 
+
 };
 
 #endif
