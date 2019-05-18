@@ -15,31 +15,32 @@
 
 struct Map 
 {
-    struct Pair **keyValuePairs;
-    size_t pairCount;
-    size_t slotCount;
+    struct Pair **buckets;
+    size_t bucketCount;
+    size_t keyCount;
 };
 
-void opMNew(struct Object *map);
 void opMSize(struct Object *map, struct Object *size);
-void opMKeys(struct Object *map, struct Object *keys);
-void opMValues(struct Object *map, struct Object *values);
 void opMGet(struct Object *map, struct Object *key, struct Object *value);
-void opMPut(struct Object *map, struct Object *key, struct Object *value);
-void opMMerge(struct Object *map, struct Object *mapToAdd);
+void opMPut(struct Object *map, struct Object *key, struct Object *value, struct Object *previousValue);
+void opMRemove(struct Object *map, struct Object *key, struct Object *value);
+void opMPutAll(struct Object *map, struct Object *mapToPut);
+void opMHasKey(struct Object *map, struct Object *key, struct Object *hasKey);
+void opMEntries(struct Object *map, struct Object *entries);
 
 size_t mapSize(struct Map *map);
-void mapKeys(struct Map *map, struct Array *keys);
-void mapValues(struct Map *map, struct Array *values);
 struct Object *mapGet(struct Map *map, struct Object *key);
-void mapPut(struct Map *map, struct Object *key, struct Object *putValue);
-void mapMerge(struct Map *map, struct Map *mapToAdd);
+struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value);
+struct Object *mapRemove(struct Map *map, struct Object *key);
+void mapPutAll(struct Map *map, struct Map *mapToPut);
+bool mapHasKey(struct Object *map, struct Object *key);
+struct Object *mapEntries(struct Object *map);
 
-void mapNew(struct Map *map, size_t initialSize);
-void mapCopy(struct Map *map, struct Map *copy);
+struct Object *mapNew(size_t initialSize);
+struct Object *mapCopy(struct Map *map);
 bool mapEqual(struct Map *map1, struct Map *map2);
-size_t mapHash(struct Map *map);
-void mapToString(struct Map *map, struct Array *string);
+uint64_t mapHash(struct Map *map);
+struct Array *mapSerialize(struct Map *map);
 
 void mapMark(struct Map *map);
 void mapFree(struct Map *map);

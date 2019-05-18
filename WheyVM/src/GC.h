@@ -5,6 +5,6 @@
 
 struct GC;
 
-void gcAddObject(struct Object *object);
+void gcRegisterObject(struct Object *object);
 
 #endif

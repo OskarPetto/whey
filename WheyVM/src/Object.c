@@ -1,82 +1,117 @@
 #include "Object.h"
 #include <assert.h>
 
-void opOCopy(struct Object *object, struct Object *copy, struct GC *gc)
+void opONew(uint8_t type, struct Object *newObject)
 {
-    objectCopy(object, copy);
+    assert(type < OBJECT_NUM_TYPES);
+
+    switch (type)
+    {
+    case OBJECT_TYPE_BOOLEAN:
+        newObject = booleanNew();
+        break;
+    case OBJECT_TYPE_INTEGER:
+        newObject = integerNew();
+        break;
+    case OBJECT_TYPE_FLOAT:
+        newObject = floatNew();
+        break;
+    case OBJECT_TYPE_LAMBDA:
+        newObject = lambdaNew();
+        break;
+    case OBJECT_TYPE_ARRAY:
+        newObject = arrayNew(ARRAY_INITIAL_SIZE);
+        break;
+    case OBJECT_TYPE_MAP:
+        newObject = mapNew(MAP_INITIAL_SIZE);
+        break;
+    case OBJECT_TYPE_PAIR:
+        newObject = pairNew();
+        break;
+    default:
+        break;
+    }
 }
 
-void opOEq(struct Object *object1, struct Object *object2, struct Object *isEqual, struct GC *gc)
+void opOConst(uint16_t constantIndex, struct Object *constObject)
 {
-    objectNew(isEqual, OBJECT_TYPE_BOOLEAN);
+    constObject = objectConstant(constantIndex);
+}
+
+void opOCopy(struct Object *object, struct Object *copy)
+{
+    copy = objectCopy(object);
+}
+
+void opOEq(struct Object *object1, struct Object *object2, struct Object *isEqual)
+{
+    isEqual = objectNew(OBJECT_TYPE_BOOLEAN);
     isEqual->value.integer_value = objectEqual(object1, object2);
-}
-
-void opONeq(struct Object *object1, struct Object *object2, struct Object *isNotEqual, struct GC *gc)
-{
-    objectNew(isNotEqual, OBJECT_TYPE_BOOLEAN);
-    isNotEqual->value.integer_value = !objectEqual(object1, object2);
 }
 
 void opOHash(struct Object *object, struct Object *hash)
 {
-    objectNew(hash, OBJECT_TYPE_INTEGER);
-    hash->value.integer_value = objectHash(object);
+    hash = objectNew(OBJECT_TYPE_INTEGER);
+    hash->value.integer_value = (int64_t)objectHash(object);
 }
 
-void opOString(struct Object *object, struct Object *string)
+void opOToString(struct Object *object, struct Object *string)
 {
-    objectNew(string, OBJECT_TYPE_ARRAY);
-    arrayNew(string->value.array, OBJECT_STRING_BUFFER_SIZE);
-
-    objectToString(object, string->value.array);
+    string = objectToString(object);
 }
 
-void objectNew(struct Object *object, uint8_t type)
+struct Object *objectNew(uint8_t type)
 {
+    struct Object *object;
     object = (struct Object *)malloc(sizeof(struct Object));
     assert(object != NULL);
-    object->type = type;
     object->mark = OBJECT_MARK_FALSE;
+    object->type = type;
 
-    gcRegisterObject(getGC(), object);
+    gcRegisterObject(object);
+
+    return object;
 }
 
-void objectCopy(struct Object *object, struct Object *copy)
+struct Object *objectConstant(uint16_t constantIndex)
+{
+    
+}
+
+struct Object *objectCopy(struct Object *object)
 {
     if (object == NULL)
     {
-        return;
+        return NULL;
     }
 
     switch (object->type)
     {
-    case OBJECT_TYPE_ARRAY:
-        arrayNew(copy, object->value.array->objectCount);
-        arrayCopy(object->value.array, copy->value.array);
-        return;
+    case OBJECT_TYPE_BOOLEAN:
+        return booleanCopy(object->value.integer_value);
 
-    case OBJECT_TYPE_DOUBLE:
-        objectNew(copy, OBJECT_TYPE_DOUBLE);
-        copy->value.double_value = object->value.double_value;
-        return;
+    case OBJECT_TYPE_INTEGER:
+        return integerCopy(object->value.integer_value);
+
+    case OBJECT_TYPE_FLOAT:
+        return floatCopy(object->value.float_value);
+
+    case OBJECT_TYPE_LAMBDA:
+        return lambdaCopy(object->value.lambda);
+
+    case OBJECT_TYPE_ARRAY:
+        return arrayCopy(object->value.array);
 
     case OBJECT_TYPE_MAP:
-        mapNew(copy, object->value.map->pairCount);
-        mapCopy(object->value.map, copy->value.map);
-        return;
+        return mapCopy(object->value.map);
 
     case OBJECT_TYPE_PAIR:
-        pairNew(copy);
-        pairCopy(object->value.pair, copy->value.pair);
-        return;
+        return pairCopy(object->value.pair);
 
-    case OBJECT_TYPE_BOOLEAN:
-    case OBJECT_TYPE_INTEGER:
-        objectNew(copy, object->type);
-        copy->value.integer_value = object->value.integer_value;
-        return;
     }
+
+    return NULL;
+
 }
 
 bool objectEquals(struct Object *object1, struct Object *object2)
@@ -103,17 +138,27 @@ bool objectEquals(struct Object *object1, struct Object *object2)
 
     switch (object1->type)
     {
+    case OBJECT_TYPE_BOOLEAN:
+        return booleanEquals(object1->value.integer_value, object2->value.integer_value);
+
+    case OBJECT_TYPE_INTEGER:
+        return integerEquals(object1->value.integer_value, object2->value.integer_value);
+
+    case OBJECT_TYPE_FLOAT:
+        return floatEquals(object1->value.float_value, object2->value.float_value);
+
+    case OBJECT_TYPE_LAMBDA:
+        return lambdaEquals(object1->value.lambda, object2->value.lambda);
+
     case OBJECT_TYPE_ARRAY:
         return arrayEquals(object1->value.array, object2->value.array);
+
     case OBJECT_TYPE_MAP:
         return mapEquals(object1->value.map, object2->value.map);
+
     case OBJECT_TYPE_PAIR:
         return pairEquals(object1->value.pair, object2->value.pair);
-    case OBJECT_TYPE_DOUBLE:
-        return object1->value.double_value == object2->value.double_value;
-    case OBJECT_TYPE_BOOLEAN:
-    case OBJECT_TYPE_INTEGER:
-        return object1->value.integer_value == object2->value.integer_value;
+
     }
 }
 
@@ -124,23 +169,33 @@ size_t objectHash(struct Object *object)
 
     switch (object->type)
     {
+    case OBJECT_TYPE_BOOLEAN:
+        return booleanHash(object->value.integer_value);
+
+    case OBJECT_TYPE_INTEGER:
+        return integerHash(object->value.integer_value);
+
+    case OBJECT_TYPE_FLOAT:
+        return floatHash(object->value.float_value);
+
+    case OBJECT_TYPE_LAMBDA:
+        return lambdaHash(object->value.lambda);
+
     case OBJECT_TYPE_ARRAY:
         return arrayHash(object->value.array);
+
     case OBJECT_TYPE_MAP:
         return mapHash(object->value.map);
+
     case OBJECT_TYPE_PAIR:
         return pairHash(object->value.pair);
-    case OBJECT_TYPE_DOUBLE:
-        return (size_t)object->value.double_value;
-    case OBJECT_TYPE_BOOLEAN:
-    case OBJECT_TYPE_INTEGER:
-        return (size_t)object->value.integer_value;
+
     }
 }
 
-void objectToString(struct Object *object, struct Object *string)
+void objectToString(struct Object *object)
 {
-    arrayNew(string, OBJECT_STRING_BUFFER_SIZE);
+    struct Object *string = stringNew(STRING_INITIAL_SIZE);
     struct Array *charArray = string->value.array;
 
     if (object == NULL)
@@ -148,25 +203,25 @@ void objectToString(struct Object *object, struct Object *string)
         arrayPushChar(charArray, 'u');
         arrayPushChar(charArray, 'l');
         arrayPushChar(charArray, 'l');
-        return;
+    return;
 
-    char buffer[OBJECT_STRING_BUFFER_SIZE];
+    char buffer[OBJECT_serialization_BUFFER_SIZE];
 
     switch (object->type)
     {
     case OBJECT_TYPE_ARRAY:
-        arrayToString(object->value.array, string);
+        arraySerialize(object->value.array, serialization);
         return;
     case OBJECT_TYPE_MAP:
-        mapToString(object->value.map, string);
+        mapSerialize(object->value.map, serialization);
         return;
-    
-    case OBJECT_TYPE_PAIR:
-        pairToString(object->value.pair, string);
-        return; 
-    case OBJECT_TYPE_DOUBLE:
 
-        int result = snprintf(buffer, OBJECT_STRING_BUFFER_SIZE, "%.10e", object->value.double_value);
+    case OBJECT_TYPE_PAIR:
+        pairSerialize(object->value.pair, serialization);
+        return;
+    case OBJECT_TYPE_FLOATING_POINT:
+
+        int result = snprintf(buffer, OBJECT_serialization_BUFFER_SIZE, "%.10e", object->value.float_value);
         assert(result >= 0);
         break;
 
@@ -174,12 +229,12 @@ void objectToString(struct Object *object, struct Object *string)
 
         if (object->value.integer_value)
         {
-            int result = snprintf(buffer, OBJECT_STRING_BUFFER_SIZE, "True");
+            int result = snprintf(buffer, OBJECT_serialization_BUFFER_SIZE, "True");
             assert(result >= 0);
         }
         else
         {
-            int result = snprintf(buffer, OBJECT_STRING_BUFFER_SIZE, "False");
+            int result = snprintf(buffer, OBJECT_serialization_BUFFER_SIZE, "False");
             assert(result >= 0);
         }
 
@@ -187,12 +242,12 @@ void objectToString(struct Object *object, struct Object *string)
 
     case OBJECT_TYPE_INTEGER:
 
-        int result = snprintf(buffer, OBJECT_STRING_BUFFER_SIZE, "%" PRId64, object->value.integer_value);
+        int result = snprintf(buffer, OBJECT_serialization_BUFFER_SIZE, "%" PRId64, object->value.integer_value);
         assert(result >= 0);
         break;
     }
 
-    for (size_t i = 0; i < OBJECT_STRING_BUFFER_SIZE; i++)
+    for (size_t i = 0; i < OBJECT_serialization_BUFFER_SIZE; i++)
     {
         if (buffer[i] == '\0')
             break;

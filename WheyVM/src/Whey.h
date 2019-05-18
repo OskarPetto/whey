@@ -6,6 +6,6 @@
 
 #define WHEY_VERSION "Whey " WHEY_VERSION_MAJOR "." WHEY_VERSION_MINOR
 
-#define WHEY_SIZE_OPERAND_STACK         25
+
 
 #endif

@@ -1,36 +1,13 @@
 #include "Array.h"
 #include <assert.h>
 
-void opANew(struct Object *array)
-{
-    objectNew(array, OBJECT_TYPE_ARRAY);
-    arrayInit(array->value.array, ARRAY_INITIAL_SIZE);
-}
-
 void opASize(struct Object *array, struct Object *size)
 {
     assert(array != NULL);
     assert(array->type == OBJECT_TYPE_ARRAY);
 
-    objectNew(size, OBJECT_TYPE_INTEGER);
+    size = objectNew(OBJECT_TYPE_INTEGER);
     size->value.integer_value = arraySize(array);
-}
-
-void opAPush(struct Object *array, struct Object *pushObject)
-{
-    assert(array != NULL);
-    assert(array->type == OBJECT_TYPE_ARRAY);
-
-    arrayPush(array, pushObject);
-}
-
-void opAPop(struct Object *array, struct Object *popObject)
-{
-    assert(array != NULL);
-    assert(array->type == OBJECT_TYPE_ARRAY);
-    assert(array->value.array->objectCount > 0);
-
-    popObject = arrayPop(array);
 }
 
 void opAGet(struct Object *array, struct Object *index, struct Object *getObject)
@@ -42,10 +19,10 @@ void opAGet(struct Object *array, struct Object *index, struct Object *getObject
     assert(index->value.integer_value >= 0);
     assert(index->value.integer_value < array->value.array->objectCount);
 
-    getObject = arrayGet(array, (size_t) index->value.integer_value);
+    getObject = arrayGet(array->value.array, (size_t) index->value.integer_value);
 }
 
-void opAPut(struct Object *array, struct Object *index, struct Object *putObject)
+void opASet(struct Object *array, struct Object *index, struct Object *setObject, struct Object *previousObject)
 {
     assert(array != NULL);
     assert(index != NULL);
@@ -54,19 +31,44 @@ void opAPut(struct Object *array, struct Object *index, struct Object *putObject
     assert(index->value.integer_value >= 0);
     assert(index->value.integer_value < array->value.array->objectCount);
 
-    arrayPut(array->value.array, index->value.integer_value, putObject);
+    previousObject = arraySet(array->value.array, (size_t) index->value.integer_value, setObject);
 }
 
-void opAConcat(struct Object *array, struct Object *arrayToAdd)
+void opAInsert(struct Object *array, struct Object *index, struct Object *insertObject)
 {
     assert(array != NULL);
     assert(array->type == OBJECT_TYPE_ARRAY);
-
-    if (arrayToAdd == NULL) return;
-
-    assert(arrayToAdd->type == OBJECT_TYPE_ARRAY);
+    assert(index->type == OBJECT_TYPE_INTEGER);
+    assert(index->value.integer_value >= 0);
+    assert(index->value.integer_value <= array->value.array->objectCount);
     
-    arrayConcat(array->value.array, arrayToAdd->value.array);
+    arrayInsert(array, (size_t) index->value.integer_value, insertObject);
+}
+
+void opARemove(struct Object *array, struct Object *index, struct Object *removeObject)
+{
+    assert(array != NULL);
+    assert(array->type == OBJECT_TYPE_ARRAY);
+    assert(index->type == OBJECT_TYPE_INTEGER);
+    assert(index->value.integer_value >= 0);
+    assert(index->value.integer_value < array->value.array->objectCount);
+
+    removeObject = arrayRemove(array, (size_t) index->value.integer_value);
+}
+
+void opAInsertAll(struct Object *array, struct Object *index, struct Object *insertArray)
+{
+    assert(array != NULL);
+    assert(array->type == OBJECT_TYPE_ARRAY);
+    assert(index->type == OBJECT_TYPE_INTEGER);
+    assert(index->value.integer_value >= 0);
+    assert(index->value.integer_value <= array->value.array->objectCount);
+
+    if (insertArray == NULL) return;
+
+    assert(insertArray->type == OBJECT_TYPE_ARRAY);
+    
+    arrayInsertAll(array->value.array,  (size_t) index->value.integer_value, insertArray->value.array);
 
 }
 
@@ -75,11 +77,28 @@ size_t arraySize(struct Array *array)
     return (size_t) array->objectCount;
 }
 
-void arrayPush(struct Array *array, struct Array *pushObject)
+struct Object *arrayGet(struct Array *array, size_t index)
+{
+    return array->objects[index];
+}
+
+struct Object *arraySet(struct Array *array, size_t index, struct Object *setObject)
+{
+    struct Object *currentObject = array->objects[index];
+    array->objects[index] = setObject;
+    return currentObject;
+}
+
+void arrayInsert(struct Array *array, size_t index, struct Array *insertObject)
 {
     if (array->objectCount >= (size_t) (((double) array->slotCount) * ARRAY_GROW_AT))
     {
         array->slotCount *= 2;
+
+        if (array->slotCount == 0) 
+        {
+            array->slotCount = 1;
+        }
 
         array->objects = (struct Object **)realloc(array->objects,
                                                    array->slotCount * sizeof(struct Object *));
@@ -88,14 +107,21 @@ void arrayPush(struct Array *array, struct Array *pushObject)
 
     }
 
-    array->objects[array->objectCount++] = pushObject;
+    for (size_t i = array->objectCount; i > index; i--)
+    {
+        array->objects[i] = array->objects[i - 1];
+    }
+    
+    array->objects[index] = insertObject;
+
+    array->objectCount++;
 }
 
-struct Object *arrayPop(struct Array *array)
+struct Object *arrayRemove(struct Array *array, size_t index)
 {
     struct Object *popObject = array->objects[--array->objectCount];
 
-    if (array->objectCount <= (size_t) (((double) array->slotCount) * ARRAY_SHRINK_AT))
+    if (array->objectCount < (size_t) (((double) array->slotCount) * ARRAY_SHRINK_AT))
     {
         array->slotCount /= 2;
 
@@ -106,43 +132,61 @@ struct Object *arrayPop(struct Array *array)
     
     }
 
-    return popObject;
-}
+    struct Object *removeObject = array->objects[index];
 
-struct Object *arrayGet(struct Array *array, size_t index)
-{
-    return array->objects[index];
-}
-
-void arrayPut(struct Array *array, size_t index, struct Object *putObject)
-{
-    array->objects[index] = putObject;
-}
-
-void arrayConcat(struct Array *array, struct Array *arrayToAdd)
-{
-    for (size_t i = 0; i < arrayToAdd->objectCount; i++)
+    for (size_t i = index; i < array->objectCount - 1; i++)
     {
-        arrayPush(array, arrayToAdd->objects[i]);
+        array->objects[i] = array->objects[i + 1];
     }
-    
+
+    array->objectCount--;
+
+    return removeObject;
 }
 
-void arrayNew(struct Object *array, size_t initialSize)
+void arrayInsertAll(struct Array *array, size_t index, struct Array *insertArray)
 {
-    objectNew(array, OBJECT_TYPE_ARRAY);
-    array->value.array->objects = (struct Object **)malloc(initialSize * sizeof(struct Object *));
-    assert(array->value.array->objects != NULL);
-    array->value.array->slotCount = initialSize;
-    array->value.array->objectCount = 0;
+    size_t newObjectCount = array->objectCount + insertArray->objectCount;
+
+    if (newObjectCount >= (size_t) (((double) array->slotCount) * ARRAY_GROW_AT))
+    {
+        array->slotCount = newObjectCount * 2;
+
+        array->objects = (struct Object **)realloc(array->objects,
+                                                   array->slotCount * sizeof(struct Object *));
+
+        assert(array->objects != NULL);
+
+    }
+
+    for (size_t i = 0; i < insertArray->objectCount; i++)
+    {
+        array->objects[array->objectCount + i] = insertArray->objects[i];
+    }
+
+    array->objectCount = newObjectCount;
 }
 
-void arrayCopy(struct Array *array, struct Array *copy)
+struct Object *arrayNew(size_t initialSize)
 {
+    struct Object *object = objectNew(OBJECT_TYPE_ARRAY);
+    object->value.array->objects = (struct Object **)malloc(initialSize * sizeof(struct Object *));
+    assert(object->value.array->objects != NULL);
+    object->value.array->slotCount = initialSize;
+    object->value.array->objectCount = 0;
+    return object;
+}
+
+struct Object *arrayCopy(struct Array *array)
+{
+    struct Object *copy = arrayNew(array->slotCount);
+
     for (size_t i = 0; i < array->objectCount; i++)
     {
-        objectCopy(array->objects[i], copy->objects[i]);
+        copy->value.array->objects[i] = objectCopy(array->objects[i]);
     }    
+
+    return copy;
 }
 
 bool arrayEquals(struct Array *array1, struct Array *array2)
@@ -179,23 +223,26 @@ size_t arrayHash(struct Array *array)
     return hash;
 }
 
-void arrayToString(struct Array *array, struct Object *string)
+struct Object *arraytoString(struct Array *array)
 {
-    struct Array *charArray = string->value.array;
+    struct Object *string = arrayNew(array->objectCount * 2);
+
+    stringAppendChar(string->value.array, '[');
 
     for (size_t i = 0; i < array->objectCount; i++)
     {
-        struct Object *subString;
-        objectToString(array->objects[i], subString->value.array);
-        arrayConcat(charArray, subString);
-        arrayPushChar(charArray, ",");
+        struct Array *subString = objectSerialize(array->objects[i]);
+        arrayPushAll(string->value.array, subString);
+        stringAppendChar(string->value.array, ',');
+    }
+
+    if (array->objectCount > 0) {
+        arrayRemove(string->value.array, string->value.array->objectCount - 1);
     }
     
-    struct Object *character;
-    objectNew(character, OBJECT_TYPE_INTEGER);
-    character->value.integer_value = ']';
+    stringAppendChar(string->value.array, ']');
 
-    arrayPut(charArray, charArray->objectCount - 1, character);
+    return string;
 }
 
 void arrayMark(struct Array *array)
@@ -220,12 +267,11 @@ void arrayFree(struct Array *array)
     free(array->objects);
 }
 
-void arrayPushChar(struct Array *array, char c)
+void stringAppendChar(struct Array *array, char c)
 {
-    struct Object *Character;
-    objectNew(Character, OBJECT_TYPE_INTEGER);
-    Character->value.integer_value = c;
+    struct Object *character = objectNew(OBJECT_TYPE_INTEGER);
+    character->value.integer_value = c;
 
-    arrayPush(array, Character);
+    arrayInsert(array, array->objectCount, character);
 }
 

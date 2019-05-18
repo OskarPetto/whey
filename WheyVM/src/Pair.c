@@ -1,10 +1,6 @@
 #include "Pair.h"
 #include <assert.h>
 
-void opPNew(struct Object *pair)
-{
-    objectNew(pair, OBJECT_TYPE_PAIR);
-}
 
 void opPGetFirst(struct Object *pair, struct Object *first)
 {
@@ -44,6 +40,14 @@ struct Object *pairGetSecond(struct Pair *pair)
     return pair->second;
 }
 
+void opPSwap(struct Object *pair)
+{
+    assert(pair != NULL);
+    assert(pair->type == OBJECT_TYPE_PAIR);
+    pairSwap(pair->value.pair);
+}
+
+
 void pairPutFirst(struct Pair *pair, struct Object *first)
 {
     pair->first = first;
@@ -54,9 +58,11 @@ void pairPutSecond(struct Pair *pair, struct Object *second)
     pair->second = second;
 }
 
-void pairNew(struct Pair *pair)
+void pairSwap(struct Pair *pair)
 {
-    objectNew(pair, OBJECT_TYPE_PAIR);
+    struct Object *temp = pair->first;
+    pair->first = pair->second;
+    pair->second = temp;
 }
 
 void pairCopy(struct Pair *pair, struct Pair *copy)
@@ -75,23 +81,28 @@ size_t pairHash(struct Pair *pair)
     return objectHash(pair->first) + objectHash(pair->second);
 }
 
-void pairToString(struct Pair *pair, struct Object *string)
+void pairSerialize(struct Pair *pair, struct Object *serialization)
 {
-    struct Array *charArray = string->value.array;
+    struct Array *charArray = serialization->value.array;
 
-    arrayPushChar(charArray, '(');
+    arrayPushChar(charArray, '"');
 
-    struct Object *firstString;
-    objectToString(pair->first, firstString);
-    arrayConcat(charArray, firstString);
+    struct Object *firstserialization;
+    objectSerialize(pair->first, firstserialization);
+    arrayConcat(charArray, firstserialization);
 
-    arrayPushChar(charArray, ',');
+    arrayPushChar(charArray, '"');
 
-    struct Object *secondString;
-    objectToString(pair->second, secondString);
-    arrayConcat(charArray, secondString);
+    arrayPushChar(charArray, ':');
 
-    arrayPushChar(charArray, ')');
+    arrayPushChar(charArray, '"');
+
+    struct Object *secondserialization;
+    objectSerialize(pair->second, secondserialization);
+    arrayConcat(charArray, secondserialization);
+
+    arrayPushChar(charArray, '"');
+
 }
 
 void pairMark(struct Pair *pair)

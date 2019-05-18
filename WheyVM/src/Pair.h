@@ -10,22 +10,21 @@ struct Pair
     struct Object *second;
 };
 
-void opPNew(struct Object *pair);
-void opPGetFirst(struct Object *pair, struct Object *first);
-void opPGetSecond(struct Object *pair, struct Object *second);
-void opPPutFirst(struct Object *pair, struct Object *first);
-void opPPutSecond(struct Object *pair, struct Object *second);
+void opPGetFst(struct Object *pair, struct Object *first);
+void opPGetSnd(struct Object *pair, struct Object *second);
+void opPSetFst(struct Object *pair, struct Object *first, struct Object *previousFirst);
+void opPSetSnd(struct Object *pair, struct Object *second, struct Object *previousSecond);
 
 struct Object *pairGetFirst(struct Pair *pair);
 struct Object *pairGetSecond(struct Pair *pair);
-void pairPutFirst(struct Pair *pair, struct Object *first);
-void pairPutSecond(struct Pair *pair, struct Object *second);
+struct Object *pairSetFirst(struct Pair *pair, struct Object *first);
+struct Object *pairSetSecond(struct Pair *pair, struct Object *second);
 
-void pairNew(struct Object *pair);
-void pairCopy(struct Pair *pair, struct Pair *copy);
+struct Object *pairNew();
+struct Object *pairCopy(struct Pair *pair);
 bool pairEquals(struct Pair *pair1, struct Pair *pair2);
-size_t pairHash(struct Pair *pair);
-void pairToString(struct Pair *pair, struct Object *string);
+uint64_t pairHash(struct Pair *pair);
+struct Object *pairToString(struct Pair *pair);
 
 void pairMark(struct Pair *pair);
 void pairFree(struct Pair *pair);

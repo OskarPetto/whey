@@ -1,30 +1,34 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#include <stdint.h>
-#include "Whey.h"
-#include "Utf8.h"
+#include "BooleanConstant.h"
+#include "IntegerConstant.h"
+#include "FloatConstant.h"
+#include "LambdaConstant.h"
+#include "ArrayConstant.h"
 
-#define CONSTANT_INTEGER           0x00
-#define CONSTANT_FLOATING_POINT    0x01
-#define CONSTANT_UTF8              0x02 
+#define OBJECT_TYPE_UNDEFINED          0x00
+#define OBJECT_TYPE_BOOLEAN            0x01
+#define OBJECT_TYPE_INTEGER            0x02
+#define OBJECT_TYPE_FLOAT              0x03
+#define OBJECT_TYPE_LAMBDA             0x04
+#define OBJECT_TYPE_ARRAY              0x06
+#define OBJECT_TYPE_MAP                0x07
+#define OBJECT_TYPE_PAIR               0x08
+#define OBJECT_NUM_TYPES               0x09
+
+union ConstantValue
+{
+    int32_t integer_value;
+    float float_value;
+    struct LambdaConstant *lambdaConstant;
+    struct ArrayConstant *arrayConstant;
+};
 
 struct Constant
 {
     uint8_t type;
     union ConstantValue value;
 };
-
-union ConstantValue
-{
-    uint8_t boolean;
-    int64_t integer;
-    double floatingPoint;
-    struct Utf8 *utf8;
-};
-
-struct Constant *constantFromBytes(uint8_t *bytes, uint32_t *index);
-
-void freeConstant(struct Constant *constant);
 
 #endif

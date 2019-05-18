@@ -2,19 +2,13 @@
 #include <assert.h>
 
 
-
-void opMNew(struct Object *map)
-{
-    objectNew(map, OBJECT_TYPE_MAP);
-    mapInit(map->value.map, MAP_INITIAL_SIZE);
-}
-
 void opMSize(struct Object *map, struct Object *size)
 {
     assert(map != NULL);
     assert(map->type == OBJECT_TYPE_MAP);
 
-    objectNew(size, OBJECT_TYPE_INTEGER);
+    size = objectNew();
+    size->type = OBJECT_TYPE_INTEGER;
     size->value.integer_value = mapSize(map);
 }
 
@@ -23,10 +17,7 @@ void opMKeys(struct Object *map, struct Object *keys)
     assert(map != NULL);
     assert(map->type == OBJECT_TYPE_MAP);
 
-    objectNew(keys, OBJECT_TYPE_ARRAY);
-    arrayNew(keys->value.array, map->value.map->slotCount);
-
-    mapKeys(map->value.map, keys->value.array);
+    keys = mapKeys(map->value.map);
 }
 
 void opMValues(struct Object *map, struct Object *values)
@@ -34,10 +25,7 @@ void opMValues(struct Object *map, struct Object *values)
     assert(map != NULL);
     assert(map->type == OBJECT_TYPE_MAP);
 
-    objectNew(values, OBJECT_TYPE_ARRAY);
-    arrayNew(values->value.array, map->value.map->slotCount);
-
-    mapValues(map->value.map, values->value.array);
+    values = mapValues(map->value.map);
 }
 
 void opMGet(struct Object *map, struct Object *key, struct Object *value)
@@ -56,60 +44,140 @@ void opMPut(struct Object *map, struct Object *key, struct Object *value)
     mapPut(map->value.map, key, value);
 }
 
-void opMMerge(struct Object *map, struct Object *mapToAdd)
+void opMPutAll(struct Object *map, struct Object *mapToPut)
 {
     assert(map != NULL);
     assert(map->type == OBJECT_TYPE_MAP);
 
-    if (mapToAdd == NULL)
+    if (mapToPut == NULL)
         return;
 
-    assert(mapToAdd->type == OBJECT_TYPE_MAP);
+    assert(mapToPut->type == OBJECT_TYPE_MAP);
 
-    mapMerge(map->value.map, mapToAdd->value.map);
+    mapPutAll(map->value.map, mapToPut->value.map);
 }
-
-
 
 size_t mapSize(struct Map *map)
 {
-    return map->pairCount;
+    return map->keyCount;
 }
 
-void mapKeys(struct Map *map, struct Array *keys)
+struct Object *mapKeys(struct Map *map)
 {
-    for (size_t i = 0; i < map->pairCount; i++)
-    {
-        struct Object *key = map->keyValuePairs[i]->first;
+    struct Object *keys = arrayNew(map->keyCount);
 
-        arrayPut(keys, i, key);
+    for (size_t i = 0; i < map->bucketCount; i++)
+    {
+        struct Pair *currentEntry = map->buckets[i];
+
+        while (currentEntry != NULL)
+        {
+
+            struct Object *key = currentEntry->first->value.pair->first;
+            arrayPut(keys->value.array, i, key);
+
+            currentEntry = currentEntry->second;
+        }
     }
+
+    return keys;
 }
 
-void mapValues(struct Map *map, struct Array *values)
+struct Object *mapValues(struct Map *map)
 {
-    for (size_t i = 0; i < map->pairCount; i++)
-    {
-        struct Object *key = map->keyValuePairs[i]->second;
+    struct Object *values = arrayNew(map->keyCount);
 
-        arrayPut(values, i, key);
+    for (size_t i = 0; i < map->bucketCount; i++)
+    {
+        struct Pair *currentEntry = map->buckets[i];
+
+        while (currentEntry != NULL)
+        {
+            struct Object *value = currentEntry->first->value.pair->second;
+            arrayPut(values->value.array, i, value);
+
+            currentEntry = currentEntry->second;
+        }
     }
+
+    return values;
 }
+
 struct Object *mapGet(struct Map *map, struct Object *key)
 {
-    size_t index = object
+    size_t index = objectHash(key) % map->bucketCount;
+
+    struct Pair *currentEntry = map->buckets[index];
+
+    while (currentEntry != NULL && !objectEquals(currentEntry->first->value.pair->first, key))
+    {
+        currentEntry = currentEntry->second;
+    }
+
+    if (currentEntry == NULL)
+        return NULL;
+
+    return currentEntry->first->value.pair->second;
 }
 
-void mapPut(struct Map *map, struct Object *key, struct Object *value);
-void mapMerge(struct Map *map, struct Map *mapToAdd);
+void mapPut(struct Map *map, struct Object *key, struct Object *value)
+{
+    size_t index = objectHash(key) % map->bucketCount;
+
+    struct Pair *currentEntry = map->buckets[index];
+
+    while (currentEntry != NULL && !objectEquals(currentEntry->first->value.pair->first, key))
+    {
+        currentEntry = currentEntry->second;
+    }
+
+    if (currentEntry != NULL)
+    {
+        currentEntry->first->value.pair->second = value;
+    } 
+    else
+    {
+        // insert in linked list
+        struct Object *keyValue = pairNew();
+        keyValue->value.pair->first = key;
+        keyValue->value.pair->second = value;
+
+        struct Object *newEntry = pairNew();
+        newEntry->value.pair->first = keyValue;
+        newEntry->value.pair->second = map->buckets[index]->second;
+        map->buckets[index] = newEntry;
+    }
+    
+}
+
+void mapPutAll(struct Map *map, struct Map *mapToPut)
+{
+
+    for (size_t i = 0; i < mapToPut->bucketCount; i++)
+    {
+        struct Pair *currentEntry = mapToPut->buckets[i];
+
+        while (currentEntry != NULL)
+        {
+            struct Object *key = currentEntry->first->value.pair->first;
+            struct Object *value = currentEntry->first->value.pair->second;
+            mapPut(map, key, value);
+
+            currentEntry = currentEntry->second;
+        }
+    }
+
+}
+
+void mapNew(struct Map *map, size_t initialSize)
+{
+    //TODO
+}
+
+void mapCopy(struct Map *map, struct Map *copy);
+bool mapEqual(struct Map *map1, struct Map *map2);
+size_t mapHash(struct Map *map);
+void mapSerialize(struct Map *map, struct Array *serialization);
+
 void mapMark(struct Map *map);
 void mapFree(struct Map *map);
-        mapInit(copy->value.map, object->value.map->slotCount);
-
-void mapInit(struct Map *map, size_t initialSize)
-{
-    map->keyValuePairs = (struct Pair **)malloc(initialSize * sizeof(struct Pair *));
-    assert(map->keyValuePairs != NULL);
-    map->slotCount = initialSize;
-    map->pairCount = 0;
-}
