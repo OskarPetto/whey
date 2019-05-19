@@ -33,9 +33,9 @@ void opONew(uint8_t type, struct Object *newObject)
     }
 }
 
-void opOConst(uint16_t constantIndex, struct Object *constObject)
+void opOConst(uint16_t constantPoolIndex, struct Object *constObject)
 {
-    constObject = objectConstant(constantIndex);
+    constObject = objectConstant(constantPoolIndex);
 }
 
 void opOCopy(struct Object *object, struct Object *copy)
@@ -73,7 +73,7 @@ struct Object *objectNew(uint8_t type)
     return object;
 }
 
-struct Object *objectConstant(uint16_t constantIndex)
+struct Object *objectConstant(uint16_t constantPoolIndex)
 {
     
 }
@@ -258,6 +258,8 @@ void objectToString(struct Object *object)
 
 void objectMark(struct Object *object)
 {
+    if (object == NULL) return;
+
     if (object->mark == OBJECT_MARK_TRUE)
         return;
 
@@ -279,6 +281,8 @@ void objectMark(struct Object *object)
 
 void objectFree(struct Object *object)
 {
+    if (object == NULL) return;
+
     switch (object->type)
     {
     case OBJECT_TYPE_ARRAY:

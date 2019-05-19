@@ -1,11 +1,12 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include <inttypes.h>
-#include <stdint.h>
 #include <stdbool.h>
+
+#include "Whey.h"
+#include "Integer.h"
+#include "Float.h"
 #include "Lambda.h"
-#include "String.h"
 #include "Array.h"
 #include "Map.h"
 #include "Pair.h"
@@ -23,11 +24,13 @@
 #define OBJECT_MARK_FALSE              0x00
 #define OBJECT_MARK_TRUE               0x01
 
+typedef float Float;
+typedef int32_t Integer; 
+
 union ObjectValue {
-    int32_t integer_value;
-    float float_value;
+    Integer integer_value;
+    Float float_value;
     struct Lambda *lambda;
-    struct String *string;
     struct Array *array;
     struct Map *map;
     struct Pair *pair;
@@ -35,25 +38,19 @@ union ObjectValue {
 
 struct Object
 {
-    uint8_t type;
-    uint8_t mark;
+    Flag type;
+    Flag mark;
     union ObjectValue value;
 };
 
-void opONew(uint8_t type, struct Object *newObject);
-void opOConst(uint16_t constantIndex, struct Object *constObject);
-void opOCopy(struct Object *object, struct Object *copy);
-void opOEq(struct Object *object1, struct Object *object2, struct Object *isEqual);
-void opOHash(struct Object *object, struct Object *hash);
-void opOToString(struct Object *object, struct Object *string);
-
-struct Object *objectNew(uint8_t type);
-struct Object *objectConstant(uint16_t constantIndex);
+struct Object *objectNew(Flag type);
+struct Object *objectConst(struct Constant *constant);
+struct Object *objectLoad(struct Object *object);
+struct Object *objectStore(struct Object *object);
 struct Object *objectCopy(struct Object *object);
-bool objectEquals(struct Object *object1, struct Object *object2);
-uint16_t objectHash(struct Object *object);
+Integer objectEquals(struct Object *object1, struct Object *object2);
+Integer objectHash(struct Object *object);
 struct Object *objectToString(struct Object *object);
-
 void objectMark(struct Object *object);
 void objectFree(struct Object *object);
 

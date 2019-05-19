@@ -169,7 +169,7 @@ void mapPutAll(struct Map *map, struct Map *mapToPut)
 
 }
 
-void mapNew(struct Map *map, size_t initialSize)
+void mapNew(struct Map *map, size_t initialSlotCount)
 {
     //TODO
 }
