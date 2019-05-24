@@ -1,2 +1,2 @@
 # umber0.2
-A stack based VM for closures
+A stack based VM
