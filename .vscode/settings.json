@@ -10,6 +10,16 @@
         "type_traits": "c",
         "tuple": "c",
         "utility": "c",
-        "pair.h": "c"
+        "pair.h": "c",
+        "boolean.h": "c",
+        "integer.h": "c",
+        "array.h": "c",
+        "assert.h": "c",
+        "constant.h": "c",
+        "object.h": "c",
+        "value.h": "c",
+        "stdint.h": "c",
+        "floating.h": "c",
+        "gc.h": "c"
     }
 }
