@@ -1,4 +1,5 @@
 #include "../Object.h"
+
 #include "../Integer.h"
 #include "../Floating.h"
 
@@ -183,10 +184,6 @@ void objectMark(struct Object *object)
     case OBJECT_TYPE_PAIR:
         pairMark(object->value.pair);
         break;
-    case OBJECT_TYPE_STRING:
-        stringMark(object->value.string);
-        break;
-
     }
 }
 

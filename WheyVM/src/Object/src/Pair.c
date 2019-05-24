@@ -1,6 +1,7 @@
 #include "../Pair.h"
-#include "../String.h"
 #include "../Array.h"
+#include "../Object.h"
+#include "../String.h"
 
 struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *second)
 {
@@ -28,9 +29,11 @@ struct Object *pairSetFirst(struct Pair *pair, struct Object *first)
     return prev;
 }
 
-struct Object *pairPutSecond(struct Pair *pair, struct Object *second)
+struct Object *pairSetSecond(struct Pair *pair, struct Object *second)
 {
+    struct Object *prev = pair->second;
     pair->second = second;
+    return prev;
 }
 
 struct Object *pairCopy(struct Gc *gc, struct Pair *pair)

@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "Types.h"
 #include <stdint.h>
 #include "Gc.h"
 #include "Array.h"
@@ -17,12 +18,6 @@
 
 #define OBJECT_MARK_FALSE              0x00
 #define OBJECT_MARK_TRUE               0x01 
-
-#define BOOLEAN_TRUE 1
-#define BOOLEAN_FALSE 0
-
-typedef int32_t Integer;
-typedef float Floating;
 
 union ObjectValue {
     Integer integer_value;

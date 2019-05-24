@@ -1,9 +1,10 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "Object.h"
-#include "Array.h"
-#include "Gc.h"
+#include "Types.h"
+
+struct Object;
+struct Gc;
 
 struct ListEntry;
 
@@ -31,10 +32,10 @@ struct Object *mapRemove(struct Map *map, struct Object *key);
 Integer mapHasKey(struct Map *map, struct Object *key);
 struct Object *mapEntries(struct Gc *gc, struct Map *map);
 
-struct Object *mapCopy(struct Gc *gc, struct Object *map);
-Integer mapEquals(struct Object *map1, struct Object *map2);
-Integer mapHash(struct Object *map);
-struct Object *mapToString(struct Gc *gc, struct Object *map);
+struct Object *mapCopy(struct Gc *gc, struct Map *map);
+Integer mapEquals(struct Map *map1, struct Map *map2);
+Integer mapHash(struct Map *map);
+struct Object *mapToString(struct Gc *gc, struct Map *map);
 
 void mapMark(struct Map *map);
 void mapFree(struct Map *map);

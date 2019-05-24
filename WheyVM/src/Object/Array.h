@@ -1,8 +1,10 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-#include "Object.h"
-#include "Gc.h"
+#include "Types.h"
+
+struct Gc;
+struct Object;
 
 struct Array
 {

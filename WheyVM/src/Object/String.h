@@ -1,9 +1,11 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include "Object.h"
-#include "Gc.h"
-#include "Array.h"
+#include "Types.h"
+
+struct Object;
+struct Gc;
+struct Array;
 
 struct String 
 {

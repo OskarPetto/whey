@@ -1,4 +1,6 @@
 #include "../Gc.h"
+#include "../Array.h"
+#include "../Object.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -29,7 +31,7 @@ void gcSweep(struct Gc *gc)
 
     for (Integer i = 0; i < gc->objects->objectCount; i++)
     {
-        if (gc->objects->objects[i]->mark = OBJECT_MARK_TRUE) 
+        if (gc->objects->objects[i]->mark == OBJECT_MARK_TRUE) 
         {
             gc->objects->objects[i]->mark = OBJECT_MARK_FALSE;
             arrayInsert(newArray, newArray->objectCount, gc->objects->objects[i]);

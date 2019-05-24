@@ -1,5 +1,7 @@
 #include "../Array.h"
+#include "../Object.h"
 #include "../String.h"
+#include "../Integer.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -142,7 +144,7 @@ Integer arrayEquals(struct Array *array1, struct Array *array2)
 
     for (Integer i = 0; i < array1->objectCount; i++)
     {
-        if (!objectEqual(array1->objects[i], array2->objects[i]))
+        if (!objectEquals(array1->objects[i], array2->objects[i]))
         {
             return BOOLEAN_FALSE;
         }

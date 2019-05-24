@@ -1,8 +1,10 @@
 #ifndef PAIR_H
 #define PAIR_H
 
-#include "Object.h"
-#include "Gc.h"
+#include "Types.h"
+
+struct Object;
+struct Gc;
 
 struct Pair
 {

@@ -4,91 +4,52 @@ CFLAGS = -O3 -Wall -std=c99
 
 SRC_DIR = ../src
 INC_DIR = ..
-OUT_DIR = out
-COMMON_HEADER = $(INC_DIR)/Array.h $(INC_DIR)/Floating.h $(INC_DIR)/Gc.h $(INC_DIR)/Integer.h $(INC_DIR)/Map.h $(INC_DIR)/Object.h $(INC_DIR)/Pair.h $(INC_DIR)/String.h 
+OBJ_DIR = ./out
+MKDIR_P = mkdir -p
 
-Array.o : $(SRC_DIR)/Array.c $(INC_DIR)/Object.h
-	$(CC) $(CFLAGS) -c $^ 
+all: object_test
 
+$(OBJ_DIR):
+		$(MKDIR_P) $(OBJ_DIR)
 
-Floating.o : $(SRC_DIR)/Floating.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
-
-
-Gc.o : $(SRC_DIR)/Gc.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Array.o : $(SRC_DIR)/Array.c $(INC_DIR)/Array.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
-Integer.o : $(SRC_DIR)/Integer.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Floating.o : $(SRC_DIR)/Floating.c $(INC_DIR)/Floating.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
-Map.o : $(SRC_DIR)/Map.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Gc.o : $(SRC_DIR)/Gc.c $(INC_DIR)/Gc.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
-Object.o : $(SRC_DIR)/Object.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Integer.o : $(SRC_DIR)/Integer.c $(INC_DIR)/Integer.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
-Pair.o : $(SRC_DIR)/Pair.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Map.o : $(SRC_DIR)/Map.c $(INC_DIR)/Map.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
-String.o : $(SRC_DIR)/String.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Object.o : $(SRC_DIR)/Object.c $(INC_DIR)/Object.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
-ArrayTest.o: ArrayTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/Pair.o : $(SRC_DIR)/Pair.c $(INC_DIR)/Pair.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-FloatingTest.o: FloatingTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
 
-GcTest.o: GcTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/String.o : $(SRC_DIR)/String.c $(INC_DIR)/String.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-IntegerTest.o: IntegerTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
+$(OBJ_DIR)/ObjectTest.o : ObjectTest.c $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-MapTest.o: MapTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
-
-ObjectTest.o: ObjectTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
-
-PairTest.o: PairTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
-
-StringTest.o: StringTest.c $(COMMON_HEADER)
-	$(CC) $(CFLAGS) -o $@ -c $^ 
-
-arraytest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o ArrayTest.o
-	$(CC) -o $@ $< 
-
-floatingtest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o FloatingTest.o
-	$(CC) -o $@ $< 
-
-gctest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o GcTest.o
-	$(CC) -o $@ $< 
-
-integertest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o IntegerTest.o
-	$(CC) -o $@ $< 
-
-maptest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o MapTest.o
-	$(CC) -o $@ $< 
-
-objecttest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o ObjectTest.o
-	$(CC) -o $@ $< 
-
-pairtest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o PairTest.o
-	$(CC) -o $@ $< 
-
-stringtest: Array.o Floating.o Gc.o Integer.o Map.o Object.o Pair.o String.o StringTest.o
-	$(CC) -o $@ $< 
-
-.PHONY: clean arraytest floatingtest gctest integertest maptest objecttest pairtest stringtest
-
+object_test: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Floating.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o $(OBJ_DIR)/String.o
+	$(CC) $^ -o $@ -lm
 
 clean:
-	rm -f arraytest floatingtest gctest integertest maptest objecttest pairtest stringtest *.o
+	rm -rf object_test $(OBJ_DIR)
+
+.PHONY: all clean

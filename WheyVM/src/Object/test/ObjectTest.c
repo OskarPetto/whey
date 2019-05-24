@@ -1,4 +1,11 @@
+#include "../Array.h"
+#include "../Floating.h"
+#include "../Gc.h"
 #include "../Integer.h"
+#include "../Map.h"
+#include "../Object.h"
+#include "../Pair.h"
+#include "../String.h"
 
 #include <assert.h>
 #include <stdlib.h>

@@ -1,8 +1,10 @@
 #ifndef INTEGER_H
 #define INTEGER_H
 
-#include "Object.h"
-#include "Gc.h"
+#include "Types.h"
+
+struct Object;
+struct Gc;
 
 struct Object *integerNew(struct Gc *gc, Integer value);
 struct Object *integerToString(struct Gc *gc, Integer integer);

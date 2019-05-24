@@ -1,5 +1,9 @@
 #include "../Floating.h"
+#include "../Object.h"
 #include "../String.h"
+
+#include <stdio.h>
+#include <string.h>
 
 #define FLOAT_STRING_BUFFER_SIZE 50
 
@@ -10,7 +14,7 @@ struct Object *floatingNew(struct Gc *gc, Floating value)
     return floating1;
 }
 
-struct Object *floatToString(struct Gc *gc, Floating floating)
+struct Object *floatingToString(struct Gc *gc, Floating floating)
 {
     char buffer[FLOAT_STRING_BUFFER_SIZE];
  

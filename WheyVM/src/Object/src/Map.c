@@ -1,6 +1,8 @@
 #include "../Map.h"
 #include "../Array.h"
+#include "../Object.h"
 #include "../String.h"
+#include "../Integer.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -63,23 +65,27 @@ static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct
 
 static struct Map *mapMaybeResize(struct Map *map, Integer newEntryCount)
 {
-    if (newEntryCount >= map->bucketCount * 3 / 4)
-    { 
-        struct Map *newMap = (struct Map *)malloc(sizeof(struct Map));
-        assert(newMap != NULL);
-        newMap->buckets = (struct ListEntry **) malloc(getNextLargerBucketCount(newEntryCount) * sizeof(struct ListEntry *));
-        assert(newMap->buckets != NULL);
-
-        mapPutAll(newMap, map);
-
-        freeMap(map);
+    if (newEntryCount < map->bucketCount * 3 / 4)
+    {
+        return map;
     }
+
+    struct Map *newMap = (struct Map *)malloc(sizeof(struct Map));
+    assert(newMap != NULL);
+    newMap->buckets = (struct ListEntry **) malloc(nextLargerBucketCount(newEntryCount) * sizeof(struct ListEntry *));
+    assert(newMap->buckets != NULL);
+
+    mapPutAll(newMap, map);
+
+    mapFree(map);
+    
+    return newMap;
 }
 
 
 struct Object *mapNew(struct Gc *gc, Integer initialEntryCount)
 {
-    Integer initialBucketCount = getNextLargerBucketCount(initialEntryCount);
+    Integer initialBucketCount = nextLargerBucketCount(initialEntryCount);
     struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
     map->value.map->buckets = (struct ListEntry **) malloc(initialBucketCount * sizeof(struct ListEntry *));
     assert(map->value.map->buckets != NULL);
@@ -169,15 +175,16 @@ struct Object *mapEntries(struct Gc *gc, struct Map *map)
 
 struct Object *mapCopy(struct Gc *gc, struct Map *map)
 {
-    struct Map *copy = mapNew(gc, map->entryCount);
+    struct Object *copy = mapNew(gc, map->entryCount);
+    struct Map *copyMap = copy->value.map;
 
-    for (Integer i = 0; i < map->bucketCount; i++)
+    for (Integer i = 0; i < copyMap->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map->buckets[i];
+        struct ListEntry *currEntry = copyMap->buckets[i];
 
         while (currEntry != NULL)
         {
-            mapPutWithHash(map, objectCopy(gc, currEntry->key), objectCopy(gc, currEntry->value), currEntry->hash);
+            mapPutWithHash(copyMap, objectCopy(gc, currEntry->key), objectCopy(gc, currEntry->value), currEntry->hash);
             currEntry = currEntry->next;
         }
 
@@ -247,15 +254,15 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
         while (currEntry != NULL)
         {
-            struct Object *subStringObject1 = objectString(gc, currEntry->key);
+            struct Object *subStringObject1 = objectToString(gc, currEntry->key);
             struct Array *subCharArray1 = stringToCharArray(gc, subStringObject1->value.string)->value.array;
             arrayInsertAll(charArray, charArray->objectCount, subCharArray1);
 
             arrayAppendInteger(gc, charArray, ':');
 
-            struct Object *subStringObject2 = objectString(gc, currEntry->value);
+            struct Object *subStringObject2 = objectToString(gc, currEntry->value);
             struct Array *subCharArray2 = stringToCharArray(gc, subStringObject2->value.string)->value.array;
-            arrayInsertAll(charArray, charArray->objectCount, subCharArray1);
+            arrayInsertAll(charArray, charArray->objectCount, subCharArray2);
 
             arrayAppendInteger(gc, charArray, ',');
 

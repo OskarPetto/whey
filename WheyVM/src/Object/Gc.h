@@ -1,10 +1,11 @@
 #ifndef GC_H
 #define GC_H
 
-#include "Object.h"
-#include "Array.h"
+#include "Types.h"
 
 #define GC_INITIAL_SIZE   20
+
+struct Object;
 
 struct Gc
 {
