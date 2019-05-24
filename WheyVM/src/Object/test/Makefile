@@ -10,7 +10,8 @@ MKDIR_P = mkdir -p
 all: object_test
 
 $(OBJ_DIR):
-		$(MKDIR_P) $(OBJ_DIR)
+	$(MKDIR_P) $(OBJ_DIR)
+	
 
 $(OBJ_DIR)/Array.o : $(SRC_DIR)/Array.c $(INC_DIR)/Array.h $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
