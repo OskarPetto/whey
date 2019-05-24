@@ -7,7 +7,7 @@ INC_DIR = ..
 OBJ_DIR = ./out
 MKDIR_P = mkdir -p
 
-all: object_test
+all: object.out
 
 $(OBJ_DIR):
 	$(MKDIR_P) $(OBJ_DIR)
@@ -47,10 +47,10 @@ $(OBJ_DIR)/String.o : $(SRC_DIR)/String.c $(INC_DIR)/String.h $(OBJ_DIR)
 $(OBJ_DIR)/ObjectTest.o : ObjectTest.c $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-object_test: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Floating.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o $(OBJ_DIR)/String.o
+object.out: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Floating.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o $(OBJ_DIR)/String.o
 	$(CC) $^ -o $@ -lm
 
 clean:
-	rm -rf object_test $(OBJ_DIR)
+	rm -rf object.out $(OBJ_DIR)
 
 .PHONY: all clean
