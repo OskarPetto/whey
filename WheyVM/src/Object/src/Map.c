@@ -1,4 +1,6 @@
 #include "../Map.h"
+#include "../Array.h"
+#include "../String.h"
 
 #include <stdlib.h>
 #include <assert.h>

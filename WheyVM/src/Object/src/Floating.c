@@ -1,4 +1,5 @@
 #include "../Floating.h"
+#include "../String.h"
 
 #define FLOAT_STRING_BUFFER_SIZE 50
 

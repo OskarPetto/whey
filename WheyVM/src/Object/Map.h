@@ -2,6 +2,8 @@
 #define MAP_H
 
 #include "Object.h"
+#include "Array.h"
+#include "Gc.h"
 
 struct ListEntry;
 

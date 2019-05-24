@@ -1,4 +1,5 @@
 #include "../Integer.h"
+#include "../String.h"
 
 #define INTEGER_STRING_BUFFER_SIZE 50
 

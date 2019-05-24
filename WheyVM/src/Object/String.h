@@ -2,6 +2,8 @@
 #define STRING_H
 
 #include "Object.h"
+#include "Gc.h"
+#include "Array.h"
 
 struct String 
 {
@@ -18,7 +20,6 @@ struct Object *stringCopy(struct Gc *gc, struct String *string);
 Integer stringEquals(struct String *string1, struct String *string2);
 Integer stringHash(struct String *string);
 
-void stringMark(struct String *string);
 void stringFree(struct String *string);
 
 #endif

@@ -1,4 +1,6 @@
 #include "../Object.h"
+#include "../Integer.h"
+#include "../Floating.h"
 
 #include <assert.h>
 #include <stdlib.h>

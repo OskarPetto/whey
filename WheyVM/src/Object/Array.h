@@ -2,6 +2,7 @@
 #define ARRAY_H
 
 #include "Object.h"
+#include "Gc.h"
 
 struct Array
 {
@@ -17,7 +18,7 @@ struct Object *arraySet(struct Array *array, Integer index, struct Object *setOb
 void arrayInsert(struct Array *array, Integer index, struct Object *insertObject);
 void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArray);
 struct Object *arrayRemove(struct Array *array, Integer index);
-void arrayAppendInteger(struct Gc *gc, struct Array *array, Integer character);
+void arrayAppendInteger(struct Gc *gc, struct Array *array, Integer integer);
 
 struct Object *arrayCopy(struct Gc *gc, struct Array *array);
 Integer arrayEquals(struct Array *array1, struct Array *array2);

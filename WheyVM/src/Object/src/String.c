@@ -4,19 +4,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Object *stringNew(Integer characterCount)
+struct Object *stringNew(struct Gc *gc, Integer characterCount)
 {
-    struct Object *string = objectNew(OBJECT_TYPE_STRING);
+    struct Object *string = objectNew(gc, OBJECT_TYPE_STRING);
     string->value.string->characters = (char *)malloc(characterCount * sizeof(char));
     assert(string->value.string->characters != NULL);
     string->value.string->characterCount = characterCount;
     return string;
 }
 
-struct Object *stringFromCharArray(struct Array *array)
+struct Object *stringFromCharArray(struct Gc *gc, struct Array *array)
 {
 
-    struct Object *stringObject = stringNew(array->objectCount);
+    struct Object *stringObject = stringNew(gc, array->objectCount);
 
     for (Integer i = 0; i < array->objectCount; i++)
     {
@@ -26,9 +26,9 @@ struct Object *stringFromCharArray(struct Array *array)
     return stringObject;
 }
 
-struct Object *stringToCharArray(struct String *string)
+struct Object *stringToCharArray(struct Gc *gc, struct String *string)
 {
-    struct Object *charArrayObject = arrayNew(string->characterCount);
+    struct Object *charArrayObject = arrayNew(gc, string->characterCount);
 
     for (Integer i = 0; i < string->characterCount; i++)
     {
@@ -49,9 +49,9 @@ void stringPrint(struct String *string)
     printf("\n");
 }
 
-struct Object *stringCopy(struct String *string)
+struct Object *stringCopy(struct Gc *gc, struct String *string)
 {
-    struct Object *copy = stringNew(string->characterCount);
+    struct Object *copy = stringNew(gc, string->characterCount);
 
     for (Integer i = 0; i < string->characterCount; i++)
     {
@@ -77,7 +77,20 @@ Integer stringEquals(struct String *string1, struct String *string2)
     }
 
 }
-Integer stringHash(struct String *string);
 
-void stringMark(struct String *string);
-void stringFree(struct String *string);
+Integer stringHash(struct String *string)
+{
+    Integer hash = 1;
+
+    for (Integer i = 0; i < string->characterCount; i++)
+    {
+        hash = hash * 31  + string->characters[i];
+    }
+
+    return hash;
+}
+
+void stringFree(struct String *string)
+{
+    free(string->characters);
+}

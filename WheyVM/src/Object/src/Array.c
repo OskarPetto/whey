@@ -1,4 +1,5 @@
 #include "../Array.h"
+#include "../String.h"
 
 #include <assert.h>
 #include <stdlib.h>

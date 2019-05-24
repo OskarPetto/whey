@@ -1,4 +1,6 @@
 #include "../Pair.h"
+#include "../String.h"
+#include "../Array.h"
 
 struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *second)
 {

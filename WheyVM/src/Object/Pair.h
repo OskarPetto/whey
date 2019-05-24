@@ -2,6 +2,7 @@
 #define PAIR_H
 
 #include "Object.h"
+#include "Gc.h"
 
 struct Pair
 {

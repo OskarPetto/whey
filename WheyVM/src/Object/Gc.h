@@ -2,6 +2,7 @@
 #define GC_H
 
 #include "Object.h"
+#include "Array.h"
 
 #define GC_INITIAL_SIZE   20
 

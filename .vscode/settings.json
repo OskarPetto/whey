@@ -20,6 +20,8 @@
         "value.h": "c",
         "stdint.h": "c",
         "floating.h": "c",
-        "gc.h": "c"
+        "gc.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c"
     }
 }

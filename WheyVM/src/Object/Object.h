@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 #include "Gc.h"
-#include "Integer.h"
-#include "Floating.h"
 #include "Array.h"
 #include "Map.h"
 #include "Pair.h"
