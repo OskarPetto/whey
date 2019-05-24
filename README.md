@@ -1,2 +1,2 @@
-# umber0.2
+# WheyVM
 A stack based VM
