@@ -346,6 +346,9 @@ void testStringNew()
     assert(string1->value.string->characterCount == 10);
     string1->value.string->characters[0] = 'A';
     string1->value.string->characters[9] = 'B';
+    free(string1->value.string->characters);
+    free(string1->value.string);
+    free(string1);
     printf("OK\n");
 }
 

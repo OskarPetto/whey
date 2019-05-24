@@ -149,11 +149,29 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
 
 struct Object *objectNew(struct Gc *gc, uint8_t type)
 {
-    struct Object *object;
-    object = (struct Object *)malloc(sizeof(struct Object));
+    struct Object *object = (struct Object *)malloc(sizeof(struct Object));
     assert(object != NULL);
     object->mark = OBJECT_MARK_TRUE;
     object->type = type;
+
+    switch (type)
+    {
+    case OBJECT_TYPE_ARRAY:
+        object->value.array = (struct Array *) malloc(sizeof(struct Array));
+        break;
+
+    case OBJECT_TYPE_MAP:
+        object->value.map = (struct Map *) malloc(sizeof(struct Map));
+        break;
+
+    case OBJECT_TYPE_PAIR:
+        object->value.pair = (struct Pair *) malloc(sizeof(struct Pair));
+        break;
+    
+    case OBJECT_TYPE_STRING:
+        object->value.string = (struct String *) malloc(sizeof(struct String));
+        break;
+    }
 
     if (gc != NULL)
     {
@@ -196,12 +214,18 @@ void objectFree(struct Object *object)
     {
     case OBJECT_TYPE_ARRAY:
         arrayFree(object->value.array);
+        free(object->value.array);
         break;
     case OBJECT_TYPE_MAP:
         mapFree(object->value.map);
+        free(object->value.map);
+        break;
+    case OBJECT_TYPE_PAIR:
+        free(object->value.pair);
         break;
     case OBJECT_TYPE_STRING:
         stringFree(object->value.string);
+        free(object->value.string);
         break;
     }
 
