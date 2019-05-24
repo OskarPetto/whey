@@ -14,127 +14,127 @@
 
 void testArrayNew()
 {
-    printf("testArrayNew:\n");
+    printf("testArrayNew: ");
     printf("OK\n");
 }
 
 void testArraySize()
 {
-    printf("testArraySize:\n");
+    printf("testArraySize: ");
     printf("OK\n");
 }
 
 void testArrayGet()
 {
-    printf("testArrayGet:\n");
+    printf("testArrayGet: ");
     printf("OK\n");
 }
 
 void testArraySet()
 {
-    printf("testArraySet:\n");
+    printf("testArraySet: ");
     printf("OK\n");
 }
 
 void testArrayInsert()
 {
-    printf("testArrayInsert:\n");
+    printf("testArrayInsert: ");
     printf("OK\n");
 }
 
 void testArrayInsertAll()
 {
-    printf("testArrayInsertAll:\n");
+    printf("testArrayInsertAll: ");
     printf("OK\n");
 }
 
 void testArrayRemove()
 {
-    printf("testArrayRemove:\n");
+    printf("testArrayRemove: ");
     printf("OK\n");
 }
 
 void testArrayAppendInteger()
 {
-    printf("testArrayAppendInteger:\n");
+    printf("testArrayAppendInteger: ");
     printf("OK\n");
 }
 
 void testArrayCopy()
 {
-    printf("testArrayCopy:\n");
+    printf("testArrayCopy: ");
     printf("OK\n");
 }
 
 void testArrayEquals()
 {
-    printf("testArrayEquals:\n");
+    printf("testArrayEquals: ");
     printf("OK\n");
 }
 
 void testArrayHash()
 {
-    printf("testArrayHash:\n");
+    printf("testArrayHash: ");
     printf("OK\n");
 }
 
 void testArrayToString()
 {
-    printf("testArrayToString:\n");
+    printf("testArrayToString: ");
     printf("OK\n");
 }
 
 void testArrayMark()
 {
-    printf("testArrayMark:\n");
+    printf("testArrayMark: ");
     printf("OK\n");
 }
 
 void testArrayFree()
 {
-    printf("testArrayFree:\n");
+    printf("testArrayFree: ");
     printf("OK\n");
 }
 
 void testFloatingNew()
 {
-    printf("testFloatingNew:\n");
+    printf("testFloatingNew: ");
     printf("OK\n");
 }
 
 void testFloatingToString()
 {
-    printf("testFloatingToString:\n");
+    printf("testFloatingToString: ");
     printf("OK\n");
 }
 
 void testGcNew()
 {
-    printf("testGcNew:\n");
+    printf("testGcNew: ");
     printf("OK\n");
 }
 
 void testGcRegisterObject()
 {
-    printf("testGcRegisterObject:\n");
+    printf("testGcRegisterObject: ");
     printf("OK\n");
 }
 
 void testGcSweep()
 {
-    printf("testGcSweep:\n");
+    printf("testGcSweep: ");
     printf("OK\n");
 }
 
 void testGcFree()
 {
-    printf("testGcFree:\n");
+    printf("testGcFree: ");
     printf("OK\n");
 }
 
 void testIntegerNew()
 {
-    printf("testIntegerNew:\n");
+    printf("testIntegerNew: ");
     struct Object *integer1 = integerNew(NULL, -5);
     assert(integer1 != NULL);
     assert(integer1->type == OBJECT_TYPE_INTEGER);
@@ -146,199 +146,199 @@ void testIntegerNew()
 
 void testIntegerToString()
 {
-    printf("testIntegerToString:\n");
+    printf("testIntegerToString: ");
     printf("OK\n");
 }
 
 void testMapNew()
 {
-    printf("testMapNew:\n");
+    printf("testMapNew: ");
     printf("OK\n");
 }
 
 void testMapSize()
 {
-    printf("testMapSize:\n");
+    printf("testMapSize: ");
     printf("OK\n");
 }
 
 void testMapGet()
 {
-    printf("testMapGet:\n");
+    printf("testMapGet: ");
     printf("OK\n");
 }
 
 void testMapPut()
 {
-    printf("testMapPut:\n");
+    printf("testMapPut: ");
     printf("OK\n");
 }
 
 void testMapPutAll()
 {
-    printf("testMapPutAll:\n");
+    printf("testMapPutAll: ");
     printf("OK\n");
 }
 
 void testMapRemove()
 {
-    printf("testMapRemove:\n");
+    printf("testMapRemove: ");
     printf("OK\n");
 }
 
 void testMapHasKey()
 {
-    printf("testMapHasKey:\n");
+    printf("testMapHasKey: ");
     printf("OK\n");
 }
 
 void testMapEntries()
 {
-    printf("testMapEntries:\n");
+    printf("testMapEntries: ");
     printf("OK\n");
 }
 
 void testMapCopy()
 {
-    printf("testMapCopy:\n");
+    printf("testMapCopy: ");
     printf("OK\n");
 }
 
 void testMapEquals()
 {
-    printf("testMapEquals:\n");
+    printf("testMapEquals: ");
     printf("OK\n");
 }
 
 void testMapHash()
 {
-    printf("testMapHash:\n");
+    printf("testMapHash: ");
     printf("OK\n");
 }
 
 void testMapToString()
 {
-    printf("testMapToString:\n");
+    printf("testMapToString: ");
     printf("OK\n");
 }
 
 void testMapMark()
 {
-    printf("testMapMark:\n");
+    printf("testMapMark: ");
     printf("OK\n");
 }
 
 void testMapFree()
 {
-    printf("testMapFree:\n");
+    printf("testMapFree: ");
     printf("OK\n");
 }
 
 void testObjectCopy()
 {
-    printf("testObjectCopy:\n");
+    printf("testObjectCopy: ");
     printf("OK\n");
 }
 
 void testObjectEquals()
 {
-    printf("testObjectEquals:\n");
+    printf("testObjectEquals: ");
     printf("OK\n");
 }
 
 void testObjectHash()
 {
-    printf("testObjectHash:\n");
+    printf("testObjectHash: ");
     printf("OK\n");
 }
 
 void testObjectToString()
 {
-    printf("testObjectToString:\n");
+    printf("testObjectToString: ");
     printf("OK\n");
 }
 
 void testObjectNew()
 {
-    printf("testObjectNew:\n");
+    printf("testObjectNew: ");
     printf("OK\n");
 }
 
 void testObjectMark()
 {
-    printf("testObjectMark:\n");
+    printf("testObjectMark: ");
     printf("OK\n");
 }
 
 void testObjectFree()
 {
-    printf("testObjectFree:\n");
+    printf("testObjectFree: ");
     printf("OK\n");
 }
 
 void testPairNew()
 {
-    printf("testPairNew:\n");
+    printf("testPairNew: ");
     printf("OK\n");
 }
 
 void testPairGetFirst()
 {
-    printf("testPairGetFirst:\n");
+    printf("testPairGetFirst: ");
     printf("OK\n");
 }
 
 void testPairGetSecond()
 {
-    printf("testPairGetSecond:\n");
+    printf("testPairGetSecond: ");
     printf("OK\n");
 }
 
 void testPairSetFirst()
 {
-    printf("testPairSetFirst:\n");
+    printf("testPairSetFirst: ");
     printf("OK\n");
 }
 
 void testPairSetSecond()
 {
-    printf("testPairSetSecond:\n");
+    printf("testPairSetSecond: ");
     printf("OK\n");
 }
 
 void testPairCopy()
 {
-    printf("testPairCopy:\n");
+    printf("testPairCopy: ");
     printf("OK\n");
 }
 
 void testPairEquals()
 {
-    printf("testPairEquals:\n");
+    printf("testPairEquals: ");
     printf("OK\n");
 }
 
 void testPairHash()
 {
-    printf("testPairHash:\n");
+    printf("testPairHash: ");
     printf("OK\n");
 }
 
 void testPairToString()
 {
-    printf("testPairToString:\n");
+    printf("testPairToString: ");
     printf("OK\n");
 }
 
 void testPairMark()
 {
-    printf("testPairMark:\n");
+    printf("testPairMark: ");
     printf("OK\n");
 }
 
 void testStringNew()
 {
-    printf("testStringNew:\n");
+    printf("testStringNew: ");
     struct Object *string1 = stringNew(NULL, 10);
     assert(string1 != NULL);
     assert(string1->type == OBJECT_TYPE_STRING);
@@ -354,43 +354,43 @@ void testStringNew()
 
 void testStringFromCharArray()
 {
-    printf("testStringFromCharArray:\n");
+    printf("testStringFromCharArray: ");
     printf("OK\n");
 }
 
 void testStringToCharArray()
 {
-    printf("testStringToCharArray:\n");
+    printf("testStringToCharArray: ");
     printf("OK\n");
 }
 
 void testStringCompare()
 {
-    printf("testStringCompare:\n");
+    printf("testStringCompare: ");
     printf("OK\n");
 }
 
 void testStringCopy()
 {
-    printf("testStringCopy:\n");
+    printf("testStringCopy: ");
     printf("OK\n");
 }
 
 void testStringEquals()
 {
-    printf("testStringEquals:\n");
+    printf("testStringEquals: ");
     printf("OK\n");
 }
 
 void testStringHash()
 {
-    printf("testStringHash:\n");
+    printf("testStringHash: ");
     printf("OK\n");
 }
 
 void testStringFree()
 {
-    printf("testStringFree:\n");
+    printf("testStringFree: ");
     printf("OK\n");
 }
 
@@ -457,5 +457,4 @@ int main(int argc, char* argv[])
     testStringEquals();
     testStringHash();
     testStringFree();
-    printf("61 tests passed.\n");
 }
