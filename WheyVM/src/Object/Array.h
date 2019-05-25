@@ -39,6 +39,7 @@ Integer stringEquals(struct Array *string1, struct Array *string2);
 Integer stringHash(struct Array *string);
 
 void stringAppendCharacter(struct Array *string, char character);
+void stringPrint(struct Array *string);
 void stringFree(struct Array *string);
 
 

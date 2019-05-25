@@ -478,9 +478,9 @@ void testArrayToString()
 {
     printf("testArrayToString: ");
     struct Object *array1 = arrayNew(NULL, 3);
-    struct Object *integer1 = integerNew(NULL, 97);
+    struct Object *integer1 = integerNew(NULL, 7);
     struct Object *integer2 = integerNew(NULL, 98);
-    struct Object *integer3 = integerNew(NULL, 99);
+    struct Object *integer3 = integerNew(NULL, 121299);
 
     array1->value.array->objects[0] = integer1;
     array1->value.array->objects[1] = integer2;
@@ -488,7 +488,21 @@ void testArrayToString()
 
     struct Object *string = arrayToString(NULL, array1->value.array);
 
-    assert(string->value.array->objectCount == 7);
+    assert(string->value.array->objectCount == 13);
+
+    assert(string->value.array->objects[0]->value.integer_value == '[');
+    assert(string->value.array->objects[1]->value.integer_value == '7');
+    assert(string->value.array->objects[2]->value.integer_value == ',');
+    assert(string->value.array->objects[3]->value.integer_value == '9');
+    assert(string->value.array->objects[4]->value.integer_value == '8');
+    assert(string->value.array->objects[5]->value.integer_value == ',');
+    assert(string->value.array->objects[6]->value.integer_value == '1');
+    assert(string->value.array->objects[7]->value.integer_value == '2');
+    assert(string->value.array->objects[8]->value.integer_value == '1');
+    assert(string->value.array->objects[9]->value.integer_value == '2');
+    assert(string->value.array->objects[10]->value.integer_value == '9');
+    assert(string->value.array->objects[11]->value.integer_value == '9');
+    assert(string->value.array->objects[12]->value.integer_value == ']');
 
 
     free(string->value.array->objects[0]);

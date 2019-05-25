@@ -4,6 +4,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 static Integer getNextLargerSlotCount(Integer slotCount)
 {
@@ -174,13 +175,18 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array)
 
         arrayInsertAll(string, string->objectCount, subString);
 
-        objectFree(subStringObject);
+        stringAppendCharacter(string, ',');
+
+        free(subString->objects);
+        free(subString);
+        free(subStringObject);
     }
 
     if (array->objectCount > 0)
     {
-        struct Object *lastInteger = integerNew(NULL, ']');
-        string->objects[string->objectCount - 1] = lastInteger;
+
+        free(arrayRemove(string, string->objectCount - 1));
+        stringAppendCharacter(string, ']');
     }
     else
     {
@@ -294,6 +300,14 @@ void stringAppendCharacter(struct Array *string, char character)
 {
     struct Object *characterObject = integerNew(NULL, (Integer) character);
     arrayInsert(string, string->objectCount, characterObject);
+}
+
+void stringPrint(struct Array *string)
+{
+    for (Integer i = 0; i < string->objectCount; i++)
+    {
+        printf("%c", string->objects[i]->value.integer_value);
+    }
 }
 
 void stringFree(struct Array *string)
