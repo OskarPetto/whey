@@ -2,7 +2,7 @@
 #define CONSTANT_H
 
 #include "Function.h"
-#include "String.h"
+#include "StringConstant.h"
 
 #define CONSTANT_TYPE_UNDEFINED          0x00
 #define CONSTANT_TYPE_IntEAN            0x01

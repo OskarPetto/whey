@@ -1,6 +1,5 @@
 #include "../Array.h"
 #include "../Object.h"
-#include "../String.h"
 #include "../Integer.h"
 
 #include <assert.h>
@@ -118,12 +117,6 @@ struct Object *arrayRemove(struct Array *array, Integer index)
     return removeObject;
 }
 
-void arrayAppendInteger(struct Gc *gc, struct Array *array, Integer character)
-{
-    struct Object *characterObject = integerNew(gc, (Integer)character);
-    arrayInsert(array, array->objectCount, characterObject);
-}
-
 struct Object *arrayCopy(struct Gc *gc, struct Array *array)
 {
     struct Object *copy = arrayNew(gc, array->objectCount);
@@ -138,11 +131,6 @@ struct Object *arrayCopy(struct Gc *gc, struct Array *array)
 
 Integer arrayEquals(struct Array *array1, struct Array *array2)
 {
-    if (array1 == array2)
-    {
-        return BOOLEAN_TRUE;
-    }
-
     if (array1->objectCount != array2->objectCount)
     {
         return BOOLEAN_FALSE;
@@ -173,29 +161,33 @@ Integer arrayHash(struct Array *array)
 
 struct Object *arrayToString(struct Gc *gc, struct Array *array)
 {
-    struct Object *arrayObject = arrayNew(gc, 0);
-    struct Array *charArray = arrayObject->value.array;
+    struct Object *stringObject = stringNew(gc, 0);
+    struct Array *string = stringObject->value.array;
 
-    arrayAppendInteger(gc, charArray, '[');
+    stringAppendCharacter(string, '[');
 
     for (Integer i = 0; i < array->objectCount; i++)
     {
-        struct Object *subString = objectToString(gc, array->objects[i]);
-        struct Array *subCharArray = stringToCharArray(gc, subString->value.string)->value.array;
-        arrayInsertAll(charArray, charArray->objectCount, subCharArray);
+        struct Object *subStringObject = objectToString(NULL, array->objects[i]);
+
+        struct Array *subString = subStringObject->value.array;
+
+        arrayInsertAll(string, string->objectCount, subString);
+
+        objectFree(subStringObject);
     }
 
     if (array->objectCount > 0)
     {
-        struct Object *lastInteger = integerNew(gc, ']');
-        charArray->objects[array->objectCount - 1] = lastInteger;
+        struct Object *lastInteger = integerNew(NULL, ']');
+        string->objects[string->objectCount - 1] = lastInteger;
     }
     else
     {
-        arrayAppendInteger(gc, charArray, ']');
+        stringAppendCharacter(string, ']');
     }
 
-    return stringFromCharArray(gc, charArray);
+    return stringObject;    
 }
 
 void arrayMark(struct Array *array)
@@ -209,4 +201,107 @@ void arrayMark(struct Array *array)
 void arrayFree(struct Array *array)
 {
     free(array->objects);
+}
+
+struct Object *stringNew(struct Gc *gc, Integer initialObjectCount)
+{
+    struct Object *string = arrayNew(gc, initialObjectCount);
+    string->type = OBJECT_TYPE_STRING;
+    return string;
+}
+
+struct Object *stringFromArray(struct Gc *gc, struct Array *array)
+{
+    return stringCopy(gc, array);
+}
+
+struct Object *stringToArray(struct Gc *gc, struct Array *string)
+{
+    struct Object *array = stringNew(gc, string->objectCount);
+
+    for (Integer i = 0; i < string->objectCount; i++)
+    {
+        array->value.array->objects[i] = integerNew(gc, string->objects[i]->value.integer_value);
+    }
+    
+    return array;
+}
+
+Integer stringCompare(struct Array *array1, struct Array *array2)
+{
+    Integer l1 = array1->objectCount;
+    Integer l2 = array2->objectCount;
+
+    Integer minL = l1 <= l2 ? l1 : l2;
+
+    for (Integer i = 0; i < minL; i++)
+    {
+        char c1 = (char) array1->objects[i]->value.integer_value;
+        char c2 = (char) array2->objects[i]->value.integer_value;
+
+        if (c1 != c2) 
+        {
+            return c1 - c2;
+        }
+    }
+
+    return l1 - l2;
+}
+
+struct Object *stringCopy(struct Gc *gc, struct Array *string)
+{
+    struct Object *copy = stringNew(gc, string->objectCount);
+
+    for (Integer i = 0; i < string->objectCount; i++)
+    {
+        copy->value.array->objects[i] = integerNew(NULL, (char) string->objects[i]->value.integer_value);
+    }
+
+    return copy;
+}
+
+Integer stringEquals(struct Array *string1, struct Array *string2)
+{
+    if (string1->objectCount != string2->objectCount)
+    {
+        return BOOLEAN_FALSE;
+    }
+
+    for (Integer i = 0; i < string1->objectCount; i++)
+    {
+        if (string1->objects[i]->value.integer_value != string2->objects[i]->value.integer_value)
+        {
+            return BOOLEAN_FALSE;
+        }
+    }
+
+    return BOOLEAN_TRUE;
+}
+
+Integer stringHash(struct Array *string)
+{
+    Integer hash = 1;
+
+    for (Integer i = 0; i < string->objectCount; i++)
+    {
+        hash = 31 * hash + string->objects[i]->value.integer_value;
+    }
+
+    return hash;
+}
+
+void stringAppendCharacter(struct Array *string, char character)
+{
+    struct Object *characterObject = integerNew(NULL, (Integer) character);
+    arrayInsert(string, string->objectCount, characterObject);
+}
+
+void stringFree(struct Array *string)
+{
+    for (Integer i = 0; i < string->objectCount; i++)
+    {
+        objectFree(string->objects[i]);
+    }
+
+    free(string->objects);
 }

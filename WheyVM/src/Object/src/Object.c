@@ -24,14 +24,15 @@ struct Object *objectCopy(struct Gc *gc, struct Object *object)
     case OBJECT_TYPE_ARRAY:
         return arrayCopy(gc, object->value.array);
 
+    case OBJECT_TYPE_STRING:
+        return stringCopy(gc, object->value.array);
+
     case OBJECT_TYPE_MAP:
         return mapCopy(gc, object->value.map);
 
     case OBJECT_TYPE_PAIR:
         return pairCopy(gc, object->value.pair);
 
-    case OBJECT_TYPE_STRING:
-        return stringCopy(gc, object->value.string);
     }
 
     return NULL;
@@ -65,14 +66,14 @@ Integer objectEquals(struct Object *object1, struct Object *object2)
     case OBJECT_TYPE_ARRAY:
         return arrayEquals(object1->value.array, object2->value.array);
 
+    case OBJECT_TYPE_STRING:
+        return stringEquals(object1->value.array, object2->value.array);
+
     case OBJECT_TYPE_MAP:
         return mapEquals(object1->value.map, object2->value.map);
 
     case OBJECT_TYPE_PAIR:
         return pairEquals(object1->value.pair, object2->value.pair);
-    
-    case OBJECT_TYPE_STRING:
-        return stringEquals(object1->value.string, object2->value.string);
     
     }
 
@@ -95,14 +96,15 @@ Integer objectHash(struct Object *object)
     case OBJECT_TYPE_ARRAY:
         return arrayHash(object->value.array);
 
+    case OBJECT_TYPE_STRING:
+        return stringHash(object->value.array);
+
     case OBJECT_TYPE_MAP:
         return mapHash(object->value.map);
 
     case OBJECT_TYPE_PAIR:
         return pairHash(object->value.pair);
 
-    case OBJECT_TYPE_STRING:
-        return stringHash(object->value.string);
     }
 
     return 0;
@@ -114,11 +116,10 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
     if (object == NULL)
     {
         struct Object *stringObject = stringNew(gc, 4);
-        struct String *string = stringObject->value.string;
-        string->characters[0] = 'n';
-        string->characters[1] = 'u';
-        string->characters[2] = 'l';
-        string->characters[3] = 'l';
+        stringObject->value.array->objects[0] = integerNew(NULL, 'n');
+        stringObject->value.array->objects[1] = integerNew(NULL, 'u');
+        stringObject->value.array->objects[2] = integerNew(NULL, 'l');
+        stringObject->value.array->objects[3] = integerNew(NULL, 'l');
         return stringObject;
     }
 
@@ -133,14 +134,14 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
     case OBJECT_TYPE_ARRAY:
         return arrayToString(gc, object->value.array);
 
+    case OBJECT_TYPE_STRING:
+        return object;  // No copy
+
     case OBJECT_TYPE_MAP:
         return mapToString(gc, object->value.map);
 
     case OBJECT_TYPE_PAIR:
         return pairToString(gc, object->value.pair);
-    
-    case OBJECT_TYPE_STRING:
-        return object;  // No copy
     
     }
 
@@ -157,6 +158,7 @@ struct Object *objectNew(struct Gc *gc, uint8_t type)
     switch (type)
     {
     case OBJECT_TYPE_ARRAY:
+    case OBJECT_TYPE_STRING:
         object->value.array = (struct Array *) malloc(sizeof(struct Array));
         break;
 
@@ -168,9 +170,6 @@ struct Object *objectNew(struct Gc *gc, uint8_t type)
         object->value.pair = (struct Pair *) malloc(sizeof(struct Pair));
         break;
     
-    case OBJECT_TYPE_STRING:
-        object->value.string = (struct String *) malloc(sizeof(struct String));
-        break;
     }
 
     if (gc != NULL)
@@ -224,8 +223,8 @@ void objectFree(struct Object *object)
         free(object->value.pair);
         break;
     case OBJECT_TYPE_STRING:
-        stringFree(object->value.string);
-        free(object->value.string);
+        stringFree(object->value.array);
+        free(object->value.array);
         break;
     }
 

@@ -5,7 +5,6 @@
 #include "../Map.h"
 #include "../Object.h"
 #include "../Pair.h"
-#include "../String.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -339,41 +338,6 @@ void testArrayRemove()
     printf("OK\n");
 }
 
-void testArrayAppendInteger()
-{
-    printf("testArrayAppendInteger: ");
-    struct Object *array1 = arrayNew(NULL, 0);
-    Integer integer1 = 97;
-    Integer integer2 = 98;
-    Integer integer3 = 99;
-
-    arrayAppendInteger(NULL, array1->value.array, integer2);
-
-    assert(array1->value.array->objectCount == 1);
-    assert(array1->value.array->slotCount == 1);
-
-    assert(array1->value.array->objects[0]->value.integer_value == integer2);
-
-    arrayAppendInteger(NULL, array1->value.array, integer1);
-    arrayAppendInteger(NULL, array1->value.array, integer3);
-
-    assert(array1->value.array->objectCount == 3);
-    assert(array1->value.array->slotCount == 4);
-
-    assert(array1->value.array->objects[1]->value.integer_value == integer1);
-    assert(array1->value.array->objects[2]->value.integer_value == integer3);
-
-    free(array1->value.array->objects[0]);
-    free(array1->value.array->objects[1]);
-    free(array1->value.array->objects[2]);
-
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
-
-    printf("OK\n");
-}
-
 void testArrayCopy()
 {
     printf("testArrayCopy: ");
@@ -406,6 +370,10 @@ void testArrayCopy()
     free(array2->value.array->objects[1]);
     free(array2->value.array->objects[2]);
 
+    free(integer1);
+    free(integer2);
+    free(integer3);
+
     free(array2->value.array->objects);
     free(array2->value.array);
     free(array2);
@@ -414,28 +382,131 @@ void testArrayCopy()
     free(array1->value.array);
     free(array1);
 
-    free(integer1);
-    free(integer2);
-    free(integer3);
-
     printf("OK\n");
 }
 
 void testArrayEquals()
 {
     printf("testArrayEquals: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *integer1 = integerNew(NULL, 97);
+    struct Object *integer2 = integerNew(NULL, 98);
+    struct Object *integer3 = integerNew(NULL, 99);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    assert(arrayEquals(array1->value.array, array1->value.array) == 1);
+
+    struct Object *array2 = arrayCopy(NULL, array1->value.array);
+    
+    assert(arrayEquals(array1->value.array, array2->value.array) == 1);
+
+    array2->value.array->objects[0]->value.integer_value = -1;
+
+    assert(arrayEquals(array1->value.array, array2->value.array) == 0);
+
+    array2->value.array->objects[0]->value.integer_value = 97;
+
+    assert(arrayEquals(array1->value.array, array2->value.array) == 1);
+
+    free(array2->value.array->objects[0]);
+    free(array2->value.array->objects[1]);
+    free(array2->value.array->objects[2]);
+
+    free(integer1);
+    free(integer2);
+    free(integer3);
+
+    free(array2->value.array->objects);
+    free(array2->value.array);
+    free(array2);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
+
     printf("OK\n");
 }
 
 void testArrayHash()
 {
     printf("testArrayHash: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *integer1 = integerNew(NULL, 97);
+    struct Object *integer2 = integerNew(NULL, 98);
+    struct Object *integer3 = integerNew(NULL, 99);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    assert(arrayHash(array1->value.array) == arrayHash(array1->value.array));
+
+    struct Object *array2 = arrayCopy(NULL, array1->value.array);
+    
+    assert(arrayHash(array1->value.array) == arrayHash(array2->value.array));
+
+    struct Object *array3 = arrayNew(NULL, 0);
+
+    assert(arrayHash(array3->value.array) == 1);
+
+    free(array2->value.array->objects[0]);
+    free(array2->value.array->objects[1]);
+    free(array2->value.array->objects[2]);
+
+    free(integer1);
+    free(integer2);
+    free(integer3);
+
+    free(array3->value.array->objects);
+    free(array3->value.array);
+    free(array3);
+
+    free(array2->value.array->objects);
+    free(array2->value.array);
+    free(array2);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
     printf("OK\n");
 }
 
 void testArrayToString()
 {
     printf("testArrayToString: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *integer1 = integerNew(NULL, 97);
+    struct Object *integer2 = integerNew(NULL, 98);
+    struct Object *integer3 = integerNew(NULL, 99);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    struct Object *string = arrayToString(NULL, array1->value.array);
+
+    assert(string->value.array->objectCount == 7);
+
+
+    free(string->value.array->objects[0]);
+    free(string->value.array->objects[1]);
+    free(string->value.array->objects[2]);
+
+    free(integer1);
+    free(integer2);
+    free(integer3);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
+
+    free(string->value.array->objects);
+    free(string->value.array);
+    free(string);
+
     printf("OK\n");
 }
 
@@ -448,6 +519,89 @@ void testArrayMark()
 void testArrayFree()
 {
     printf("testArrayFree: ");
+    printf("OK\n");
+}
+
+void testStringNew()
+{
+    printf("testStringNew: ");
+    printf("OK\n");
+}
+
+void testStringFromArray()
+{
+    printf("testStringFromArray: ");
+    printf("OK\n");
+}
+
+void testStringToArray()
+{
+    printf("testStringToArray: ");
+    printf("OK\n");
+}
+
+void testStringCompare()
+{
+    printf("testStringCompare: ");
+    printf("OK\n");
+}
+
+void testStringCopy()
+{
+    printf("testStringCopy: ");
+    printf("OK\n");
+}
+
+void testStringEquals()
+{
+    printf("testStringEquals: ");
+    printf("OK\n");
+}
+
+void testStringHash()
+{
+    printf("testStringHash: ");
+    printf("OK\n");
+}
+
+void testStringAppendCharacter()
+{
+    printf("testStringAppendCharacter: ");
+    struct Object *array1 = arrayNew(NULL, 0);
+    Integer integer1 = 97;
+    Integer integer2 = 98;
+    Integer integer3 = 99;
+
+    stringAppendCharacter(array1->value.array, integer2);
+
+    assert(array1->value.array->objectCount == 1);
+    assert(array1->value.array->slotCount == 1);
+
+    assert(array1->value.array->objects[0]->value.integer_value == integer2);
+
+    stringAppendCharacter(array1->value.array, integer1);
+    stringAppendCharacter(array1->value.array, integer3);
+
+    assert(array1->value.array->objectCount == 3);
+    assert(array1->value.array->slotCount == 4);
+
+    assert(array1->value.array->objects[1]->value.integer_value == integer1);
+    assert(array1->value.array->objects[2]->value.integer_value == integer3);
+
+    free(array1->value.array->objects[0]);
+    free(array1->value.array->objects[1]);
+    free(array1->value.array->objects[2]);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
+
+    printf("OK\n");
+}
+
+void testStringFree()
+{
+    printf("testStringFree: ");
     printf("OK\n");
 }
 
@@ -690,64 +844,6 @@ void testPairMark()
     printf("OK\n");
 }
 
-void testStringNew()
-{
-    printf("testStringNew: ");
-    struct Object *string1 = stringNew(NULL, 10);
-    assert(string1 != NULL);
-    assert(string1->type == OBJECT_TYPE_STRING);
-    assert(string1->mark == OBJECT_MARK_TRUE);
-    assert(string1->value.string->characterCount == 10);
-    string1->value.string->characters[0] = 'A';
-    string1->value.string->characters[9] = 'B';
-    free(string1->value.string->characters);
-    free(string1->value.string);
-    free(string1);
-    printf("OK\n");
-}
-
-void testStringFromCharArray()
-{
-    printf("testStringFromCharArray: ");
-    printf("OK\n");
-}
-
-void testStringToCharArray()
-{
-    printf("testStringToCharArray: ");
-    printf("OK\n");
-}
-
-void testStringCompare()
-{
-    printf("testStringCompare: ");
-    printf("OK\n");
-}
-
-void testStringCopy()
-{
-    printf("testStringCopy: ");
-    printf("OK\n");
-}
-
-void testStringEquals()
-{
-    printf("testStringEquals: ");
-    printf("OK\n");
-}
-
-void testStringHash()
-{
-    printf("testStringHash: ");
-    printf("OK\n");
-}
-
-void testStringFree()
-{
-    printf("testStringFree: ");
-    printf("OK\n");
-}
-
 int main(int argc, char* argv[])
 {
     testArrayNew();
@@ -757,13 +853,21 @@ int main(int argc, char* argv[])
     testArrayInsert();
     testArrayInsertAll();
     testArrayRemove();
-    testArrayAppendInteger();
     testArrayCopy();
     testArrayEquals();
     testArrayHash();
     testArrayToString();
     testArrayMark();
     testArrayFree();
+    testStringNew();
+    testStringFromArray();
+    testStringToArray();
+    testStringCompare();
+    testStringCopy();
+    testStringEquals();
+    testStringHash();
+    testStringAppendCharacter();
+    testStringFree();
     testFloatingNew();
     testFloatingToString();
     testGcNew();
@@ -803,13 +907,5 @@ int main(int argc, char* argv[])
     testPairHash();
     testPairToString();
     testPairMark();
-    testStringNew();
-    testStringFromCharArray();
-    testStringToCharArray();
-    testStringCompare();
-    testStringCopy();
-    testStringEquals();
-    testStringHash();
-    testStringFree();
     printf("All tests passed.\n");
 }

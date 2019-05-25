@@ -1,5 +1,5 @@
 #include "../Integer.h"
-#include "../String.h"
+#include "../Array.h"
 #include "../Object.h"
 
 #include <stdio.h>
@@ -26,7 +26,7 @@ struct Object *integerToString(struct Gc *gc, Integer integer)
 
     for (Integer i = 0; i < charCount; i++)
     {
-        stringObject->value.string->characters[i] = buffer[i];
+        stringObject->value.array->objects[i] = integerNew(NULL, buffer[i]);
     }
 
     return stringObject;

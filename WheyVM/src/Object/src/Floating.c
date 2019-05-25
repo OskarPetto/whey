@@ -1,6 +1,7 @@
 #include "../Floating.h"
 #include "../Object.h"
-#include "../String.h"
+#include "../Integer.h"
+#include "../Array.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +27,7 @@ struct Object *floatingToString(struct Gc *gc, Floating floating)
 
     for (Integer i = 0; i < charCount; i++)
     {
-        stringObject->value.string->characters[i] = buffer[i];
+        stringObject->value.array->objects[i] = integerNew(NULL, buffer[i]);
     }
 
     return stringObject;

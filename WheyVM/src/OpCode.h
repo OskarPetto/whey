@@ -64,8 +64,9 @@
 #define OP_PSETFST                 0x83
 #define OP_PSETSND                 0x84
 
-#define OP_SFROMCHARARRAY          0x80
-#define OP_STOCHARARRAY            0x81
-#define OP_SCOMPARE                0x82
+#define OP_SNEW                    0x81
+#define OP_SFROMARRAY              0x82
+#define OP_STOARRAY                0x83
+#define OP_SCOMPARE                0x84
 
 #endif

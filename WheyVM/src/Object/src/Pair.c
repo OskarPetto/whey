@@ -1,7 +1,8 @@
 #include "../Pair.h"
 #include "../Array.h"
 #include "../Object.h"
-#include "../String.h"
+
+#include <stdlib.h>
 
 struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *second)
 {
@@ -53,24 +54,28 @@ Integer pairHash(struct Pair *pair)
 
 struct Object *pairToString(struct Gc *gc, struct Pair *pair)
 {
-    struct Object *arrayObject = arrayNew(gc, 0);
-    struct Array *charArray = arrayObject->value.array;
+    struct Object *stringObject = stringNew(gc, 0);
+    struct Array *string = stringObject->value.array;
 
-    arrayAppendInteger(gc, charArray, '(');
+    stringAppendCharacter(string, '(');
 
-    struct Object *subStringObject1 = objectToString(gc, pair->first);
-    struct Array *subCharArray1 = stringToCharArray(gc, subStringObject1->value.string)->value.array;
-    arrayInsertAll(charArray, charArray->objectCount, subCharArray1);
+    struct Object *subStringObject1 = objectToString(NULL, pair->first);
+    struct Array *subString1 = subStringObject1->value.array;
+    arrayInsertAll(string, string->objectCount, subString1);
 
-    arrayAppendInteger(gc, charArray, ',');
+    objectFree(subStringObject1);
 
-    struct Object *subStringObject2 = objectToString(gc, pair->second);
-    struct Array *subCharArray2 = stringToCharArray(gc, subStringObject2->value.string)->value.array;
-    arrayInsertAll(charArray, charArray->objectCount, subCharArray2);
+    stringAppendCharacter(string, ',');
 
-    arrayAppendInteger(gc, charArray, ')');
+    struct Object *subStringObject2 = objectToString(NULL, pair->second);
+    struct Array *subString2 = subStringObject2->value.array;
+    arrayInsertAll(string, string->objectCount, subString2);
 
-    return stringFromCharArray(gc, charArray);
+    objectFree(subStringObject2);
+
+    stringAppendCharacter(string, ')');
+
+    return stringObject;
 }
 
 void pairMark(struct Pair *pair)

@@ -1,7 +1,6 @@
 #include "../Map.h"
 #include "../Array.h"
 #include "../Object.h"
-#include "../String.h"
 #include "../Integer.h"
 
 #include <stdlib.h>
@@ -243,10 +242,10 @@ Integer mapHash(struct Map *map)
 
 struct Object *mapToString(struct Gc *gc, struct Map *map)
 {
-    struct Object *arrayObject = arrayNew(gc, 0);
-    struct Array *charArray = arrayObject->value.array;
+    struct Object *stringObject = stringNew(gc, 0);
+    struct Array *string = stringObject->value.array;
 
-    arrayAppendInteger(gc, charArray, '{');
+    stringAppendCharacter(string, '{');
 
     for (Integer i = 0; i < map->bucketCount; i++)
     {
@@ -254,17 +253,23 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
         while (currEntry != NULL)
         {
-            struct Object *subStringObject1 = objectToString(gc, currEntry->key);
-            struct Array *subCharArray1 = stringToCharArray(gc, subStringObject1->value.string)->value.array;
-            arrayInsertAll(charArray, charArray->objectCount, subCharArray1);
+            struct Object *subStringObject1 = objectToString(NULL, currEntry->key);
 
-            arrayAppendInteger(gc, charArray, ':');
+            struct Array *subString1 = subStringObject1->value.array;
+            arrayInsertAll(string, string->objectCount, subString1);
 
-            struct Object *subStringObject2 = objectToString(gc, currEntry->value);
-            struct Array *subCharArray2 = stringToCharArray(gc, subStringObject2->value.string)->value.array;
-            arrayInsertAll(charArray, charArray->objectCount, subCharArray2);
+            objectFree(subStringObject1);
 
-            arrayAppendInteger(gc, charArray, ',');
+            stringAppendCharacter(string, ':');
+
+            struct Object *subStringObject2 = objectToString(NULL, currEntry->value);
+
+            struct Array *subString2 = subStringObject2->value.array;
+            arrayInsertAll(string, string->objectCount, subString2);
+
+            stringAppendCharacter(string, ',');
+
+            objectFree(subStringObject2);
 
             currEntry = currEntry->next;
         }
@@ -273,15 +278,15 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
     if (map->entryCount > 0)
     {
-        struct Object *lastChar = integerNew(gc, '}');
-        charArray->objects[charArray->objectCount - 1] = lastChar;
+        struct Object *lastChar = integerNew(NULL, '}');
+        string->objects[string->objectCount - 1] = lastChar;
     } 
     else 
     {
-        arrayAppendInteger(gc, charArray, '}');
+        stringAppendCharacter(string, '}');
     }
 
-    return stringFromCharArray(gc, charArray);
+    return stringObject;
 }
 
 void mapMark(struct Map *map)

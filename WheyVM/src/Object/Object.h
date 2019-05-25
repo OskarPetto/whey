@@ -7,14 +7,13 @@
 #include "Array.h"
 #include "Map.h"
 #include "Pair.h"
-#include "String.h"
 
 #define OBJECT_TYPE_INTEGER            0x01
 #define OBJECT_TYPE_FLOATING           0x02
 #define OBJECT_TYPE_ARRAY              0x03
-#define OBJECT_TYPE_MAP                0x04
-#define OBJECT_TYPE_PAIR               0x05
-#define OBJECT_TYPE_STRING             0x06
+#define OBJECT_TYPE_STRING             0x04
+#define OBJECT_TYPE_MAP                0x05
+#define OBJECT_TYPE_PAIR               0x06
 
 #define OBJECT_MARK_FALSE              0x00
 #define OBJECT_MARK_TRUE               0x01 
@@ -22,10 +21,9 @@
 union ObjectValue {
     Integer integer_value;
     Floating floating_value;
-    struct Array *array;
-    struct Map *map;
-    struct Pair *pair;
-    struct String *string;
+    struct Array *array;                // must not be NULL
+    struct Map *map;                    // must not be NULL
+    struct Pair *pair;                  // must not be NULL 
 };
 
 struct Object
