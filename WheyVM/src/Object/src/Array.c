@@ -41,7 +41,9 @@ struct Object *arraySet(struct Array *array, Integer index, struct Object *setOb
 
 void arrayInsert(struct Array *array, Integer index, struct Object *insertObject)
 {
-    if (array->objectCount >= array->slotCount)
+    array->objectCount++;
+
+    if (array->objectCount > array->slotCount)
     {
         array->slotCount = getNextLargerSlotCount(array->objectCount);
 
@@ -58,7 +60,6 @@ void arrayInsert(struct Array *array, Integer index, struct Object *insertObject
 
     array->objects[index] = insertObject;
 
-    array->objectCount++;
 }
 
 void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArray)
@@ -105,16 +106,6 @@ void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArra
 
 struct Object *arrayRemove(struct Array *array, Integer index)
 {
-    if (array->objectCount < array->slotCount / 2)
-    {
-        array->slotCount = getNextLargerSlotCount(array->objectCount);
-
-        array->objects = (struct Object **)realloc(array->objects,
-                                                   array->slotCount * sizeof(struct Object *));
-
-        assert(array->objects != NULL);
-    }
-
     struct Object *removeObject = array->objects[index];
 
     for (Integer i = index; i < array->objectCount - 1; i++)

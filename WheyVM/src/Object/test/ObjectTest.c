@@ -138,7 +138,7 @@ void testArrayInsert()
     arrayInsert(array->value.array, 2, integer3);
 
     assert(array->value.array->objectCount == 6);
-    assert(array->value.array->slotCount == 7);
+    assert(array->value.array->slotCount == 8);
 
     assert(array->value.array->objects[0] == integer1);
     assert(array->value.array->objects[1] == integer2);
@@ -150,7 +150,7 @@ void testArrayInsert()
     arrayInsert(array->value.array, 6, integer2);
 
     assert(array->value.array->objectCount == 7);
-    assert(array->value.array->slotCount == 7);
+    assert(array->value.array->slotCount == 8);
     assert(array->value.array->objects[6] == integer2);
 
     free(array->value.array->objects);
@@ -299,12 +299,78 @@ void testArrayInsertAll()
 void testArrayRemove()
 {
     printf("testArrayRemove: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *integer1 = integerNew(NULL, 97);
+    struct Object *integer2 = integerNew(NULL, 98);
+    struct Object *integer3 = integerNew(NULL, 99);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    assert(arrayRemove(array1->value.array, 1) == integer2);
+
+    assert(array1->value.array->objectCount == 2);
+    assert(array1->value.array->slotCount == 5);
+
+    assert(array1->value.array->objects[0] == integer1);
+    assert(array1->value.array->objects[1] == integer3);
+
+    assert(arrayRemove(array1->value.array, 0) == integer1);
+
+    assert(array1->value.array->objectCount == 1);
+    assert(array1->value.array->slotCount == 5);
+
+    assert(array1->value.array->objects[0] == integer3);
+
+    assert(arrayRemove(array1->value.array, 0) == integer3);
+
+    assert(array1->value.array->objectCount == 0);
+    assert(array1->value.array->slotCount == 5);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
+
+    free(integer1);
+    free(integer2);
+    free(integer3);
+
     printf("OK\n");
 }
 
 void testArrayAppendInteger()
 {
     printf("testArrayAppendInteger: ");
+    struct Object *array1 = arrayNew(NULL, 0);
+    Integer integer1 = 97;
+    Integer integer2 = 98;
+    Integer integer3 = 99;
+
+    arrayAppendInteger(NULL, array1->value.array, integer2);
+
+    assert(array1->value.array->objectCount == 1);
+    assert(array1->value.array->slotCount == 1);
+
+    assert(array1->value.array->objects[0]->value.integer_value == integer2);
+
+    arrayAppendInteger(NULL, array1->value.array, integer1);
+    arrayAppendInteger(NULL, array1->value.array, integer3);
+
+    assert(array1->value.array->objectCount == 3);
+    assert(array1->value.array->slotCount == 4);
+
+    assert(array1->value.array->objects[1]->value.integer_value == integer1);
+    assert(array1->value.array->objects[2]->value.integer_value == integer3);
+
+    free(array1->value.array->objects[0]);
+    free(array1->value.array->objects[1]);
+    free(array1->value.array->objects[2]);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
+
     printf("OK\n");
 }
 
@@ -704,4 +770,5 @@ int main(int argc, char* argv[])
     testStringEquals();
     testStringHash();
     testStringFree();
+    printf("All tests passed.\n");
 }
