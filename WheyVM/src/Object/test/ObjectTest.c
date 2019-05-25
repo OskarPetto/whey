@@ -377,6 +377,47 @@ void testArrayAppendInteger()
 void testArrayCopy()
 {
     printf("testArrayCopy: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *integer1 = integerNew(NULL, 97);
+    struct Object *integer2 = integerNew(NULL, 98);
+    struct Object *integer3 = integerNew(NULL, 99);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    struct Object *array2 = arrayCopy(NULL, array1->value.array);
+
+    assert(array2->value.array->objectCount == array1->value.array->objectCount);
+    assert(array2->value.array->objects[0] != array1->value.array->objects[0]);
+    assert(array2->value.array->objects[1] != array1->value.array->objects[1]);
+    assert(array2->value.array->objects[2] != array1->value.array->objects[2]);
+    assert(array2->value.array->objects[0]->type == OBJECT_TYPE_INTEGER);
+    assert(array2->value.array->objects[1]->type == OBJECT_TYPE_INTEGER);
+    assert(array2->value.array->objects[2]->type == OBJECT_TYPE_INTEGER);
+    assert(array2->value.array->objects[0]->value.integer_value == 97);
+    assert(array2->value.array->objects[1]->value.integer_value == 98);
+    assert(array2->value.array->objects[2]->value.integer_value == 99);
+
+    integer1->value.integer_value = 55;
+    assert(array2->value.array->objects[0]->value.integer_value == 97);
+
+    free(array2->value.array->objects[0]);
+    free(array2->value.array->objects[1]);
+    free(array2->value.array->objects[2]);
+
+    free(array2->value.array->objects);
+    free(array2->value.array);
+    free(array2);
+
+    free(array1->value.array->objects);
+    free(array1->value.array);
+    free(array1);
+
+    free(integer1);
+    free(integer2);
+    free(integer3);
+
     printf("OK\n");
 }
 
