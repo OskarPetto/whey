@@ -1,2 +1,2 @@
-# umber0.2
-A stack based VM for closures
+# WheyVM
+A stack based VM
