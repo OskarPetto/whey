@@ -63,9 +63,22 @@ void arrayInsert(struct Array *array, Integer index, struct Object *insertObject
 
 void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArray)
 {
-    Integer newObjectCount = array->objectCount + insertArray->objectCount;
+    if (insertArray->objectCount == 0)
+    {
+        return;
+    }
 
-    if (newObjectCount >= array->slotCount)
+    Integer insertObjectCount = insertArray->objectCount;
+    struct Object **insertObjects = (struct Object **) malloc(insertObjectCount * sizeof(struct Object *));
+
+    for (Integer i = 0; i < insertObjectCount; i++)
+    {
+        insertObjects[i] = insertArray->objects[i];
+    }
+
+    Integer newObjectCount = array->objectCount + insertObjectCount;
+
+    if (newObjectCount > array->slotCount)
     {
         array->slotCount = getNextLargerSlotCount(newObjectCount);
 
@@ -77,13 +90,15 @@ void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArra
 
     for (Integer i = array->objectCount - 1; i >= index; i--)
     {
-        array->objects[insertArray->objectCount + i] = array->objects[i];
+        array->objects[insertObjectCount + i] = array->objects[i];
     }
 
-    for (Integer i = 0; i < insertArray->objectCount; i++)
+    for (Integer i = 0; i < insertObjectCount; i++)
     {
-        array->objects[index + i] = insertArray->objects[i];
+        array->objects[index + i] = insertObjects[i];
     }
+
+    free(insertObjects);
 
     array->objectCount = newObjectCount;
 }
@@ -114,7 +129,7 @@ struct Object *arrayRemove(struct Array *array, Integer index)
 
 void arrayAppendInteger(struct Gc *gc, struct Array *array, Integer character)
 {
-    struct Object *characterObject = integerNew(gc, (Integer) character);
+    struct Object *characterObject = integerNew(gc, (Integer)character);
     arrayInsert(array, array->objectCount, characterObject);
 }
 
@@ -183,8 +198,8 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array)
     {
         struct Object *lastInteger = integerNew(gc, ']');
         charArray->objects[array->objectCount - 1] = lastInteger;
-    } 
-    else 
+    }
+    else
     {
         arrayAppendInteger(gc, charArray, ']');
     }
