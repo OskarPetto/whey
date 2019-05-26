@@ -1084,29 +1084,13 @@ void testIntegerToString()
 void testMapNew()
 {
     printf("testMapNew: ");
-    struct Object *map1 = mapNew(NULL, 0);
-    struct Object *map2 = mapNew(NULL, 1);
-    struct Object *map3 = mapNew(NULL, 2);
-    struct Object *map4 = mapNew(NULL, 8);
-    struct Object *map5 = mapNew(NULL, 1024);
+    struct Object *map1 = mapNew(NULL);
 
     assert(map1->type == OBJECT_TYPE_MAP);
-    assert(map2->type == OBJECT_TYPE_MAP);
-    assert(map3->type == OBJECT_TYPE_MAP);
-    assert(map4->type == OBJECT_TYPE_MAP);
-    assert(map5->type == OBJECT_TYPE_MAP);
 
-    assert(map1->value.map->bucketCount == 0);
-    assert(map2->value.map->bucketCount == 1);
-    assert(map3->value.map->bucketCount == 2);
-    assert(map4->value.map->bucketCount == 8);
-    assert(map5->value.map->bucketCount == 1024);
+    assert(map1->value.map->bucketCount == 8);
 
     objectFree(map1);
-    objectFree(map2);
-    objectFree(map3);
-    objectFree(map4);
-    objectFree(map5);
 
     printf("OK\n");
 }
@@ -1114,27 +1098,22 @@ void testMapNew()
 void testMapSize()
 {
     printf("testMapSize: ");
-    struct Object *map1 = mapNew(NULL, 8);
-    struct Object *map2 = mapNew(NULL, 16);
+    struct Object *map1 = mapNew(NULL);
 
     assert(map1->type == OBJECT_TYPE_MAP);
-    assert(map2->type == OBJECT_TYPE_MAP);
 
     assert(map1->value.map->bucketCount == 8);
-    assert(map2->value.map->bucketCount == 16);
 
     assert(mapSize(map1->value.map) == 0);
-    assert(mapSize(map2->value.map) == 0);
 
     objectFree(map1);
-    objectFree(map2);
     printf("OK\n");
 }
 
 void testMapGet()
 {
     printf("testMapGet: ");
-    struct Object *map1 = mapNew(NULL, 8);
+    struct Object *map1 = mapNew(NULL);
     struct Object *integer1 = integerNew(NULL, 1212);
 
     struct Object *string1 = stringNew(NULL, 6);
@@ -1166,7 +1145,7 @@ void testMapGet()
 void testMapPut()
 {
     printf("testMapPut: ");
-    struct Object *map1 = mapNew(NULL, 2);
+    struct Object *map1 = mapNew(NULL);
     
     struct Object *integer1 = integerNew(NULL, 1);
     struct Object *integer2 = integerNew(NULL, 17);
@@ -1182,15 +1161,15 @@ void testMapPut()
 
     assert(mapPut(map1->value.map, integer1, integer6) == NULL);
     assert(mapSize(map1->value.map) == 1);
-    assert(map1->value.map->bucketCount == 2);
+    assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer2, integer7) == NULL);
     assert(mapSize(map1->value.map) == 2);
-    assert(map1->value.map->bucketCount == 4);
+    assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer3, integer8) == NULL);
     assert(mapSize(map1->value.map) == 3);
-    assert(map1->value.map->bucketCount == 4);
+    assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer4, integer9) == NULL);
     assert(mapSize(map1->value.map) == 4);
@@ -1246,21 +1225,184 @@ void testMapPut()
     printf("OK\n");
 }
 
+void testMapPutMany()
+{
+    printf("testMapPutMany: ");
+ 
+    int largeNum = 200000;
+
+    struct Object *map = mapNew(NULL);
+    struct Object **objects = (struct Object **) malloc(largeNum * sizeof(struct Object *));
+
+    for (int i = 0; i < largeNum; i++)
+    {
+        objects[i] = integerNew(NULL, i);
+        assert(mapPut(map->value.map, objects[i], objects[i]) == NULL);
+    }
+    
+    for (int i = 0; i < largeNum; i++)
+    {
+        assert(mapGet(map->value.map, objects[i]) == objects[i]);
+        free(objects[i]);
+    }
+
+    free(objects);
+    objectFree(map);
+
+    printf("OK\n");
+}
+
 void testMapPutAll()
 {
     printf("testMapPutAll: ");
+    struct Object *map1 = mapNew(NULL);
+    struct Object *map2 = mapNew(NULL);
+    struct Object *map3 = mapNew(NULL);
+    
+    struct Object *integer1 = integerNew(NULL, 1);
+    struct Object *integer2 = integerNew(NULL, 17);
+    struct Object *integer3 = integerNew(NULL, 82);
+    struct Object *integer4 = integerNew(NULL, 43);
+    struct Object *integer5 = integerNew(NULL, 17);
+
+    struct Object *integer6 = integerNew(NULL, 121);
+    struct Object *integer7 = integerNew(NULL, 441);
+    struct Object *integer8 = integerNew(NULL, 566);
+    struct Object *integer9 = integerNew(NULL, 874);
+    struct Object *integer10 = integerNew(NULL, 236);
+
+    mapPut(map1->value.map, integer1, integer6);
+    mapPut(map1->value.map, integer2, integer7);
+    mapPut(map1->value.map, integer3, integer8);
+    mapPut(map1->value.map, integer4, integer9);
+
+    mapPut(map2->value.map, integer5, integer10);
+    mapPut(map2->value.map, integer7, integer1);
+
+    mapPutAll(map1->value.map, map2->value.map);
+
+    assert(map1->value.map->entryCount == 5);
+    assert(map1->value.map->bucketCount == 8);
+    assert(mapGet(map1->value.map, integer1) == integer6);
+    assert(mapGet(map1->value.map, integer2) == integer10);
+    assert(mapGet(map1->value.map, integer3) == integer8);
+    assert(mapGet(map1->value.map, integer4) == integer9);
+    assert(mapGet(map1->value.map, integer5) == integer10);
+    assert(mapGet(map1->value.map, integer7) == integer1);
+
+    mapPutAll(map2->value.map, map3->value.map);
+
+    assert(map2->value.map->entryCount == 2);
+    assert(map2->value.map->bucketCount == 8);
+    assert(mapGet(map2->value.map, integer5) == integer10);
+    assert(mapGet(map2->value.map, integer7) == integer1);
+
+    mapPutAll(map2->value.map, map2->value.map);
+
+    assert(map2->value.map->entryCount == 2);
+    assert(map2->value.map->bucketCount == 8);
+    assert(mapGet(map2->value.map, integer5) == integer10);
+    assert(mapGet(map2->value.map, integer7) == integer1);
+
+    objectFree(map1);
+    objectFree(map2);
+    objectFree(map3);
+
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
+    objectFree(integer4);
+    objectFree(integer5);
+    objectFree(integer6);
+    objectFree(integer7);
+    objectFree(integer8);
+    objectFree(integer9);
+    objectFree(integer10);
+
     printf("OK\n");
 }
 
 void testMapRemove()
 {
     printf("testMapRemove: ");
+    struct Object *map1 = mapNew(NULL);
+    
+    struct Object *integer1 = integerNew(NULL, 1);
+    struct Object *integer2 = integerNew(NULL, 17);
+    struct Object *integer3 = integerNew(NULL, 82);
+    struct Object *integer4 = integerNew(NULL, 43);
+    struct Object *integer5 = integerNew(NULL, 17);
+
+    struct Object *integer6 = integerNew(NULL, 121);
+    struct Object *integer7 = integerNew(NULL, 441);
+    struct Object *integer8 = integerNew(NULL, 566);
+    struct Object *integer9 = integerNew(NULL, 874);
+    struct Object *integer10 = integerNew(NULL, 236);
+
+    mapPut(map1->value.map, integer1, integer6);
+    mapPut(map1->value.map, integer2, integer7);
+    mapPut(map1->value.map, integer3, integer8);
+    mapPut(map1->value.map, integer4, integer9);
+
+    assert(mapRemove(map1->value.map, integer2) == integer7);
+    assert(map1->value.map->entryCount == 3);
+    assert(mapGet(map1->value.map, integer2) == NULL);
+
+    assert(mapRemove(map1->value.map, integer2) == NULL);
+    assert(map1->value.map->entryCount == 3);
+
+    assert(mapRemove(map1->value.map, integer4) == integer9);
+    assert(map1->value.map->entryCount == 2);
+    assert(mapGet(map1->value.map, integer4) == NULL);
+
+    assert(mapRemove(map1->value.map, integer3) == integer8);
+    assert(map1->value.map->entryCount == 1);
+    assert(mapGet(map1->value.map, integer3) == NULL);
+
+    assert(mapRemove(map1->value.map, integer1) == integer6);
+    assert(map1->value.map->entryCount == 0);
+    assert(mapGet(map1->value.map, integer1) == NULL);
+
+    assert(mapRemove(map1->value.map, NULL) == NULL);
+    assert(map1->value.map->entryCount == 0);
+
+    objectFree(map1);
+
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
+    objectFree(integer4);
+    objectFree(integer5);
+    objectFree(integer6);
+    objectFree(integer7);
+    objectFree(integer8);
+    objectFree(integer9);
+    objectFree(integer10);
+
     printf("OK\n");
 }
 
 void testMapHasKey()
 {
     printf("testMapHasKey: ");
+
+    struct Object *map1 = mapNew(NULL);
+    struct Object *integer1 = integerNew(NULL, 1);
+
+    assert(mapHasKey(map1->value.map, integer1) == BOOLEAN_FALSE);
+    assert(mapHasKey(map1->value.map, NULL) == BOOLEAN_FALSE);
+
+    mapPut(map1->value.map, integer1, NULL);
+
+    assert(mapHasKey(map1->value.map, integer1) == BOOLEAN_TRUE);
+
+    mapRemove(map1->value.map, integer1);
+
+    assert(mapHasKey(map1->value.map, integer1) == BOOLEAN_FALSE);
+
+    objectFree(map1);
+    objectFree(integer1);
+
     printf("OK\n");
 }
 
@@ -1444,6 +1586,7 @@ int main(int argc, char* argv[])
     testMapSize();
     testMapGet();
     testMapPut();
+    //testMapPutMany();
     testMapPutAll();
     testMapRemove();
     testMapHasKey();

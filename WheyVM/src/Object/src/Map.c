@@ -9,6 +9,8 @@
 
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
+#define MAP_INITIAL_BUCKET_COUNT 8
+
 static Integer indexFor(Integer hash, Integer length)
 {
     return hash & (length - 1);
@@ -19,55 +21,9 @@ static Integer improveHash(Integer hash)
     return hash ^ (hash >> 16);
 }
 
-static Integer getNextLargerBucketCount(Integer entryCount)
-{
-    double power = 1 + ceil(log(entryCount) / log(2.));
-    return (Integer) pow(2., power);
-}
-
-static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct Object *value, Integer hash)
-{
-    Integer index = indexFor(hash, map->bucketCount);
-    struct MapEntry *currEntry = map->buckets[index];
-    struct MapEntry *prevEntry = NULL;
-
-    while (currEntry != NULL && !objectEquals(currEntry->key, key))
-    {
-        prevEntry = currEntry;
-        currEntry = currEntry->next;
-    }
-
-    if (currEntry != NULL) // key found
-    {
-        struct Object *previousValue = currEntry->value;
-        currEntry->value = value;
-        return previousValue;
-    }
-
-    struct MapEntry *newEntry = (struct MapEntry *) malloc(sizeof (struct MapEntry));
-    assert(newEntry != NULL);
-    newEntry->key = key;
-    newEntry->value = value;
-    newEntry->hash = hash;
-    newEntry->next = NULL;
-
-    if (prevEntry == NULL)
-    {
-        map->buckets[index] = newEntry;
-    }
-    else
-    {
-        prevEntry->next = newEntry;
-    }
-
-    map->entryCount++;
-
-    return NULL;
-}
-
 static void mapResize(struct Map *map, Integer newBucketCount)
 {
-    struct MapEntry **buckets = (struct MapEntry **) calloc(newBucketCount, sizeof(struct MapEntry *));
+    struct MapEntry **buckets = (struct MapEntry **)calloc(newBucketCount, sizeof(struct MapEntry *));
     assert(buckets != NULL);
 
     for (Integer i = 0; i < map->bucketCount; i++)
@@ -75,11 +31,11 @@ static void mapResize(struct Map *map, Integer newBucketCount)
         struct MapEntry *currEntryToInsert = map->buckets[i];
 
         while (currEntryToInsert != NULL)
-        {   
+        {
             struct MapEntry *next = currEntryToInsert->next;
 
-            Integer index = indexFor(currEntryToInsert->hash, newBucketCount);
             currEntryToInsert->next = NULL;
+            Integer index = indexFor(currEntryToInsert->hash, newBucketCount);
             struct MapEntry *currEntry = buckets[index];
             struct MapEntry *prevEntry = NULL;
 
@@ -107,15 +63,61 @@ static void mapResize(struct Map *map, Integer newBucketCount)
     map->bucketCount = newBucketCount;
 }
 
+static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct Object *value, Integer hash)
+{
+    if (map->entryCount >= map->bucketCount * 3 / 4)
+    {
+        Integer newBucketCount = map->bucketCount * 2;
 
-struct Object *mapNew(struct Gc *gc, Integer initialBucketCount)
+        mapResize(map, newBucketCount);
+    }
+
+    Integer index = indexFor(hash, map->bucketCount);
+    struct MapEntry *currEntry = map->buckets[index];
+    struct MapEntry *prevEntry = NULL;
+
+    while (currEntry != NULL && !objectEquals(currEntry->key, key))
+    {
+        prevEntry = currEntry;
+        currEntry = currEntry->next;
+    }
+
+    if (currEntry != NULL) // key found
+    {
+        struct Object *previousValue = currEntry->value;
+        currEntry->value = value;
+        return previousValue;
+    }
+
+    struct MapEntry *newEntry = (struct MapEntry *)malloc(sizeof(struct MapEntry));
+    assert(newEntry != NULL);
+    newEntry->key = key;
+    newEntry->value = value;
+    newEntry->hash = hash;
+    newEntry->next = NULL;
+
+    if (prevEntry == NULL)
+    {
+        map->buckets[index] = newEntry;
+    }
+    else
+    {
+        prevEntry->next = newEntry;
+    }
+
+    map->entryCount++;
+
+    return NULL;
+}
+
+struct Object *mapNew(struct Gc *gc)
 {
     struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
-    map->value.map = (struct Map *) malloc(sizeof(struct Map));
+    map->value.map = (struct Map *)malloc(sizeof(struct Map));
     assert(map->value.map != NULL);
-    map->value.map->buckets = (struct MapEntry **) calloc(initialBucketCount, sizeof(struct MapEntry *));
+    map->value.map->buckets = (struct MapEntry **)calloc(MAP_INITIAL_BUCKET_COUNT, sizeof(struct MapEntry *));
     assert(map->value.map->buckets != NULL);
-    map->value.map->bucketCount = initialBucketCount;
+    map->value.map->bucketCount = MAP_INITIAL_BUCKET_COUNT;
     map->value.map->entryCount = 0;
     return map;
 }
@@ -146,14 +148,6 @@ struct Object *mapGet(struct Map *map, struct Object *key)
 
 struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value)
 {
-    if (map->entryCount + 1 > map->bucketCount * 3 / 4)
-    {
-        Integer newBucketCount = getNextLargerBucketCount(map->entryCount + 1);
-
-        mapResize(map, newBucketCount);
-
-    }
-
     Integer improvedHash = improveHash(objectHash(key));
 
     struct Object *prevObject = mapPutWithHash(map, key, value, improvedHash);
@@ -163,15 +157,6 @@ struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value)
 
 void mapPutAll(struct Map *map, struct Map *mapToPut)
 {
-    Integer newEntryCount =map->entryCount + mapToPut->entryCount;
-    
-    if (newEntryCount > map->bucketCount * 3 / 4)
-    {
-        Integer newBucketCount = getNextLargerBucketCount(newEntryCount);
-        
-        mapResize(map, newBucketCount);
-    }
-
     for (Integer i = 0; i < mapToPut->bucketCount; i++)
     {
         struct MapEntry *currEntry = mapToPut->buckets[i];
@@ -181,13 +166,65 @@ void mapPutAll(struct Map *map, struct Map *mapToPut)
             mapPutWithHash(map, currEntry->key, currEntry->value, currEntry->hash);
             currEntry = currEntry->next;
         }
-
     }
+}
+
+struct Object *mapRemove(struct Map *map, struct Object *key)
+{
+    if (map->entryCount == 0)
+    {
+        return NULL;
+    }
+
+    Integer improvedHash = improveHash(objectHash(key));
+
+    Integer index = indexFor(improvedHash, map->bucketCount);
+    struct MapEntry *currEntry = map->buckets[index];
+    struct MapEntry *prevEntry = NULL;
+
+    while (currEntry != NULL && !objectEquals(currEntry->key, key))
+    {
+        prevEntry = currEntry;
+        currEntry = currEntry->next;
+    }
+
+    if (currEntry == NULL) // key not found
+    {
+        return NULL;
+    }
+
+    struct Object *previousValue = currEntry->value;
+
+    if (prevEntry == NULL)
+    {
+        map->buckets[index] = currEntry->next;
+    }
+    else
+    {
+        prevEntry->next = currEntry->next;
+    }
+    free(currEntry);
+    map->entryCount--;
+    return previousValue;
 }
 
 Integer mapHasKey(struct Map *map, struct Object *key)
 {
-    return mapGet(map, key) != NULL;
+    Integer improvedHash = improveHash(objectHash(key));
+
+    Integer index = indexFor(improvedHash, map->bucketCount);
+
+    struct MapEntry *currEntry = map->buckets[index];
+
+    while (currEntry != NULL && !objectEquals(currEntry->key, key))
+    {
+        currEntry = currEntry->next;
+    }
+
+    if (currEntry == NULL)
+        return BOOLEAN_FALSE;
+
+    return BOOLEAN_TRUE;
 }
 
 struct Object *mapEntries(struct Gc *gc, struct Map *map)
@@ -214,7 +251,7 @@ struct Object *mapEntries(struct Gc *gc, struct Map *map)
 
 struct Object *mapCopy(struct Gc *gc, struct Map *map)
 {
-    struct Object *copy = mapNew(gc, map->entryCount);
+    struct Object *copy = mapNew(gc);
     struct Map *copyMap = copy->value.map;
 
     for (Integer i = 0; i < copyMap->bucketCount; i++)
@@ -226,8 +263,7 @@ struct Object *mapCopy(struct Gc *gc, struct Map *map)
             mapPutWithHash(copyMap, objectCopy(gc, currEntry->key), objectCopy(gc, currEntry->value), currEntry->hash);
             currEntry = currEntry->next;
         }
-
-    }   
+    }
 
     return copy;
 }
@@ -254,10 +290,9 @@ Integer mapEquals(struct Map *map1, struct Map *map2)
 
             currEntry = currEntry->next;
         }
-
     }
 
-    return BOOLEAN_TRUE;   
+    return BOOLEAN_TRUE;
 }
 
 Integer mapHash(struct Map *map)
@@ -273,11 +308,9 @@ Integer mapHash(struct Map *map)
             hash = 31 * hash + currEntry->hash + objectHash(currEntry->value);
             currEntry = currEntry->next;
         }
-
     }
 
     return hash;
-
 }
 
 struct Object *mapToString(struct Gc *gc, struct Map *map)
@@ -313,15 +346,14 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
             currEntry = currEntry->next;
         }
-
     }
 
     if (map->entryCount > 0)
     {
         struct Object *lastChar = integerNew(NULL, '}');
         string->objects[string->objectCount - 1] = lastChar;
-    } 
-    else 
+    }
+    else
     {
         stringAppendCharacter(string, '}');
     }
@@ -342,7 +374,6 @@ void mapMark(struct Map *map)
 
             currEntry = currEntry->next;
         }
-
     }
 }
 
@@ -359,11 +390,9 @@ void mapFree(struct Map *map)
             free(currEntry);
 
             currEntry = nextEntry;
-
         }
     }
 
     free(map->buckets);
     free(map);
 }
-
