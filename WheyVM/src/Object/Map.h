@@ -23,7 +23,7 @@ struct Map
     Integer entryCount;
 };
 
-struct Object *mapNew(struct Gc *gc, Integer initialEntryCount);
+struct Object *mapNew(struct Gc *gc, Integer initialBucketCount);
 Integer mapSize(struct Map *map);
 struct Object *mapGet(struct Map *map, struct Object *key);
 struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value);

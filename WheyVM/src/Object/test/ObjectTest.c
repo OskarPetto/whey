@@ -1063,30 +1063,186 @@ void testIntegerNew()
 void testIntegerToString()
 {
     printf("testIntegerToString: ");
+    struct Object *integer1 = integerNew(NULL, 10105);
+
+    struct Object *string = integerToString(NULL, integer1->value.integer_value);
+
+    assert(string->type == OBJECT_TYPE_STRING);
+
+    assert(string->value.array->objectCount == 5);
+    assert(string->value.array->objects[0]->value.integer_value == '1');
+    assert(string->value.array->objects[1]->value.integer_value == '0');
+    assert(string->value.array->objects[2]->value.integer_value == '1');
+    assert(string->value.array->objects[3]->value.integer_value == '0');
+    assert(string->value.array->objects[4]->value.integer_value == '5');
+    
+    objectFree(string);
+    objectFree(integer1);
     printf("OK\n");
 }
 
 void testMapNew()
 {
     printf("testMapNew: ");
+    struct Object *map1 = mapNew(NULL, 0);
+    struct Object *map2 = mapNew(NULL, 1);
+    struct Object *map3 = mapNew(NULL, 2);
+    struct Object *map4 = mapNew(NULL, 8);
+    struct Object *map5 = mapNew(NULL, 1024);
+
+    assert(map1->type == OBJECT_TYPE_MAP);
+    assert(map2->type == OBJECT_TYPE_MAP);
+    assert(map3->type == OBJECT_TYPE_MAP);
+    assert(map4->type == OBJECT_TYPE_MAP);
+    assert(map5->type == OBJECT_TYPE_MAP);
+
+    assert(map1->value.map->bucketCount == 0);
+    assert(map2->value.map->bucketCount == 1);
+    assert(map3->value.map->bucketCount == 2);
+    assert(map4->value.map->bucketCount == 8);
+    assert(map5->value.map->bucketCount == 1024);
+
+    objectFree(map1);
+    objectFree(map2);
+    objectFree(map3);
+    objectFree(map4);
+    objectFree(map5);
+
     printf("OK\n");
 }
 
 void testMapSize()
 {
     printf("testMapSize: ");
+    struct Object *map1 = mapNew(NULL, 8);
+    struct Object *map2 = mapNew(NULL, 16);
+
+    assert(map1->type == OBJECT_TYPE_MAP);
+    assert(map2->type == OBJECT_TYPE_MAP);
+
+    assert(map1->value.map->bucketCount == 8);
+    assert(map2->value.map->bucketCount == 16);
+
+    assert(mapSize(map1->value.map) == 0);
+    assert(mapSize(map2->value.map) == 0);
+
+    objectFree(map1);
+    objectFree(map2);
     printf("OK\n");
 }
 
 void testMapGet()
 {
     printf("testMapGet: ");
+    struct Object *map1 = mapNew(NULL, 8);
+    struct Object *integer1 = integerNew(NULL, 1212);
+
+    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *char1 = integerNew(NULL, 'h');
+    struct Object *char2 = integerNew(NULL, 'a');
+    struct Object *char3 = integerNew(NULL, 'l');
+    struct Object *char4 = integerNew(NULL, 'l');
+    struct Object *char5 = integerNew(NULL, 'o');
+    struct Object *char6 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = char1;
+    string1->value.array->objects[1] = char2;
+    string1->value.array->objects[2] = char3;
+    string1->value.array->objects[3] = char4;
+    string1->value.array->objects[4] = char5;
+    string1->value.array->objects[5] = char6;
+
+    assert(mapGet(map1->value.map, integer1) == NULL);
+    assert(mapGet(map1->value.map, string1) == NULL);
+    assert(mapGet(map1->value.map, map1) == NULL);
+
+    objectFree(map1);
+    objectFree(integer1);
+    objectFree(string1);
+
     printf("OK\n");
 }
 
 void testMapPut()
 {
     printf("testMapPut: ");
+    struct Object *map1 = mapNew(NULL, 2);
+    
+    struct Object *integer1 = integerNew(NULL, 1);
+    struct Object *integer2 = integerNew(NULL, 17);
+    struct Object *integer3 = integerNew(NULL, 82);
+    struct Object *integer4 = integerNew(NULL, 43);
+    struct Object *integer5 = integerNew(NULL, 17);
+
+    struct Object *integer6 = integerNew(NULL, 121);
+    struct Object *integer7 = integerNew(NULL, 441);
+    struct Object *integer8 = integerNew(NULL, 566);
+    struct Object *integer9 = integerNew(NULL, 874);
+    struct Object *integer10 = integerNew(NULL, 236);
+
+    assert(mapPut(map1->value.map, integer1, integer6) == NULL);
+    assert(mapSize(map1->value.map) == 1);
+    assert(map1->value.map->bucketCount == 2);
+
+    assert(mapPut(map1->value.map, integer2, integer7) == NULL);
+    assert(mapSize(map1->value.map) == 2);
+    assert(map1->value.map->bucketCount == 4);
+
+    assert(mapPut(map1->value.map, integer3, integer8) == NULL);
+    assert(mapSize(map1->value.map) == 3);
+    assert(map1->value.map->bucketCount == 4);
+
+    assert(mapPut(map1->value.map, integer4, integer9) == NULL);
+    assert(mapSize(map1->value.map) == 4);
+    assert(map1->value.map->bucketCount == 8);
+    
+    assert(mapPut(map1->value.map, integer5, integer10) == integer7);
+    assert(mapGet(map1->value.map, integer5) == integer10);
+    assert(mapSize(map1->value.map) == 4);
+    assert(map1->value.map->bucketCount == 8);
+
+    assert(mapPut(map1->value.map, integer6, integer5) == NULL);
+    assert(mapGet(map1->value.map, integer6) == integer5);
+    assert(mapSize(map1->value.map) == 5);
+    assert(map1->value.map->bucketCount == 8);
+
+    assert(mapPut(map1->value.map, integer7, integer4) == NULL);
+    assert(mapGet(map1->value.map, integer7) == integer4);
+    assert(mapSize(map1->value.map) == 6);
+    assert(map1->value.map->bucketCount == 8);
+
+    assert(mapPut(map1->value.map, integer8, integer3) == NULL);
+    assert(mapGet(map1->value.map, integer8) == integer3);
+    assert(mapSize(map1->value.map) == 7);
+    assert(map1->value.map->bucketCount == 16);
+
+    assert(mapPut(map1->value.map, integer9, integer2) == NULL);
+    assert(mapGet(map1->value.map, integer9) == integer2);
+    assert(mapSize(map1->value.map) == 8);
+    assert(map1->value.map->bucketCount == 16);
+
+    assert(mapPut(map1->value.map, NULL, integer1) == NULL);
+    assert(mapGet(map1->value.map, NULL) == integer1);
+    assert(mapSize(map1->value.map) == 9);
+    assert(map1->value.map->bucketCount == 16);
+
+    assert(mapPut(map1->value.map, NULL, NULL) == integer1);
+    assert(mapGet(map1->value.map, NULL) == NULL);
+    assert(mapSize(map1->value.map) == 9);
+    assert(map1->value.map->bucketCount == 16);
+
+    objectFree(map1);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
+    objectFree(integer4);
+    objectFree(integer5);
+    objectFree(integer6);
+    objectFree(integer7);
+    objectFree(integer8);
+    objectFree(integer9);
+    objectFree(integer10);
+
     printf("OK\n");
 }
 

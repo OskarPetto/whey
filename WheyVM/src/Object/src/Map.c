@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <math.h>
 
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
+
 static Integer indexFor(Integer hash, Integer length)
 {
     return hash & (length - 1);
@@ -17,16 +19,17 @@ static Integer improveHash(Integer hash)
     return hash ^ (hash >> 16);
 }
 
-static Integer nextLargerBucketCount(Integer entryCount)
+static Integer getNextLargerBucketCount(Integer entryCount)
 {
-    return (Integer) pow(2, ceil(log((double) entryCount) / log (2.)));
+    double power = 1 + ceil(log(entryCount) / log(2.));
+    return (Integer) pow(2., power);
 }
 
 static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct Object *value, Integer hash)
 {
     Integer index = indexFor(hash, map->bucketCount);
     struct MapEntry *currEntry = map->buckets[index];
-    struct MapEntry *prevEntry = currEntry;
+    struct MapEntry *prevEntry = NULL;
 
     while (currEntry != NULL && !objectEquals(currEntry->key, key))
     {
@@ -62,33 +65,55 @@ static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct
     return NULL;
 }
 
-static struct Map *mapMaybeResize(struct Map *map, Integer newEntryCount)
+static void mapResize(struct Map *map, Integer newBucketCount)
 {
-    if (newEntryCount < map->bucketCount * 3 / 4)
+    struct MapEntry **buckets = (struct MapEntry **) calloc(newBucketCount, sizeof(struct MapEntry *));
+    assert(buckets != NULL);
+
+    for (Integer i = 0; i < map->bucketCount; i++)
     {
-        return map;
+        struct MapEntry *currEntryToInsert = map->buckets[i];
+
+        while (currEntryToInsert != NULL)
+        {   
+            struct MapEntry *next = currEntryToInsert->next;
+
+            Integer index = indexFor(currEntryToInsert->hash, newBucketCount);
+            currEntryToInsert->next = NULL;
+            struct MapEntry *currEntry = buckets[index];
+            struct MapEntry *prevEntry = NULL;
+
+            while (currEntry != NULL)
+            {
+                prevEntry = currEntry;
+                currEntry = currEntry->next;
+            }
+
+            if (prevEntry == NULL)
+            {
+                buckets[index] = currEntryToInsert;
+            }
+            else
+            {
+                prevEntry->next = currEntryToInsert;
+            }
+
+            currEntryToInsert = next;
+        }
     }
 
-    struct Map *newMap = (struct Map *)malloc(sizeof(struct Map));
-    assert(newMap != NULL);
-    newMap->buckets = (struct MapEntry **) malloc(nextLargerBucketCount(newEntryCount) * sizeof(struct MapEntry *));
-    assert(newMap->buckets != NULL);
-
-    mapPutAll(newMap, map);
-
-    mapFree(map);
-    
-    return newMap;
+    free(map->buckets);
+    map->buckets = buckets;
+    map->bucketCount = newBucketCount;
 }
 
 
-struct Object *mapNew(struct Gc *gc, Integer initialEntryCount)
+struct Object *mapNew(struct Gc *gc, Integer initialBucketCount)
 {
-    Integer initialBucketCount = nextLargerBucketCount(initialEntryCount);
     struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
     map->value.map = (struct Map *) malloc(sizeof(struct Map));
     assert(map->value.map != NULL);
-    map->value.map->buckets = (struct MapEntry **) malloc(initialBucketCount * sizeof(struct MapEntry *));
+    map->value.map->buckets = (struct MapEntry **) calloc(initialBucketCount, sizeof(struct MapEntry *));
     assert(map->value.map->buckets != NULL);
     map->value.map->bucketCount = initialBucketCount;
     map->value.map->entryCount = 0;
@@ -121,7 +146,13 @@ struct Object *mapGet(struct Map *map, struct Object *key)
 
 struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value)
 {
-    map = mapMaybeResize(map, map->entryCount + 1);
+    if (map->entryCount + 1 > map->bucketCount * 3 / 4)
+    {
+        Integer newBucketCount = getNextLargerBucketCount(map->entryCount + 1);
+
+        mapResize(map, newBucketCount);
+
+    }
 
     Integer improvedHash = improveHash(objectHash(key));
 
@@ -132,7 +163,14 @@ struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value)
 
 void mapPutAll(struct Map *map, struct Map *mapToPut)
 {
-    map = mapMaybeResize(map, map->entryCount + mapToPut->entryCount);
+    Integer newEntryCount =map->entryCount + mapToPut->entryCount;
+    
+    if (newEntryCount > map->bucketCount * 3 / 4)
+    {
+        Integer newBucketCount = getNextLargerBucketCount(newEntryCount);
+        
+        mapResize(map, newBucketCount);
+    }
 
     for (Integer i = 0; i < mapToPut->bucketCount; i++)
     {
