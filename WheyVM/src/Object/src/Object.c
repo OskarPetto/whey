@@ -155,23 +155,6 @@ struct Object *objectNew(struct Gc *gc, uint8_t type)
     object->mark = OBJECT_MARK_TRUE;
     object->type = type;
 
-    switch (type)
-    {
-    case OBJECT_TYPE_ARRAY:
-    case OBJECT_TYPE_STRING:
-        object->value.array = (struct Array *) malloc(sizeof(struct Array));
-        break;
-
-    case OBJECT_TYPE_MAP:
-        object->value.map = (struct Map *) malloc(sizeof(struct Map));
-        break;
-
-    case OBJECT_TYPE_PAIR:
-        object->value.pair = (struct Pair *) malloc(sizeof(struct Pair));
-        break;
-    
-    }
-
     if (gc != NULL)
     {
         gcRegisterObject(gc, object);
@@ -213,18 +196,15 @@ void objectFree(struct Object *object)
     {
     case OBJECT_TYPE_ARRAY:
         arrayFree(object->value.array);
-        free(object->value.array);
         break;
     case OBJECT_TYPE_MAP:
         mapFree(object->value.map);
-        free(object->value.map);
         break;
     case OBJECT_TYPE_PAIR:
         free(object->value.pair);
         break;
     case OBJECT_TYPE_STRING:
         stringFree(object->value.array);
-        free(object->value.array);
         break;
     }
 

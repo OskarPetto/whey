@@ -3,10 +3,13 @@
 #include "../Object.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *second)
 {
     struct Object *pair = objectNew(gc, OBJECT_TYPE_PAIR);
+    pair->value.pair = (struct Pair *) malloc(sizeof(struct Pair));
+    assert(pair->value.pair != NULL); 
     pair->value.pair->first = first;
     pair->value.pair->second = second;
     return pair;

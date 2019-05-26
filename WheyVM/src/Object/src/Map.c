@@ -86,6 +86,8 @@ struct Object *mapNew(struct Gc *gc, Integer initialEntryCount)
 {
     Integer initialBucketCount = nextLargerBucketCount(initialEntryCount);
     struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
+    map->value.map = (struct Map *) malloc(sizeof(struct Map));
+    assert(map->value.map != NULL);
     map->value.map->buckets = (struct ListEntry **) malloc(initialBucketCount * sizeof(struct ListEntry *));
     assert(map->value.map->buckets != NULL);
     map->value.map->bucketCount = initialBucketCount;
@@ -324,5 +326,6 @@ void mapFree(struct Map *map)
     }
 
     free(map->buckets);
+    free(map);
 }
 

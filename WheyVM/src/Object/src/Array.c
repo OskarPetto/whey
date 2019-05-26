@@ -15,6 +15,8 @@ struct Object *arrayNew(struct Gc *gc, Integer initialObjectCount)
 {
     Integer slotCount = getNextLargerSlotCount(initialObjectCount);
     struct Object *object = objectNew(gc, OBJECT_TYPE_ARRAY);
+    object->value.array = (struct Array *) malloc(sizeof(struct Array));
+    assert(object->value.array != NULL);
     object->value.array->objects = (struct Object **)malloc(slotCount * sizeof(struct Object *));
     assert(object->value.array->objects != NULL);
     object->value.array->slotCount = slotCount;
@@ -207,6 +209,8 @@ void arrayMark(struct Array *array)
 void arrayFree(struct Array *array)
 {
     free(array->objects);
+    free(array);
+
 }
 
 struct Object *stringNew(struct Gc *gc, Integer initialObjectCount)
@@ -314,8 +318,9 @@ void stringFree(struct Array *string)
 {
     for (Integer i = 0; i < string->objectCount; i++)
     {
-        objectFree(string->objects[i]);
+        free(string->objects[i]);
     }
 
     free(string->objects);
+    free(string);
 }

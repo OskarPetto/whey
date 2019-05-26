@@ -34,14 +34,8 @@ void testArrayNew()
     array1->value.array->objects[13] = array2;
     assert(array1->value.array->objects[13] == array2);
 
-    free(array1->value.array->objects);
-    free(array2->value.array->objects);
-
-    free(array1->value.array);
-    free(array2->value.array);
-
-    free(array1);
-    free(array2);
+    objectFree(array1);
+    objectFree(array2);
 
     printf("OK\n");
 }
@@ -55,14 +49,8 @@ void testArraySize()
     struct Object *array2 = arrayNew(NULL, 0);
     assert(arraySize(array2->value.array) == 0);
 
-    free(array1->value.array->objects);
-    free(array2->value.array->objects);
-
-    free(array1->value.array);
-    free(array2->value.array);
-
-    free(array1);
-    free(array2);
+    objectFree(array1);
+    objectFree(array2);
 
     printf("OK\n");
 }
@@ -78,12 +66,8 @@ void testArrayGet()
 
     assert(arrayGet(array->value.array, 10) == integer);
 
-    free(array->value.array->objects);
-
-    free(array->value.array);
-
-    free(array);
-    free(integer);
+    objectFree(array);
+    objectFree(integer);
 
     printf("OK\n");
 }
@@ -100,12 +84,8 @@ void testArraySet()
     assert(arraySet(array->value.array, 10, NULL) == integer);
     assert(arrayGet(array->value.array, 10) == NULL);
 
-    free(array->value.array->objects);
-
-    free(array->value.array);
-
-    free(array);
-    free(integer);
+    objectFree(array);
+    objectFree(integer);
 
     printf("OK\n");
 }
@@ -152,13 +132,11 @@ void testArrayInsert()
     assert(array->value.array->slotCount == 8);
     assert(array->value.array->objects[6] == integer2);
 
-    free(array->value.array->objects);
-    free(array->value.array);
-    free(array);
+    objectFree(array);
 
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
     printf("OK\n");
 }
@@ -276,21 +254,13 @@ void testArrayInsertAll()
     assert(array2->value.array->objects[14] == integer2);
     assert(array2->value.array->objects[15] == integer3);
 
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
+    objectFree(array1);
+    objectFree(array2);
+    objectFree(array3);
 
-    free(array2->value.array->objects);
-    free(array2->value.array);
-    free(array2);
-
-    free(array3->value.array->objects);
-    free(array3->value.array);
-    free(array3);
-
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
     printf("OK\n");
 }
@@ -327,13 +297,11 @@ void testArrayRemove()
     assert(array1->value.array->objectCount == 0);
     assert(array1->value.array->slotCount == 5);
 
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
+    objectFree(array1);
 
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
     printf("OK\n");
 }
@@ -366,21 +334,16 @@ void testArrayCopy()
     integer1->value.integer_value = 55;
     assert(array2->value.array->objects[0]->value.integer_value == 97);
 
-    free(array2->value.array->objects[0]);
-    free(array2->value.array->objects[1]);
-    free(array2->value.array->objects[2]);
+    objectFree(array2->value.array->objects[0]);
+    objectFree(array2->value.array->objects[1]);
+    objectFree(array2->value.array->objects[2]);
 
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
-    free(array2->value.array->objects);
-    free(array2->value.array);
-    free(array2);
-
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
+    objectFree(array2);
+    objectFree(array1);
 
     printf("OK\n");
 }
@@ -411,21 +374,16 @@ void testArrayEquals()
 
     assert(arrayEquals(array1->value.array, array2->value.array) == 1);
 
-    free(array2->value.array->objects[0]);
-    free(array2->value.array->objects[1]);
-    free(array2->value.array->objects[2]);
+    objectFree(array2->value.array->objects[0]);
+    objectFree(array2->value.array->objects[1]);
+    objectFree(array2->value.array->objects[2]);
 
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
-    free(array2->value.array->objects);
-    free(array2->value.array);
-    free(array2);
-
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
+    objectFree(array2);
+    objectFree(array1);
 
     printf("OK\n");
 }
@@ -452,25 +410,18 @@ void testArrayHash()
 
     assert(arrayHash(array3->value.array) == 1);
 
-    free(array2->value.array->objects[0]);
-    free(array2->value.array->objects[1]);
-    free(array2->value.array->objects[2]);
+    objectFree(array2->value.array->objects[0]);
+    objectFree(array2->value.array->objects[1]);
+    objectFree(array2->value.array->objects[2]);
 
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
-    free(array3->value.array->objects);
-    free(array3->value.array);
-    free(array3);
+    objectFree(array3);
+    objectFree(array2);
+    objectFree(array1);
 
-    free(array2->value.array->objects);
-    free(array2->value.array);
-    free(array2);
-
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
     printf("OK\n");
 }
 
@@ -486,40 +437,42 @@ void testArrayToString()
     array1->value.array->objects[1] = integer2;
     array1->value.array->objects[2] = integer3;
 
-    struct Object *string = arrayToString(NULL, array1->value.array);
+    struct Object *string1 = arrayToString(NULL, array1->value.array);
 
-    assert(string->value.array->objectCount == 13);
+    assert(string1->value.array->objectCount == 13);
 
-    assert(string->value.array->objects[0]->value.integer_value == '[');
-    assert(string->value.array->objects[1]->value.integer_value == '7');
-    assert(string->value.array->objects[2]->value.integer_value == ',');
-    assert(string->value.array->objects[3]->value.integer_value == '9');
-    assert(string->value.array->objects[4]->value.integer_value == '8');
-    assert(string->value.array->objects[5]->value.integer_value == ',');
-    assert(string->value.array->objects[6]->value.integer_value == '1');
-    assert(string->value.array->objects[7]->value.integer_value == '2');
-    assert(string->value.array->objects[8]->value.integer_value == '1');
-    assert(string->value.array->objects[9]->value.integer_value == '2');
-    assert(string->value.array->objects[10]->value.integer_value == '9');
-    assert(string->value.array->objects[11]->value.integer_value == '9');
-    assert(string->value.array->objects[12]->value.integer_value == ']');
+    assert(string1->value.array->objects[0]->value.integer_value == '[');
+    assert(string1->value.array->objects[1]->value.integer_value == '7');
+    assert(string1->value.array->objects[2]->value.integer_value == ',');
+    assert(string1->value.array->objects[3]->value.integer_value == '9');
+    assert(string1->value.array->objects[4]->value.integer_value == '8');
+    assert(string1->value.array->objects[5]->value.integer_value == ',');
+    assert(string1->value.array->objects[6]->value.integer_value == '1');
+    assert(string1->value.array->objects[7]->value.integer_value == '2');
+    assert(string1->value.array->objects[8]->value.integer_value == '1');
+    assert(string1->value.array->objects[9]->value.integer_value == '2');
+    assert(string1->value.array->objects[10]->value.integer_value == '9');
+    assert(string1->value.array->objects[11]->value.integer_value == '9');
+    assert(string1->value.array->objects[12]->value.integer_value == ']');
 
+    struct Object *array2 = arrayNew(NULL, 0);
 
-    free(string->value.array->objects[0]);
-    free(string->value.array->objects[1]);
-    free(string->value.array->objects[2]);
+    struct Object *string2 = arrayToString(NULL, array2->value.array);
 
+    assert(string2->value.array->objectCount == 2);
+
+    assert(string2->value.array->objects[0]->value.integer_value == '[');
+    assert(string2->value.array->objects[1]->value.integer_value == ']');
+
+    objectFree(string1);
+    objectFree(string2);
+    
     free(integer1);
     free(integer2);
     free(integer3);
 
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
-
-    free(string->value.array->objects);
-    free(string->value.array);
-    free(string);
+    objectFree(array1);
+    objectFree(array2);
 
     printf("OK\n");
 }
