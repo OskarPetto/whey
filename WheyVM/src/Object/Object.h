@@ -20,7 +20,7 @@
 
 union ObjectValue {
     Integer integer_value;
-    Floating floating_value;
+    Double double_value;
     struct Array *array;                // must not be NULL
     struct Map *map;                    // must not be NULL
     struct Pair *pair;                  // must not be NULL 

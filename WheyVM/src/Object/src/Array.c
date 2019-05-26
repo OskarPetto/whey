@@ -55,7 +55,7 @@ void arrayInsert(struct Array *array, Integer index, struct Object *insertObject
         assert(array->objects != NULL);
     }
 
-    for (Integer i = array->objectCount; i > index; i--)
+    for (Integer i = array->objectCount - 1; i > index; i--)
     {
         array->objects[i] = array->objects[i - 1];
     }
@@ -217,6 +217,12 @@ struct Object *stringNew(struct Gc *gc, Integer initialObjectCount)
 {
     struct Object *string = arrayNew(gc, initialObjectCount);
     string->type = OBJECT_TYPE_STRING;
+
+    for (Integer i = 0; i < initialObjectCount; i++)
+    {
+        string->value.array->objects[i] = NULL;
+    }
+
     return string;
 }
 
@@ -227,7 +233,7 @@ struct Object *stringFromArray(struct Gc *gc, struct Array *array)
 
 struct Object *stringToArray(struct Gc *gc, struct Array *string)
 {
-    struct Object *array = stringNew(gc, string->objectCount);
+    struct Object *array = arrayNew(gc, string->objectCount);
 
     for (Integer i = 0; i < string->objectCount; i++)
     {
@@ -318,7 +324,10 @@ void stringFree(struct Array *string)
 {
     for (Integer i = 0; i < string->objectCount; i++)
     {
-        free(string->objects[i]);
+        if (string->objects[i] != NULL) 
+        {
+            free(string->objects[i]);
+        }
     }
 
     free(string->objects);

@@ -17,7 +17,7 @@ $(OBJ_DIR)/Array.o : $(SRC_DIR)/Array.c $(INC_DIR)/Array.h $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-$(OBJ_DIR)/Floating.o : $(SRC_DIR)/Floating.c $(INC_DIR)/Floating.h $(OBJ_DIR)
+$(OBJ_DIR)/Double.o : $(SRC_DIR)/Double.c $(INC_DIR)/Double.h $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
@@ -44,7 +44,7 @@ $(OBJ_DIR)/Pair.o : $(SRC_DIR)/Pair.c $(INC_DIR)/Pair.h $(OBJ_DIR)
 $(OBJ_DIR)/ObjectTest.o : ObjectTest.c $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-object.out: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Floating.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o
+object.out: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Double.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o
 	$(CC) $^ -o $@ -lm
 
 clean:

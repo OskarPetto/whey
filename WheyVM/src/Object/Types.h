@@ -7,6 +7,6 @@
 #define BOOLEAN_FALSE 0
 
 typedef int32_t Integer;
-typedef float Floating;
+typedef double Double;
 
 #endif

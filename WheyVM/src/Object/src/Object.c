@@ -1,7 +1,7 @@
 #include "../Object.h"
 
 #include "../Integer.h"
-#include "../Floating.h"
+#include "../Double.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -19,7 +19,7 @@ struct Object *objectCopy(struct Gc *gc, struct Object *object)
         return integerNew(gc, object->value.integer_value);
 
     case OBJECT_TYPE_FLOATING:
-        return floatingNew(gc, object->value.floating_value);
+        return doubleNew(gc, object->value.double_value);
 
     case OBJECT_TYPE_ARRAY:
         return arrayCopy(gc, object->value.array);
@@ -61,7 +61,7 @@ Integer objectEquals(struct Object *object1, struct Object *object2)
         return object1->value.integer_value == object2->value.integer_value;
 
     case OBJECT_TYPE_FLOATING:
-        return object1->value.floating_value == object2->value.floating_value;
+        return object1->value.double_value == object2->value.double_value;
 
     case OBJECT_TYPE_ARRAY:
         return arrayEquals(object1->value.array, object2->value.array);
@@ -129,7 +129,7 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
         return integerToString(gc, object->value.integer_value);
 
     case OBJECT_TYPE_FLOATING:
-        return floatingToString(gc, object->value.floating_value);
+        return doubleToString(gc, object->value.double_value);
 
     case OBJECT_TYPE_ARRAY:
         return arrayToString(gc, object->value.array);

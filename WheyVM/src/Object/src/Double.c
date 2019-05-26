@@ -1,4 +1,4 @@
-#include "../Floating.h"
+#include "../Double.h"
 #include "../Object.h"
 #include "../Integer.h"
 #include "../Array.h"
@@ -8,18 +8,18 @@
 
 #define FLOAT_STRING_BUFFER_SIZE 50
 
-struct Object *floatingNew(struct Gc *gc, Floating value)
+struct Object *doubleNew(struct Gc *gc, Double value)
 {
-    struct Object *floating1 = objectNew(gc, OBJECT_TYPE_FLOATING);
-    floating1->value.floating_value = value;
-    return floating1;
+    struct Object *double1 = objectNew(gc, OBJECT_TYPE_FLOATING);
+    double1->value.double_value = value;
+    return double1;
 }
 
-struct Object *floatingToString(struct Gc *gc, Floating floating)
+struct Object *doubleToString(struct Gc *gc, Double double1)
 {
     char buffer[FLOAT_STRING_BUFFER_SIZE];
  
-    snprintf(buffer, FLOAT_STRING_BUFFER_SIZE, "%.10e", floating);
+    snprintf(buffer, FLOAT_STRING_BUFFER_SIZE, "%.10e", double1);
 
     int charCount = strlen(buffer);
 

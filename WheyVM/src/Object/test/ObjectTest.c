@@ -1,5 +1,5 @@
 #include "../Array.h"
-#include "../Floating.h"
+#include "../Double.h"
 #include "../Gc.h"
 #include "../Integer.h"
 #include "../Map.h"
@@ -467,9 +467,9 @@ void testArrayToString()
     objectFree(string1);
     objectFree(string2);
     
-    free(integer1);
-    free(integer2);
-    free(integer3);
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
 
     objectFree(array1);
     objectFree(array2);
@@ -480,88 +480,402 @@ void testArrayToString()
 void testArrayMark()
 {
     printf("testArrayMark: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array2 = arrayNew(NULL, 0);
+    struct Object *integer1 = integerNew(NULL, 7);
+    struct Object *integer2 = integerNew(NULL, 98);
+    struct Object *integer3 = integerNew(NULL, 121299);
+
+    array1->mark = OBJECT_MARK_FALSE;
+    array2->mark = OBJECT_MARK_FALSE;
+    integer1->mark = OBJECT_MARK_FALSE;
+    integer2->mark = OBJECT_MARK_FALSE;
+    integer3->mark = OBJECT_MARK_FALSE;
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    objectMark(array1);
+
+    assert(array1->mark == OBJECT_MARK_TRUE);
+    assert(integer1->mark == OBJECT_MARK_TRUE);
+    assert(integer2->mark == OBJECT_MARK_TRUE);
+    assert(integer3->mark == OBJECT_MARK_TRUE);
+    assert(integer3->mark == OBJECT_MARK_TRUE);
+
+    integer2->mark = OBJECT_MARK_FALSE;
+
+    objectMark(array1);
+
+    assert(array1->mark == OBJECT_MARK_TRUE);
+    assert(integer1->mark == OBJECT_MARK_TRUE);
+    assert(integer2->mark == OBJECT_MARK_FALSE);
+    assert(integer3->mark == OBJECT_MARK_TRUE);
+    assert(integer3->mark == OBJECT_MARK_TRUE);
+
+    objectMark(array2);
+    
+    assert(array2->mark == OBJECT_MARK_TRUE);
+
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
+
+    objectFree(array1);
+    objectFree(array2);
+
     printf("OK\n");
 }
 
 void testArrayFree()
 {
     printf("testArrayFree: ");
+    struct Object *array1 = arrayNew(NULL, 3);
+    assert(array1->type == OBJECT_TYPE_ARRAY);
+    objectFree(array1);
+
     printf("OK\n");
 }
 
 void testStringNew()
 {
     printf("testStringNew: ");
+    
+    struct Object *string = stringNew(NULL, 3);
+    assert(string != NULL);
+    assert(string->value.array != NULL);
+    assert(string->value.array->objects != NULL);
+    assert(string->type == OBJECT_TYPE_STRING);
+    assert(string->value.array->slotCount == 5);
+    assert(string->value.array->objectCount == 3);
+
+    objectFree(string);
+    
     printf("OK\n");
 }
 
 void testStringFromArray()
 {
     printf("testStringFromArray: ");
+    struct Object *array1 = arrayNew(NULL, 5);
+    struct Object *integer1 = integerNew(NULL, 'h');
+    struct Object *integer2 = integerNew(NULL, 'e');
+    struct Object *integer3 = integerNew(NULL, 'l');
+    struct Object *integer4 = integerNew(NULL, 'l');
+    struct Object *integer5 = integerNew(NULL, 'o');
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+    array1->value.array->objects[3] = integer4;
+    array1->value.array->objects[4] = integer5;
+
+    struct Object *string = stringFromArray(NULL, array1->value.array); 
+
+    assert(string->type == OBJECT_TYPE_STRING);
+    assert(string->value.array->objectCount == 5);
+    assert(string->value.array->slotCount == 8);
+
+    assert(string->value.array->objects[0] != integer1);
+    assert(string->value.array->objects[1] != integer2);
+    assert(string->value.array->objects[2] != integer3);
+    assert(string->value.array->objects[3] != integer4);
+    assert(string->value.array->objects[4] != integer5);
+    
+    assert(string->value.array->objects[0]->value.integer_value == integer1->value.integer_value);
+    assert(string->value.array->objects[1]->value.integer_value == integer2->value.integer_value);
+    assert(string->value.array->objects[2]->value.integer_value == integer3->value.integer_value);
+    assert(string->value.array->objects[3]->value.integer_value == integer4->value.integer_value);
+    assert(string->value.array->objects[4]->value.integer_value == integer5->value.integer_value);
+
+    objectFree(array1);
+
+    objectFree(string);
+
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
+    objectFree(integer4);
+    objectFree(integer5);
+
+
     printf("OK\n");
 }
 
 void testStringToArray()
 {
     printf("testStringToArray: ");
+    struct Object *string1 = stringNew(NULL, 5);
+    struct Object *integer1 = integerNew(NULL, 'h');
+    struct Object *integer2 = integerNew(NULL, 'e');
+    struct Object *integer3 = integerNew(NULL, 'l');
+    struct Object *integer4 = integerNew(NULL, 'l');
+    struct Object *integer5 = integerNew(NULL, 'o');
+
+    string1->value.array->objects[0] = integer1;
+    string1->value.array->objects[1] = integer2;
+    string1->value.array->objects[2] = integer3;
+    string1->value.array->objects[3] = integer4;
+    string1->value.array->objects[4] = integer5;
+
+    struct Object *array = stringToArray(NULL, string1->value.array);
+
+    assert(array->type == OBJECT_TYPE_ARRAY);
+    assert(array->value.array->objects[0] != integer1);
+    assert(array->value.array->objects[1] != integer2);
+    assert(array->value.array->objects[2] != integer3);
+    assert(array->value.array->objects[3] != integer4);
+    assert(array->value.array->objects[4] != integer5);
+    
+    assert(array->value.array->objects[0]->value.integer_value == integer1->value.integer_value);
+    assert(array->value.array->objects[1]->value.integer_value == integer2->value.integer_value);
+    assert(array->value.array->objects[2]->value.integer_value == integer3->value.integer_value);
+    assert(array->value.array->objects[3]->value.integer_value == integer4->value.integer_value);
+    assert(array->value.array->objects[4]->value.integer_value == integer5->value.integer_value);
+
+    objectFree(string1);
+
+    objectFree(array->value.array->objects[0]);
+    objectFree(array->value.array->objects[1]);
+    objectFree(array->value.array->objects[2]);
+    objectFree(array->value.array->objects[3]);
+    objectFree(array->value.array->objects[4]);
+
+    objectFree(array);
+
     printf("OK\n");
 }
 
 void testStringCompare()
 {
     printf("testStringCompare: ");
+    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
+
+    struct Object *string2 = stringNew(NULL, 5);
+    struct Object *integer21 = integerNew(NULL, 'h');
+    struct Object *integer22 = integerNew(NULL, 'a');
+    struct Object *integer23 = integerNew(NULL, 'l');
+    struct Object *integer24 = integerNew(NULL, 'l');
+    struct Object *integer25 = integerNew(NULL, 'o');
+
+    string2->value.array->objects[0] = integer21;
+    string2->value.array->objects[1] = integer22;
+    string2->value.array->objects[2] = integer23;
+    string2->value.array->objects[3] = integer24;
+    string2->value.array->objects[4] = integer25;
+
+    struct Object *string3 = stringNew(NULL, 6);
+    struct Object *integer31 = integerNew(NULL, 'b');
+    struct Object *integer32 = integerNew(NULL, 'a');
+    struct Object *integer33 = integerNew(NULL, 'n');
+    struct Object *integer34 = integerNew(NULL, 'a');
+    struct Object *integer35 = integerNew(NULL, 'n');
+    struct Object *integer36 = integerNew(NULL, 'a');
+
+    string3->value.array->objects[0] = integer31;
+    string3->value.array->objects[1] = integer32;
+    string3->value.array->objects[2] = integer33;
+    string3->value.array->objects[3] = integer34;
+    string3->value.array->objects[4] = integer35;
+    string3->value.array->objects[5] = integer36;
+
+    struct Object *string4 = stringNew(NULL, 0);
+
+    assert(stringCompare(string1->value.array, string1->value.array) == 0);
+    assert(stringCompare(string1->value.array, string2->value.array) > 0);
+    assert(stringCompare(string1->value.array, string3->value.array) > 0);
+    assert(stringCompare(string2->value.array, string1->value.array) < 0);
+    assert(stringCompare(string2->value.array, string2->value.array) == 0);
+    assert(stringCompare(string2->value.array, string3->value.array) > 0);
+    assert(stringCompare(string3->value.array, string1->value.array) < 0);
+    assert(stringCompare(string3->value.array, string2->value.array) < 0);
+    assert(stringCompare(string3->value.array, string3->value.array) == 0);
+
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+    objectFree(string4);
+
     printf("OK\n");
 }
 
 void testStringCopy()
 {
     printf("testStringCopy: ");
+    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
+
+    struct Object *string2 = stringCopy(NULL, string1->value.array);
+
+    assert(string2->type == OBJECT_TYPE_STRING);
+    assert(string2->value.array->objects[0] != string1->value.array->objects[0]);
+    assert(string2->value.array->objects[1] != string1->value.array->objects[1]);
+    assert(string2->value.array->objects[2] != string1->value.array->objects[2]);
+    assert(string2->value.array->objects[3] != string1->value.array->objects[3]);
+    assert(string2->value.array->objects[4] != string1->value.array->objects[4]);
+    assert(string2->value.array->objects[5] != string1->value.array->objects[5]);
+
+    assert(string2->value.array->objects[0]->value.integer_value == string1->value.array->objects[0]->value.integer_value);
+    assert(string2->value.array->objects[1]->value.integer_value == string1->value.array->objects[1]->value.integer_value);
+    assert(string2->value.array->objects[2]->value.integer_value == string1->value.array->objects[2]->value.integer_value);
+    assert(string2->value.array->objects[3]->value.integer_value == string1->value.array->objects[3]->value.integer_value);
+    assert(string2->value.array->objects[4]->value.integer_value == string1->value.array->objects[4]->value.integer_value);
+    assert(string2->value.array->objects[5]->value.integer_value == string1->value.array->objects[5]->value.integer_value);
+
+    objectFree(string1);
+    objectFree(string2);
+
     printf("OK\n");
 }
 
 void testStringEquals()
 {
     printf("testStringEquals: ");
+
+    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
+
+    struct Object *string2 = stringCopy(NULL, string1->value.array);
+
+    struct Object *string3 = stringNew(NULL, 3);
+    struct Object *integer31 = integerNew(NULL, 'b');
+    struct Object *integer32 = integerNew(NULL, 'a');
+    struct Object *integer33 = integerNew(NULL, 'n');
+
+    string3->value.array->objects[0] = integer31;
+    string3->value.array->objects[1] = integer32;
+    string3->value.array->objects[2] = integer33;
+
+    struct Object *string4 = stringNew(NULL, 0);
+
+    assert(stringEquals(string1->value.array, string1->value.array) == BOOLEAN_TRUE);
+    assert(stringEquals(string1->value.array, string2->value.array) == BOOLEAN_TRUE);
+    assert(stringEquals(string1->value.array, string3->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string1->value.array, string4->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string2->value.array, string1->value.array) == BOOLEAN_TRUE);
+    assert(stringEquals(string2->value.array, string2->value.array) == BOOLEAN_TRUE);
+    assert(stringEquals(string2->value.array, string3->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string2->value.array, string4->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string3->value.array, string1->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string3->value.array, string2->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string3->value.array, string3->value.array) == BOOLEAN_TRUE);
+    assert(stringEquals(string3->value.array, string4->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string4->value.array, string1->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string4->value.array, string2->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string4->value.array, string3->value.array) == BOOLEAN_FALSE);
+    assert(stringEquals(string4->value.array, string4->value.array) == BOOLEAN_TRUE);
+
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+    objectFree(string4);
+
     printf("OK\n");
 }
 
 void testStringHash()
 {
     printf("testStringHash: ");
+
+    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
+
+    struct Object *string2 = stringCopy(NULL, string1->value.array);
+
+    struct Object *string3 = stringNew(NULL, 0);
+    struct Object *string4 = stringNew(NULL, 0);
+
+    assert(stringHash(string1->value.array) == stringHash(string2->value.array));
+    assert(stringHash(string3->value.array) == stringHash(string4->value.array));
+
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+    objectFree(string4);
+
     printf("OK\n");
 }
 
 void testStringAppendCharacter()
 {
     printf("testStringAppendCharacter: ");
-    struct Object *array1 = arrayNew(NULL, 0);
-    Integer integer1 = 97;
-    Integer integer2 = 98;
-    Integer integer3 = 99;
+    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
 
-    stringAppendCharacter(array1->value.array, integer2);
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
 
-    assert(array1->value.array->objectCount == 1);
-    assert(array1->value.array->slotCount == 1);
+    struct Object *string2 = stringNew(NULL, 0);
+    stringAppendCharacter(string2->value.array, 'h');
+    stringAppendCharacter(string2->value.array, 'a');
+    stringAppendCharacter(string2->value.array, 'l');
+    stringAppendCharacter(string2->value.array, 'l');
+    stringAppendCharacter(string2->value.array, 'o');
+    stringAppendCharacter(string2->value.array, '1');
 
-    assert(array1->value.array->objects[0]->value.integer_value == integer2);
+    assert(stringEquals(string1->value.array, string2->value.array) == BOOLEAN_TRUE);
 
-    stringAppendCharacter(array1->value.array, integer1);
-    stringAppendCharacter(array1->value.array, integer3);
-
-    assert(array1->value.array->objectCount == 3);
-    assert(array1->value.array->slotCount == 4);
-
-    assert(array1->value.array->objects[1]->value.integer_value == integer1);
-    assert(array1->value.array->objects[2]->value.integer_value == integer3);
-
-    free(array1->value.array->objects[0]);
-    free(array1->value.array->objects[1]);
-    free(array1->value.array->objects[2]);
-
-    free(array1->value.array->objects);
-    free(array1->value.array);
-    free(array1);
+    objectFree(string1);
+    objectFree(string2);
 
     printf("OK\n");
 }
@@ -569,18 +883,52 @@ void testStringAppendCharacter()
 void testStringFree()
 {
     printf("testStringFree: ");
+    struct Object *string1 = stringNew(NULL, 6);
+    objectFree(string1);
+
     printf("OK\n");
 }
 
-void testFloatingNew()
+void testDoubleNew()
 {
-    printf("testFloatingNew: ");
+    printf("testDoubleNew: ");
+    struct Object *double1 = doubleNew(NULL, 0.001);
+    assert(double1->type == OBJECT_TYPE_FLOATING);
+    assert(double1->mark == OBJECT_MARK_TRUE);
+    assert(double1->value.double_value == 0.001);
+    objectFree(double1);
     printf("OK\n");
 }
 
-void testFloatingToString()
+void testDoubleToString()
 {
-    printf("testFloatingToString: ");
+    printf("testDoubleToString: ");
+    struct Object *double1 = doubleNew(NULL, 0.0010105);
+
+    struct Object *string = doubleToString(NULL, double1->value.double_value);
+
+    assert(string->type == OBJECT_TYPE_STRING);
+
+    assert(string->value.array->objectCount == 16);
+    assert(string->value.array->objects[0]->value.integer_value == '1');
+    assert(string->value.array->objects[1]->value.integer_value == '.');
+    assert(string->value.array->objects[2]->value.integer_value == '0');
+    assert(string->value.array->objects[3]->value.integer_value == '1');
+    assert(string->value.array->objects[4]->value.integer_value == '0');
+    assert(string->value.array->objects[5]->value.integer_value == '5');
+    assert(string->value.array->objects[6]->value.integer_value == '0');
+    assert(string->value.array->objects[7]->value.integer_value == '0');
+    assert(string->value.array->objects[8]->value.integer_value == '0');
+    assert(string->value.array->objects[9]->value.integer_value == '0');
+    assert(string->value.array->objects[10]->value.integer_value == '0');
+    assert(string->value.array->objects[11]->value.integer_value == '0');
+    assert(string->value.array->objects[12]->value.integer_value == 'e');
+    assert(string->value.array->objects[13]->value.integer_value == '-');
+    assert(string->value.array->objects[14]->value.integer_value == '0');
+    assert(string->value.array->objects[15]->value.integer_value == '3');
+    
+    objectFree(string);
+    objectFree(double1);
     printf("OK\n");
 }
 
@@ -611,11 +959,6 @@ void testGcFree()
 void testIntegerNew()
 {
     printf("testIntegerNew: ");
-    struct Object *integer1 = integerNew(NULL, -5);
-    assert(integer1->type == OBJECT_TYPE_INTEGER);
-    assert(integer1->mark == OBJECT_MARK_TRUE);
-    assert(integer1->value.integer_value == -5);
-    free(integer1);
     printf("OK\n");
 }
 
@@ -835,8 +1178,8 @@ int main(int argc, char* argv[])
     testStringHash();
     testStringAppendCharacter();
     testStringFree();
-    testFloatingNew();
-    testFloatingToString();
+    testDoubleNew();
+    testDoubleToString();
     testGcNew();
     testGcRegisterObject();
     testGcSweep();
@@ -875,4 +1218,6 @@ int main(int argc, char* argv[])
     testPairToString();
     testPairMark();
     printf("All tests passed.\n");
+
+    return 0;
 }
