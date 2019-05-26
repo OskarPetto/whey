@@ -17,7 +17,7 @@ void testArrayNew()
 
     struct Object *array1 = arrayNew(NULL, 14);
     assert(array1->type == OBJECT_TYPE_ARRAY);
-    assert(array1->mark == OBJECT_MARK_TRUE);
+    assert(array1->mark == OBJECT_MARK_FALSE);
     assert(array1->value.array != NULL);
     assert(array1->value.array->objectCount == 14);
     assert(array1->value.array->slotCount == 22);
@@ -26,7 +26,7 @@ void testArrayNew()
 
     struct Object *array2 = arrayNew(NULL, 0);
     assert(array2->type == OBJECT_TYPE_ARRAY);
-    assert(array2->mark == OBJECT_MARK_TRUE);
+    assert(array2->mark == OBJECT_MARK_FALSE);
     assert(array2->value.array != NULL);
     assert(array2->value.array->objectCount == 0);
     assert(array2->value.array->slotCount == 1);
@@ -486,12 +486,6 @@ void testArrayMark()
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 121299);
 
-    array1->mark = OBJECT_MARK_FALSE;
-    array2->mark = OBJECT_MARK_FALSE;
-    integer1->mark = OBJECT_MARK_FALSE;
-    integer2->mark = OBJECT_MARK_FALSE;
-    integer3->mark = OBJECT_MARK_FALSE;
-
     array1->value.array->objects[0] = integer1;
     array1->value.array->objects[1] = integer2;
     array1->value.array->objects[2] = integer3;
@@ -894,7 +888,7 @@ void testDoubleNew()
     printf("testDoubleNew: ");
     struct Object *double1 = doubleNew(NULL, 0.001);
     assert(double1->type == OBJECT_TYPE_FLOATING);
-    assert(double1->mark == OBJECT_MARK_TRUE);
+    assert(double1->mark == OBJECT_MARK_FALSE);
     assert(double1->value.double_value == 0.001);
     objectFree(double1);
     printf("OK\n");
@@ -935,30 +929,134 @@ void testDoubleToString()
 void testGcNew()
 {
     printf("testGcNew: ");
+    struct Gc *gc = gcNew();
+
+    assert(gc->freeCount == 0);
+    assert(gc->newCount == 0);
+    assert(gc->head == NULL);
+
+    gcFree(gc);
+
     printf("OK\n");
 }
 
 void testGcRegisterObject()
 {
     printf("testGcRegisterObject: ");
+    struct Gc *gc = gcNew();
+    struct Object *array1 = arrayNew(gc, 3);
+    struct Object *integer1 = integerNew(gc, 7);
+    struct Object *integer2 = integerNew(gc, 98);
+    struct Object *integer3 = integerNew(gc, 121299);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    struct Object *string1 = stringNew(gc, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
+
+    assert(gc->newCount == 5);
+    assert(gc->freeCount == 0);
+    assert(gc->head->object == string1);
+    assert(gc->head->next->object == integer3);
+    assert(gc->head->next->next->object == integer2);
+    assert(gc->head->next->next->next->object == integer1);
+    assert(gc->head->next->next->next->next->object == array1);
+    assert(gc->head->next->next->next->next->next == NULL);
+
+    gcFree(gc);
+
     printf("OK\n");
 }
 
 void testGcSweep()
 {
     printf("testGcSweep: ");
+    struct Gc *gc = gcNew();
+    struct Object *array1 = arrayNew(gc, 3);
+    struct Object *integer1 = integerNew(gc, 7);
+    struct Object *integer2 = integerNew(gc, 98);
+    struct Object *integer3 = integerNew(gc, 121299);
+
+    array1->value.array->objects[0] = integer1;
+    array1->value.array->objects[1] = integer2;
+    array1->value.array->objects[2] = integer3;
+
+    struct Object *string1 = stringNew(gc, 6);
+    struct Object *integer11 = integerNew(NULL, 'h');
+    struct Object *integer12 = integerNew(NULL, 'a');
+    struct Object *integer13 = integerNew(NULL, 'l');
+    struct Object *integer14 = integerNew(NULL, 'l');
+    struct Object *integer15 = integerNew(NULL, 'o');
+    struct Object *integer16 = integerNew(NULL, '1');
+
+    string1->value.array->objects[0] = integer11;
+    string1->value.array->objects[1] = integer12;
+    string1->value.array->objects[2] = integer13;
+    string1->value.array->objects[3] = integer14;
+    string1->value.array->objects[4] = integer15;
+    string1->value.array->objects[5] = integer16;
+
+    assert(gc->newCount == 5);
+
+    integer1->mark = OBJECT_MARK_TRUE;
+    string1->mark = OBJECT_MARK_TRUE;
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 3);
+    assert(gc->head->object == string1);
+    assert(gc->head->next->object == integer1);
+    assert(gc->head->next->next == NULL);
+
+    integer1->mark = OBJECT_MARK_TRUE;
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 4);
+    assert(gc->head->object == integer1);
+    assert(gc->head->next == NULL);
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 5);
+    assert(gc->head == NULL);
+
+    gcFree(gc);
+
     printf("OK\n");
 }
 
 void testGcFree()
 {
     printf("testGcFree: ");
+    struct Gc *gc = gcNew();
+    gcFree(gc);
     printf("OK\n");
 }
 
 void testIntegerNew()
 {
     printf("testIntegerNew: ");
+    struct Object *integer = integerNew(NULL, 1231212);
+
+    assert(integer->type == OBJECT_TYPE_INTEGER);
+    assert(integer->value.integer_value == 1231212);
+
+    objectFree(integer);
     printf("OK\n");
 }
 

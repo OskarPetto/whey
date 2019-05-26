@@ -152,7 +152,7 @@ struct Object *objectNew(struct Gc *gc, uint8_t type)
 {
     struct Object *object = (struct Object *)malloc(sizeof(struct Object));
     assert(object != NULL);
-    object->mark = OBJECT_MARK_TRUE;
+    object->mark = OBJECT_MARK_FALSE;
     object->type = type;
 
     if (gc != NULL)

@@ -6,19 +6,19 @@
 struct Object;
 struct Gc;
 
-struct ListEntry;
+struct MapEntry;
 
-struct ListEntry
+struct MapEntry
 {
     struct Object *key;
     struct Object *value;
     Integer hash;
-    struct ListEntry *next;
+    struct MapEntry *next;
 };
 
 struct Map 
 {
-    struct ListEntry **buckets;
+    struct MapEntry **buckets;
     Integer bucketCount;
     Integer entryCount;
 };

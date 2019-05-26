@@ -25,8 +25,8 @@ static Integer nextLargerBucketCount(Integer entryCount)
 static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct Object *value, Integer hash)
 {
     Integer index = indexFor(hash, map->bucketCount);
-    struct ListEntry *currEntry = map->buckets[index];
-    struct ListEntry *prevEntry = currEntry;
+    struct MapEntry *currEntry = map->buckets[index];
+    struct MapEntry *prevEntry = currEntry;
 
     while (currEntry != NULL && !objectEquals(currEntry->key, key))
     {
@@ -41,7 +41,7 @@ static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct
         return previousValue;
     }
 
-    struct ListEntry *newEntry = (struct ListEntry *) malloc(sizeof (struct ListEntry));
+    struct MapEntry *newEntry = (struct MapEntry *) malloc(sizeof (struct MapEntry));
     assert(newEntry != NULL);
     newEntry->key = key;
     newEntry->value = value;
@@ -71,7 +71,7 @@ static struct Map *mapMaybeResize(struct Map *map, Integer newEntryCount)
 
     struct Map *newMap = (struct Map *)malloc(sizeof(struct Map));
     assert(newMap != NULL);
-    newMap->buckets = (struct ListEntry **) malloc(nextLargerBucketCount(newEntryCount) * sizeof(struct ListEntry *));
+    newMap->buckets = (struct MapEntry **) malloc(nextLargerBucketCount(newEntryCount) * sizeof(struct MapEntry *));
     assert(newMap->buckets != NULL);
 
     mapPutAll(newMap, map);
@@ -88,7 +88,7 @@ struct Object *mapNew(struct Gc *gc, Integer initialEntryCount)
     struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
     map->value.map = (struct Map *) malloc(sizeof(struct Map));
     assert(map->value.map != NULL);
-    map->value.map->buckets = (struct ListEntry **) malloc(initialBucketCount * sizeof(struct ListEntry *));
+    map->value.map->buckets = (struct MapEntry **) malloc(initialBucketCount * sizeof(struct MapEntry *));
     assert(map->value.map->buckets != NULL);
     map->value.map->bucketCount = initialBucketCount;
     map->value.map->entryCount = 0;
@@ -106,7 +106,7 @@ struct Object *mapGet(struct Map *map, struct Object *key)
 
     Integer index = indexFor(improvedHash, map->bucketCount);
 
-    struct ListEntry *currEntry = map->buckets[index];
+    struct MapEntry *currEntry = map->buckets[index];
 
     while (currEntry != NULL && !objectEquals(currEntry->key, key))
     {
@@ -136,7 +136,7 @@ void mapPutAll(struct Map *map, struct Map *mapToPut)
 
     for (Integer i = 0; i < mapToPut->bucketCount; i++)
     {
-        struct ListEntry *currEntry = mapToPut->buckets[i];
+        struct MapEntry *currEntry = mapToPut->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -160,7 +160,7 @@ struct Object *mapEntries(struct Gc *gc, struct Map *map)
 
     for (Integer i = 0; i < map->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map->buckets[i];
+        struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -181,7 +181,7 @@ struct Object *mapCopy(struct Gc *gc, struct Map *map)
 
     for (Integer i = 0; i < copyMap->bucketCount; i++)
     {
-        struct ListEntry *currEntry = copyMap->buckets[i];
+        struct MapEntry *currEntry = copyMap->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -203,7 +203,7 @@ Integer mapEquals(struct Map *map1, struct Map *map2)
 
     for (Integer i = 0; i < map1->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map1->buckets[i];
+        struct MapEntry *currEntry = map1->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -228,7 +228,7 @@ Integer mapHash(struct Map *map)
 
     for (Integer i = 0; i < map->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map->buckets[i];
+        struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -251,7 +251,7 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
     for (Integer i = 0; i < map->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map->buckets[i];
+        struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -295,7 +295,7 @@ void mapMark(struct Map *map)
 {
     for (Integer i = 0; i < map->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map->buckets[i];
+        struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {
@@ -312,11 +312,11 @@ void mapFree(struct Map *map)
 {
     for (Integer i = 0; i < map->bucketCount; i++)
     {
-        struct ListEntry *currEntry = map->buckets[i];
+        struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {
-            struct ListEntry *nextEntry = currEntry->next;
+            struct MapEntry *nextEntry = currEntry->next;
 
             free(currEntry);
 

@@ -3,13 +3,19 @@
 
 #include "Types.h"
 
-#define GC_INITIAL_SIZE   20
-
 struct Object;
+
+struct GcObject;
+
+struct GcObject
+{
+    struct Object *object;
+    struct GcObject *next;
+};
 
 struct Gc
 {
-    struct Array *objects;
+    struct GcObject *head;
     Integer newCount;
     Integer freeCount;
 };
