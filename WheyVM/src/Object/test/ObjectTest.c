@@ -1409,6 +1409,88 @@ void testMapHasKey()
 void testMapEntries()
 {
     printf("testMapEntries: ");
+
+    struct Object *map1 = mapNew(NULL);
+    struct Object *map2 = mapNew(NULL);
+    
+    struct Object *integer1 = integerNew(NULL, 1);
+    struct Object *integer2 = integerNew(NULL, 17);
+    struct Object *integer3 = integerNew(NULL, 82);
+    struct Object *integer4 = integerNew(NULL, 43);
+    struct Object *integer5 = integerNew(NULL, 18);
+
+    struct Object *integer6 = integerNew(NULL, 121);
+    struct Object *integer7 = integerNew(NULL, 441);
+    struct Object *integer8 = integerNew(NULL, 566);
+    struct Object *integer9 = integerNew(NULL, 874);
+    struct Object *integer10 = integerNew(NULL, 236);
+
+    mapPut(map1->value.map, integer1, integer6);
+    mapPut(map1->value.map, integer2, integer7);
+    mapPut(map1->value.map, integer3, integer8);
+    mapPut(map1->value.map, integer4, integer9);
+    mapPut(map1->value.map, integer5, integer10);
+
+    struct Object *emptyArray = mapEntries(NULL, map2->value.map);
+    assert(emptyArray->value.array->objectCount == 0);
+
+    struct Object *array = mapEntries(NULL, map1->value.map);
+
+    assert(array->type == OBJECT_TYPE_ARRAY);
+    assert(array->value.array->objectCount == 5);
+    assert(array->value.array->slotCount == 8);
+
+    assert(array->value.array->objects[0]->type == OBJECT_TYPE_PAIR);
+    assert(array->value.array->objects[1]->type == OBJECT_TYPE_PAIR);
+    assert(array->value.array->objects[2]->type == OBJECT_TYPE_PAIR);
+    assert(array->value.array->objects[3]->type == OBJECT_TYPE_PAIR);
+    assert(array->value.array->objects[4]->type == OBJECT_TYPE_PAIR);
+
+    struct Object *f1 = array->value.array->objects[0]->value.pair->first;
+    struct Object *f2 = array->value.array->objects[1]->value.pair->first;
+    struct Object *f3 = array->value.array->objects[2]->value.pair->first;
+    struct Object *f4 = array->value.array->objects[3]->value.pair->first;
+    struct Object *f5 = array->value.array->objects[4]->value.pair->first;
+
+    assert(f1 == integer1 || f2 == integer1 || f3 == integer1 || f4 == integer1 || f5 == integer1);
+    assert(f1 == integer2 || f2 == integer2 || f3 == integer2 || f4 == integer2 || f5 == integer2);
+    assert(f1 == integer3 || f2 == integer3 || f3 == integer3 || f4 == integer3 || f5 == integer3);
+    assert(f1 == integer4 || f2 == integer4 || f3 == integer4 || f4 == integer4 || f5 == integer4);
+    assert(f1 == integer5 || f2 == integer5 || f3 == integer5 || f4 == integer5 || f5 == integer5);
+
+    struct Object *s1 = array->value.array->objects[0]->value.pair->second;
+    struct Object *s2 = array->value.array->objects[1]->value.pair->second;
+    struct Object *s3 = array->value.array->objects[2]->value.pair->second;
+    struct Object *s4 = array->value.array->objects[3]->value.pair->second;
+    struct Object *s5 = array->value.array->objects[4]->value.pair->second;
+
+    assert(s1 == integer6 || s2 == integer6 || s3 == integer6 || s4 == integer6 || s5 == integer6);
+    assert(s1 == integer7 || s2 == integer7 || s3 == integer7 || s4 == integer7 || s5 == integer7);
+    assert(s1 == integer8 || s2 == integer8 || s3 == integer8 || s4 == integer8 || s5 == integer8);
+    assert(s1 == integer9 || s2 == integer9 || s3 == integer9 || s4 == integer9 || s5 == integer9);
+    assert(s1 == integer10 || s2 == integer10 || s3 == integer10 || s4 == integer10 || s5 == integer10);
+
+    objectFree(array->value.array->objects[0]);
+    objectFree(array->value.array->objects[1]);
+    objectFree(array->value.array->objects[2]);
+    objectFree(array->value.array->objects[3]);
+    objectFree(array->value.array->objects[4]);
+
+    objectFree(array);
+    objectFree(emptyArray);
+    objectFree(map1);
+    objectFree(map2);
+
+    objectFree(integer1);
+    objectFree(integer2);
+    objectFree(integer3);
+    objectFree(integer4);
+    objectFree(integer5);
+    objectFree(integer6);
+    objectFree(integer7);
+    objectFree(integer8);
+    objectFree(integer9);
+    objectFree(integer10);
     printf("OK\n");
 }
 
