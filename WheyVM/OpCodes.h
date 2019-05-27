@@ -1,5 +1,5 @@
-#ifndef OPCODE_H
-#define OPCODE_H
+#ifndef OP_CODES_H
+#define OP_CODES_H
 
 #define OP_HALT                    0x00
         

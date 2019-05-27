@@ -5,9 +5,9 @@
 
 struct Function
 {
-    uint8_t maxArgumentCount;
+    uint8_t argumentCount;
     uint16_t opCodeCount;
-    uint8_t *opCodes;
+    unsigned char *opCodes;
 };
 
 struct Function *functionNew(uint8_t *bytes, uint32_t *byteIndex);

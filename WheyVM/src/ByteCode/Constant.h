@@ -1,22 +1,25 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
-#include "Function.h"
-#include "StringConstant.h"
+#include <stdint.h>
 
 #define CONSTANT_TYPE_INTEGER            0x01
 #define CONSTANT_TYPE_DOUBLE             0x02
-#define CONSTANT_TYPE_FUNCTION           0x03
 #define CONSTANT_TYPE_STRING             0x04
 
 typedef double DoubleConstant;
 typedef int32_t IntegerConstant; 
 
+struct StringConstant
+{
+    uint16_t characterCount;
+    char *characters;
+};
+
 union ConstantValue
 {
     IntegerConstant integerConstant;
     DoubleConstant doubleConstant;
-    struct Function *function;
     struct StringConstant *stringConstant;
 };
 
@@ -26,7 +29,7 @@ struct Constant
     union ConstantValue value;
 };
 
-struct Constant *constantNew(uint8_t *bytes, uint32_t *fileIndex);
+struct Constant *constantNew(uint8_t *bytes, uint32_t *byteIndex);
 
 void constantFree(struct Constant *constant);
 
