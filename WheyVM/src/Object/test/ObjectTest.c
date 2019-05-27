@@ -1743,6 +1743,7 @@ void testObjectCopy()
         != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")));
 
     gcSweep(gc);
+    assert(gc->freeCount == gc->newCount);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1768,6 +1769,7 @@ void testObjectEquals()
     assert(objectEquals(object, copy) == BOOLEAN_TRUE);
 
     gcSweep(gc);
+    assert(gc->freeCount == gc->newCount);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1791,6 +1793,7 @@ void testObjectHash()
     assert(objectHash(object) == objectHash(copy));
 
     gcSweep(gc);
+    assert(gc->freeCount == gc->newCount);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1806,6 +1809,7 @@ void testObjectToString()
     stringPrint(string->value.array);
 
     gcSweep(gc);
+    assert(gc->freeCount == gc->newCount);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1819,6 +1823,7 @@ void testObjectNew()
 
     gcSweep(gc);
 
+    assert(gc->freeCount == gc->newCount);
     assert(gc->freeCount == 1);
     assert(gc->head == NULL);
 
@@ -1830,6 +1835,19 @@ void testObjectNew()
 void testObjectMark()
 {
     printf("testObjectMark: ");
+    struct Gc *gc = gcNew();
+    struct Object *object = getComplexObject(gc);
+
+    objectMark(object);
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 0);
+
+    gcSweep(gc);
+    assert(gc->freeCount == gc->newCount);
+    gcFree(gc);
+
     printf("OK\n");
 }
 
@@ -1847,60 +1865,198 @@ void testObjectFree()
 void testPairNew()
 {
     printf("testPairNew: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *pair = pairNew(NULL, NULL, integer1);
+
+    assert(pair->value.pair->first == NULL);
+    assert(pair->value.pair->second == integer1);
+
+    objectFree(integer1);
+    objectFree(pair);
+
     printf("OK\n");
 }
 
 void testPairGetFirst()
 {
     printf("testPairGetFirst: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *pair = pairNew(NULL, NULL, integer1);
+
+    assert(pairGetFirst(pair->value.pair) == NULL);
+    pair->value.pair->first = integer1;
+    assert(pairGetFirst(pair->value.pair) == integer1);
+
+    objectFree(integer1);
+    objectFree(pair);
     printf("OK\n");
 }
 
 void testPairGetSecond()
 {
     printf("testPairGetSecond: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *pair = pairNew(NULL, NULL, integer1);
+
+    assert(pairGetSecond(pair->value.pair) == integer1);
+    pair->value.pair->second = NULL;
+    assert(pairGetSecond(pair->value.pair) == NULL);
+
+    objectFree(integer1);
+    objectFree(pair);
     printf("OK\n");
 }
 
 void testPairSetFirst()
 {
     printf("testPairSetFirst: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *pair = pairNew(NULL, NULL, integer1);
+
+    assert(pairSetFirst(pair->value.pair, integer1) == NULL);
+    assert(pairGetFirst(pair->value.pair) == integer1);
+
+    assert(pairSetFirst(pair->value.pair, NULL) == integer1);
+    assert(pairGetFirst(pair->value.pair) == NULL);
+
+    objectFree(integer1);
+    objectFree(pair);
     printf("OK\n");
 }
 
 void testPairSetSecond()
 {
     printf("testPairSetSecond: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *pair = pairNew(NULL, NULL, integer1);
+
+    assert(pairSetSecond(pair->value.pair, NULL) == integer1);
+    assert(pairGetSecond(pair->value.pair) == NULL);
+
+    assert(pairSetSecond(pair->value.pair, integer1) == NULL);
+    assert(pairGetSecond(pair->value.pair) == integer1);
+
+    objectFree(integer1);
+    objectFree(pair);
     printf("OK\n");
 }
 
 void testPairCopy()
 {
     printf("testPairCopy: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *pair = pairNew(NULL, string1, integer1);
+
+    struct Object *copy = pairCopy(NULL, pair->value.pair);
+
+    assert(copy != pair);
+    assert(copy->value.pair->first != pair->value.pair->first);
+    assert(copy->value.pair->second != pair->value.pair->second);
+
+    objectFree(integer1);
+    objectFree(string1);
+    objectFree(pair);
+    objectFree(copy->value.pair->first);
+    objectFree(copy->value.pair->second);
+    objectFree(copy);
     printf("OK\n");
 }
 
 void testPairEquals()
 {
     printf("testPairEquals: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *pair = pairNew(NULL, string1, integer1);
+
+    struct Object *copy = pairCopy(NULL, pair->value.pair);
+
+    assert(pairEquals(pair->value.pair, pair->value.pair) == BOOLEAN_TRUE);
+    assert(pairEquals(copy->value.pair, pair->value.pair) == BOOLEAN_TRUE);
+
+    pairSetFirst(pair->value.pair, NULL);
+    assert(pairEquals(copy->value.pair, pair->value.pair) == BOOLEAN_FALSE);
+
+    objectFree(integer1);
+    objectFree(string1);
+    objectFree(pair);
+    objectFree(copy->value.pair->first);
+    objectFree(copy->value.pair->second);
+    objectFree(copy);
     printf("OK\n");
 }
 
 void testPairHash()
 {
     printf("testPairHash: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *pair = pairNew(NULL, string1, integer1);
+
+    struct Object *copy = pairCopy(NULL, pair->value.pair);
+
+    assert(pairHash(pair->value.pair) == pairHash(pair->value.pair));
+    assert(pairHash(copy->value.pair) == pairHash(pair->value.pair));
+
+    objectFree(integer1);
+    objectFree(string1);
+    objectFree(pair);
+    objectFree(copy->value.pair->first);
+    objectFree(copy->value.pair->second);
+    objectFree(copy);
     printf("OK\n");
 }
 
 void testPairToString()
 {
     printf("testPairToString: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *pair = pairNew(NULL, string1, integer1);
+
+    struct Object *pairString = pairToString(NULL, pair->value.pair);
+    
+    assert(pairString->type == OBJECT_TYPE_STRING);
+    assert(pairString->value.array->objectCount == 14);
+    assert(pairString->value.array->objects[0]->value.integer_value == '(');
+    assert(pairString->value.array->objects[1]->value.integer_value == '1');
+    assert(pairString->value.array->objects[2]->value.integer_value == '2');
+    assert(pairString->value.array->objects[3]->value.integer_value == '3');
+    assert(pairString->value.array->objects[4]->value.integer_value == '3');
+    assert(pairString->value.array->objects[5]->value.integer_value == '1');
+    assert(pairString->value.array->objects[6]->value.integer_value == '2');
+    assert(pairString->value.array->objects[7]->value.integer_value == '3');
+    assert(pairString->value.array->objects[8]->value.integer_value == ',');
+    assert(pairString->value.array->objects[9]->value.integer_value == '1');
+    assert(pairString->value.array->objects[10]->value.integer_value == '2');
+    assert(pairString->value.array->objects[11]->value.integer_value == '3');
+    assert(pairString->value.array->objects[12]->value.integer_value == '1');
+    assert(pairString->value.array->objects[13]->value.integer_value == ')');
+
+    objectFree(pairString);
+    objectFree(integer1);
+    objectFree(string1);
+    objectFree(pair);
     printf("OK\n");
 }
 
 void testPairMark()
 {
     printf("testPairMark: ");
+    struct Object *integer1 = integerNew(NULL, 1231);
+    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *pair = pairNew(NULL, string1, integer1);
+
+    objectMark(pair);
+
+    assert(integer1->mark == OBJECT_MARK_TRUE);
+    assert(string1->mark == OBJECT_MARK_TRUE);
+    assert(pair->mark == OBJECT_MARK_TRUE);
+
+    objectFree(integer1);
+    objectFree(string1);
+    objectFree(pair);
     printf("OK\n");
 }
 
