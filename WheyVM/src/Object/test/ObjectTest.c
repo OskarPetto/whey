@@ -1500,6 +1500,32 @@ void testMapHash()
 void testMapToString()
 {
     printf("testMapToString: ");
+    struct Object *map1 = mapNew(NULL);
+
+    struct Object *string1 = stringNew(NULL, "hier");
+    struct Object *string2 = stringNew(NULL, "dort");
+    struct Object *string3 = stringNew(NULL, "nah");
+    struct Object *string4 = stringNew(NULL, "fern");
+    struct Object *integer1 = integerNew(NULL, 2);
+
+    mapPut(map1->value.map, string1, string2);
+    mapPut(map1->value.map, string3, string4);
+    mapPut(map1->value.map, integer1, NULL);
+    mapPut(map1->value.map, NULL, integer1);
+
+    struct Object *mapString1 = mapToString(NULL, map1->value.map);
+
+    assert(mapString1->type == OBJECT_TYPE_STRING);
+    assert(mapString1->value.array->objectCount == 34);
+
+    objectFree(map1);
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+    objectFree(string4);
+    objectFree(integer1);
+    objectFree(mapString1);
+
     printf("OK\n");
 }
 

@@ -335,7 +335,9 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
             struct Array *subString1 = subStringObject1->value.array;
             arrayInsertAll(string, string->objectCount, subString1);
 
-            objectFree(subStringObject1);
+            free(subString1->objects);
+            free(subString1);
+            free(subStringObject1);
 
             stringAppendCharacter(string, ':');
 
@@ -344,9 +346,11 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
             struct Array *subString2 = subStringObject2->value.array;
             arrayInsertAll(string, string->objectCount, subString2);
 
-            stringAppendCharacter(string, ',');
+            free(subString2->objects);
+            free(subString2);
+            free(subStringObject2);
 
-            objectFree(subStringObject2);
+            stringAppendCharacter(string, ',');
 
             currEntry = currEntry->next;
         }
@@ -354,8 +358,8 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
     if (map->entryCount > 0)
     {
-        struct Object *lastChar = integerNew(NULL, '}');
-        string->objects[string->objectCount - 1] = lastChar;
+        free(arrayRemove(string, string->objectCount - 1));
+        stringAppendCharacter(string, '}');
     }
     else
     {

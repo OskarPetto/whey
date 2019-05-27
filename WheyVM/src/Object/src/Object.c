@@ -130,7 +130,7 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
         return arrayToString(gc, object->value.array);
 
     case OBJECT_TYPE_STRING:
-        return object;  // No copy
+        return stringCopy(gc, object->value.array);  // copy
 
     case OBJECT_TYPE_MAP:
         return mapToString(gc, object->value.map);
