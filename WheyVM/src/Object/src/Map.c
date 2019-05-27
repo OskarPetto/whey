@@ -9,8 +9,6 @@
 
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
-#define MAP_INITIAL_BUCKET_COUNT 8
-
 static Integer indexFor(Integer hash, Integer length)
 {
     return hash & (length - 1);
@@ -19,6 +17,18 @@ static Integer indexFor(Integer hash, Integer length)
 static Integer improveHash(Integer hash)
 {
     return hash ^ (hash >> 16);
+}
+
+static struct Object *mapWithBucketCount(struct Gc *gc, Integer initialBucketCount)
+{
+    struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
+    map->value.map = (struct Map *)malloc(sizeof(struct Map));
+    assert(map->value.map != NULL);
+    map->value.map->buckets = (struct MapEntry **)calloc(initialBucketCount, sizeof(struct MapEntry *));
+    assert(map->value.map->buckets != NULL);
+    map->value.map->bucketCount = initialBucketCount;
+    map->value.map->entryCount = 0;
+    return map;
 }
 
 static void mapResize(struct Map *map, Integer newBucketCount)
@@ -86,6 +96,7 @@ static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct
     {
         struct Object *previousValue = currEntry->value;
         currEntry->value = value;
+        currEntry->key = key;
         return previousValue;
     }
 
@@ -112,14 +123,7 @@ static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct
 
 struct Object *mapNew(struct Gc *gc)
 {
-    struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
-    map->value.map = (struct Map *)malloc(sizeof(struct Map));
-    assert(map->value.map != NULL);
-    map->value.map->buckets = (struct MapEntry **)calloc(MAP_INITIAL_BUCKET_COUNT, sizeof(struct MapEntry *));
-    assert(map->value.map->buckets != NULL);
-    map->value.map->bucketCount = MAP_INITIAL_BUCKET_COUNT;
-    map->value.map->entryCount = 0;
-    return map;
+    return mapWithBucketCount(gc, 8);
 }
 
 Integer mapSize(struct Map *map)
@@ -251,12 +255,12 @@ struct Object *mapEntries(struct Gc *gc, struct Map *map)
 
 struct Object *mapCopy(struct Gc *gc, struct Map *map)
 {
-    struct Object *copy = mapNew(gc);
+    struct Object *copy = mapWithBucketCount(gc, map->bucketCount);
     struct Map *copyMap = copy->value.map;
 
-    for (Integer i = 0; i < copyMap->bucketCount; i++)
+    for (Integer i = 0; i < map->bucketCount; i++)
     {
-        struct MapEntry *currEntry = copyMap->buckets[i];
+        struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {

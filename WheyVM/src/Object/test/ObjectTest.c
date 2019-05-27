@@ -1369,18 +1369,131 @@ void testMapEntries()
 void testMapCopy()
 {
     printf("testMapCopy: ");
+    struct Object *map1 = mapNew(NULL);
+
+    struct Object *string1 = stringNew(NULL, "hier");
+    struct Object *string2 = stringNew(NULL, "dort");
+    struct Object *string3 = stringNew(NULL, "nah");
+    struct Object *string4 = stringNew(NULL, "fern");
+    struct Object *integer1 = integerNew(NULL, 2);
+
+    mapPut(map1->value.map, string1, string2);
+    mapPut(map1->value.map, string3, string4);
+    mapPut(map1->value.map, integer1, NULL);
+    mapPut(map1->value.map, NULL, integer1);
+
+    struct Object *map2 = mapCopy(NULL, map1->value.map);
+
+    assert(map2->value.map->entryCount == 4);
+    assert(mapGet(map2->value.map, string1) != string2);
+    assert(mapGet(map2->value.map, string3) != string4);
+    assert(mapGet(map2->value.map, integer1) == NULL);
+    assert(mapGet(map2->value.map, NULL) != integer1);
+
+    assert(objectEquals(mapGet(map2->value.map, string1), string2) == BOOLEAN_TRUE);
+    assert(objectEquals(mapGet(map2->value.map, string3), string4) == BOOLEAN_TRUE);
+    assert(objectEquals(mapGet(map2->value.map, NULL), integer1) == BOOLEAN_TRUE);
+
+    for (Integer i = 0; i < map2->value.map->bucketCount; i++)
+    {
+        struct MapEntry *currEntry = map2->value.map->buckets[i];
+
+        while (currEntry != NULL)
+        {
+            objectFree(currEntry->key);
+            objectFree(currEntry->value);
+
+            currEntry = currEntry->next;
+        }
+    }
+
+    objectFree(integer1);
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+    objectFree(string4);
+    objectFree(map1);
+    objectFree(map2);
     printf("OK\n");
 }
 
 void testMapEquals()
 {
     printf("testMapEquals: ");
+    struct Gc *gc = gcNew();
+    struct Object *map1 = mapNew(gc);
+
+    struct Object *string1 = stringNew(gc, "hier");
+    struct Object *string2 = stringNew(gc, "dort");
+    struct Object *string3 = stringNew(gc, "nah");
+    struct Object *string4 = stringNew(gc, "fern");
+    struct Object *integer1 = integerNew(gc, 2);
+
+    mapPut(map1->value.map, string1, string2);
+    mapPut(map1->value.map, string3, string4);
+    mapPut(map1->value.map, integer1, NULL);
+    mapPut(map1->value.map, NULL, integer1);
+
+    struct Object *map2 = mapCopy(gc, map1->value.map);
+
+    assert(mapEquals(map1->value.map, map1->value.map) == BOOLEAN_TRUE);
+    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_TRUE);
+    
+    mapRemove(map2->value.map, integer1);
+    
+    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_FALSE);
+
+    mapPut(map2->value.map, integer1, integer1);
+
+    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_FALSE);
+
+    mapPut(map2->value.map, integer1, NULL);
+
+    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_TRUE);
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 13);
+    assert(gc->head == NULL);
+
+    gcFree(gc);
     printf("OK\n");
 }
 
 void testMapHash()
 {
     printf("testMapHash: ");
+    struct Gc *gc = gcNew();
+    struct Object *map1 = mapNew(gc);
+
+    struct Object *string1 = stringNew(gc, "hier");
+    struct Object *string2 = stringNew(gc, "dort");
+    struct Object *string3 = stringNew(gc, "nah");
+    struct Object *string4 = stringNew(gc, "fern");
+    struct Object *integer1 = integerNew(gc, 2);
+
+    mapPut(map1->value.map, string1, string2);
+    mapPut(map1->value.map, string3, string4);
+    mapPut(map1->value.map, integer1, NULL);
+    mapPut(map1->value.map, NULL, integer1);
+
+    struct Object *map2 = mapCopy(gc, map1->value.map);
+
+    assert(mapHash(map1->value.map) == mapHash(map1->value.map));
+    assert(mapHash(map1->value.map) == mapHash(map2->value.map));
+    
+    mapRemove(map2->value.map, integer1);
+    mapPut(map2->value.map, integer1, integer1);
+    mapPut(map2->value.map, integer1, NULL);
+
+    assert(mapHash(map1->value.map) == mapHash(map2->value.map));
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 13);
+    assert(gc->head == NULL);
+
+    gcFree(gc);
     printf("OK\n");
 }
 
