@@ -18,29 +18,33 @@ static struct Object *getComplexObject(struct Gc *gc)
     struct Object *nameKey2 = stringNew(gc, "Otto");
     struct Object *nameKey3 = stringNew(gc, "Lisa");
 
+    struct Object *personNameKey = stringNew(gc, "name");
+    struct Object *personAgeKey = stringNew(gc, "age");
+    struct Object *personHeightKey = stringNew(gc, "height");
+
     struct Object *person1 = mapNew(gc);
-    struct Object *person1NameKey = stringNew(gc, "name");
-    struct Object *person1AgeKey = stringNew(gc, "age");
     struct Object *person1NameValue = stringNew(gc, "Willi");
     struct Object *person1AgeValue = integerNew(gc, 25);
-    mapPut(person1->value.map, person1NameKey, person1NameValue);
-    mapPut(person1->value.map, person1AgeKey, person1AgeValue);
+    struct Object *person1HeightValue = doubleNew(gc, 1.81);
+    mapPut(person1->value.map, personNameKey, person1NameValue);
+    mapPut(person1->value.map, personAgeKey, person1AgeValue);
+    mapPut(person1->value.map, personHeightKey, person1HeightValue);
 
     struct Object *person2 = mapNew(gc);
-    struct Object *person2NameKey = stringNew(gc, "name");
-    struct Object *person2AgeKey = stringNew(gc, "age");
     struct Object *person2NameValue = stringNew(gc, "Otto");
     struct Object *person2AgeValue = integerNew(gc, 64);
-    mapPut(person2->value.map, person2NameKey, person2NameValue);
-    mapPut(person2->value.map, person2AgeKey, person2AgeValue);
+    struct Object *person2HeightValue = doubleNew(gc, 1.65);
+    mapPut(person2->value.map, personNameKey, person2NameValue);
+    mapPut(person2->value.map, personAgeKey, person2AgeValue);
+    mapPut(person2->value.map, personHeightKey, person2HeightValue);
 
     struct Object *person3 = mapNew(gc);
-    struct Object *person3NameKey = stringNew(gc, "name");
-    struct Object *person3AgeKey = stringNew(gc, "age");
     struct Object *person3NameValue = stringNew(gc, "Lisa");
     struct Object *person3AgeValue = integerNew(gc, 33);
-    mapPut(person3->value.map, person3NameKey, person3NameValue);
-    mapPut(person3->value.map, person3AgeKey, person3AgeValue);
+    struct Object *person3HeightValue = doubleNew(gc, 1.68);
+    mapPut(person3->value.map, personNameKey, person3NameValue);
+    mapPut(person3->value.map, personAgeKey, person3AgeValue);
+    mapPut(person3->value.map, personHeightKey, person3HeightValue);
 
     struct Object *address1 = mapNew(gc);
     struct Object *address1StreetKey = stringNew(gc, "street");
@@ -1499,6 +1503,7 @@ void testMapEquals()
     printf("testMapEquals: ");
     struct Gc *gc = gcNew();
     struct Object *map1 = mapNew(gc);
+    struct Object *map2 = mapNew(gc);
 
     struct Object *string1 = stringNew(gc, "hier");
     struct Object *string2 = stringNew(gc, "dort");
@@ -1511,26 +1516,31 @@ void testMapEquals()
     mapPut(map1->value.map, integer1, NULL);
     mapPut(map1->value.map, NULL, integer1);
 
-    struct Object *map2 = mapCopy(gc, map1->value.map);
+    mapPut(map2->value.map, string1, string2);
+
+    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_FALSE);
+    assert(mapEquals(map2->value.map, map1->value.map) == BOOLEAN_FALSE);
+
+    struct Object *mapCopy1 = mapCopy(gc, map1->value.map);
 
     assert(mapEquals(map1->value.map, map1->value.map) == BOOLEAN_TRUE);
-    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_TRUE);
+    assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_TRUE);
     
-    mapRemove(map2->value.map, integer1);
+    mapRemove(mapCopy1->value.map, integer1);
     
-    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_FALSE);
+    assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_FALSE);
 
-    mapPut(map2->value.map, integer1, integer1);
+    mapPut(mapCopy1->value.map, integer1, integer1);
 
-    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_FALSE);
+    assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_FALSE);
 
-    mapPut(map2->value.map, integer1, NULL);
+    mapPut(mapCopy1->value.map, integer1, NULL);
 
-    assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_TRUE);
+    assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_TRUE);
 
     gcSweep(gc);
 
-    assert(gc->freeCount == 13);
+    assert(gc->freeCount == 14);
     assert(gc->head == NULL);
 
     gcFree(gc);
@@ -1661,18 +1671,6 @@ void testObjectCopy()
     printf("testObjectCopy: ");
     struct Gc *gc = gcNew();
     struct Object *object = getComplexObject(gc);
-
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "age"))->value.integer_value == 25);
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "age"))->value.integer_value == 64);
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "age"))->value.integer_value == 33);
-
-    assert(objectEquals(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "name")), stringNew(gc, "Willi")) == BOOLEAN_TRUE);
-    assert(objectEquals(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "name")), stringNew(gc, "Otto")) == BOOLEAN_TRUE);
-    assert(objectEquals(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "name")), stringNew(gc, "Lisa")) == BOOLEAN_TRUE);
-
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objectCount == 2);
-    assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objectCount == 1);
-    assert(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->second->value.array->objectCount == 0);
     
     struct Object *copy = objectCopy(gc, object);
     
@@ -1686,26 +1684,64 @@ void testObjectCopy()
     assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first != mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first);
     assert(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first != mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first);
 
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "name")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "name")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "name"))  
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "name")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "name"))  
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "name")));
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "age")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "age")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "age"))  
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "age")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "age"))  
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "age")));
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "height")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "height")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "height"))  
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "height")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "height"))  
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "height")));
+
     assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second);
     assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second != mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second);
     assert(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->second != mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->second);
 
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0] != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]);
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1] != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]);
-    assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0] != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]);
-
-    assert(mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "age"))->value.integer_value == 25);
-    assert(mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "age"))->value.integer_value == 64);
-    assert(mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "age"))->value.integer_value == 33);
-
-    assert(objectEquals(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "name")), stringNew(gc, "Willi")) == BOOLEAN_TRUE);
-    assert(objectEquals(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "name")), stringNew(gc, "Otto")) == BOOLEAN_TRUE);
-    assert(objectEquals(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "name")), stringNew(gc, "Lisa")) == BOOLEAN_TRUE);
-
-    assert(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objectCount == 2);
-    assert(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objectCount == 1);
-    assert(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->second->value.array->objectCount == 0);
+    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0] 
+        != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]);
     
+    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1] 
+        != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]);
+
+    assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0] 
+        != mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]);
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")));
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")));
+    
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "street")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "street")));
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "number")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "number")));
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")));
+
+    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")) 
+        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")));
+
     gcSweep(gc);
     gcFree(gc);
     printf("OK\n");
@@ -1714,24 +1750,80 @@ void testObjectCopy()
 void testObjectEquals()
 {
     printf("testObjectEquals: ");
+    struct Gc *gc = gcNew();
+    struct Object *object = getComplexObject(gc);
+    
+    struct Object *copy = objectCopy(gc, object);
+
+    assert(objectEquals(object, copy) == BOOLEAN_TRUE);
+
+    // copy changes address
+    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integer_value = 12;
+    
+    assert(objectEquals(object, copy) == BOOLEAN_FALSE);
+
+    // copy changes address back
+    mapPut(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"), integerNew(gc, 32));
+    
+    assert(objectEquals(object, copy) == BOOLEAN_TRUE);
+
+    gcSweep(gc);
+    gcFree(gc);
     printf("OK\n");
 }
 
 void testObjectHash()
 {
     printf("testObjectHash: ");
+    struct Gc *gc = gcNew();
+    struct Object *object = getComplexObject(gc);
+    
+    struct Object *copy = objectCopy(gc, object);
+
+    assert(objectHash(object) == objectHash(copy));
+
+    // copy changes address
+    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integer_value = 12;
+    
+    // copy changes address back
+    mapPut(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"), integerNew(gc, 32));
+    
+    assert(objectHash(object) == objectHash(copy));
+
+    gcSweep(gc);
+    gcFree(gc);
     printf("OK\n");
 }
 
 void testObjectToString()
 {
     printf("testObjectToString: ");
+    struct Gc *gc = gcNew();
+    struct Object *object = getComplexObject(gc);
+
+    struct Object *string = objectToString(gc, object);
+
+    stringPrint(string->value.array);
+
+    gcSweep(gc);
+    gcFree(gc);
     printf("OK\n");
 }
 
 void testObjectNew()
 {
     printf("testObjectNew: ");
+    struct Gc *gc = gcNew();
+    
+    objectNew(gc, 200);
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 1);
+    assert(gc->head == NULL);
+
+    gcFree(gc);
+
     printf("OK\n");
 }
 

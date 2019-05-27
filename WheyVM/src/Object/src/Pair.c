@@ -66,7 +66,9 @@ struct Object *pairToString(struct Gc *gc, struct Pair *pair)
     struct Array *subString1 = subStringObject1->value.array;
     arrayInsertAll(string, string->objectCount, subString1);
 
-    objectFree(subStringObject1);
+    free(subString1->objects);
+    free(subString1);
+    free(subStringObject1);
 
     stringAppendCharacter(string, ',');
 
@@ -74,7 +76,9 @@ struct Object *pairToString(struct Gc *gc, struct Pair *pair)
     struct Array *subString2 = subStringObject2->value.array;
     arrayInsertAll(string, string->objectCount, subString2);
 
-    objectFree(subStringObject2);
+    free(subString2->objects);
+    free(subString2);
+    free(subStringObject2);
 
     stringAppendCharacter(string, ')');
 

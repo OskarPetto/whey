@@ -279,6 +279,7 @@ Integer mapEquals(struct Map *map1, struct Map *map2)
         return BOOLEAN_FALSE;
     }
 
+    // map1 subset map2
     for (Integer i = 0; i < map1->bucketCount; i++)
     {
         struct MapEntry *currEntry = map1->buckets[i];
