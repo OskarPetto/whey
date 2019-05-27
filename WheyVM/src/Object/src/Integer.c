@@ -10,7 +10,7 @@
 struct Object *integerNew(struct Gc *gc, Integer value)
 {
     struct Object *integer = objectNew(gc, OBJECT_TYPE_INTEGER);
-    integer->value.integer_value = value;
+    integer->value.integerValue = value;
     return integer;
 }
 

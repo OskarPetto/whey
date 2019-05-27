@@ -16,10 +16,10 @@ struct Object *objectCopy(struct Gc *gc, struct Object *object)
     switch (object->type)
     {
     case OBJECT_TYPE_INTEGER:
-        return integerNew(gc, object->value.integer_value);
+        return integerNew(gc, object->value.integerValue);
 
-    case OBJECT_TYPE_FLOATING:
-        return doubleNew(gc, object->value.double_value);
+    case OBJECT_TYPE_DOUBLE:
+        return doubleNew(gc, object->value.doubleValue);
 
     case OBJECT_TYPE_ARRAY:
         return arrayCopy(gc, object->value.array);
@@ -58,10 +58,10 @@ Integer objectEquals(struct Object *object1, struct Object *object2)
     switch (object1->type)
     {
     case OBJECT_TYPE_INTEGER:
-        return object1->value.integer_value == object2->value.integer_value;
+        return object1->value.integerValue == object2->value.integerValue;
 
-    case OBJECT_TYPE_FLOATING:
-        return object1->value.double_value == object2->value.double_value;
+    case OBJECT_TYPE_DOUBLE:
+        return object1->value.doubleValue == object2->value.doubleValue;
 
     case OBJECT_TYPE_ARRAY:
         return arrayEquals(object1->value.array, object2->value.array);
@@ -88,10 +88,10 @@ Integer objectHash(struct Object *object)
     switch (object->type)
     {
     case OBJECT_TYPE_INTEGER:
-        return object->value.integer_value;
+        return object->value.integerValue;
 
-    case OBJECT_TYPE_FLOATING:
-        return object->value.integer_value; //nonsense
+    case OBJECT_TYPE_DOUBLE:
+        return object->value.integerValue; //nonsense
 
     case OBJECT_TYPE_ARRAY:
         return arrayHash(object->value.array);
@@ -121,10 +121,10 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
     switch (object->type)
     {
     case OBJECT_TYPE_INTEGER:
-        return integerToString(gc, object->value.integer_value);
+        return integerToString(gc, object->value.integerValue);
 
-    case OBJECT_TYPE_FLOATING:
-        return doubleToString(gc, object->value.double_value);
+    case OBJECT_TYPE_DOUBLE:
+        return doubleToString(gc, object->value.doubleValue);
 
     case OBJECT_TYPE_ARRAY:
         return arrayToString(gc, object->value.array);

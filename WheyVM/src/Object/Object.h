@@ -9,7 +9,7 @@
 #include "Pair.h"
 
 #define OBJECT_TYPE_INTEGER            0x01
-#define OBJECT_TYPE_FLOATING           0x02
+#define OBJECT_TYPE_DOUBLE             0x02
 #define OBJECT_TYPE_ARRAY              0x03
 #define OBJECT_TYPE_STRING             0x04
 #define OBJECT_TYPE_MAP                0x05
@@ -19,8 +19,8 @@
 #define OBJECT_MARK_TRUE               0x01 
 
 union ObjectValue {
-    Integer integer_value;
-    Double double_value;
+    Integer integerValue;
+    Double doubleValue;
     struct Array *array;                // must not be NULL
     struct Map *map;                    // must not be NULL
     struct Pair *pair;                  // must not be NULL 

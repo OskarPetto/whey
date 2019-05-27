@@ -240,7 +240,7 @@ struct Object *stringToArray(struct Gc *gc, struct Array *string)
 
     for (Integer i = 0; i < string->objectCount; i++)
     {
-        array->value.array->objects[i] = integerNew(gc, (char) string->objects[i]->value.integer_value);
+        array->value.array->objects[i] = integerNew(gc, (char) string->objects[i]->value.integerValue);
     }
     
     return array;
@@ -255,8 +255,8 @@ Integer stringCompare(struct Array *array1, struct Array *array2)
 
     for (Integer i = 0; i < minL; i++)
     {
-        char c1 = (char) array1->objects[i]->value.integer_value;
-        char c2 = (char) array2->objects[i]->value.integer_value;
+        char c1 = (char) array1->objects[i]->value.integerValue;
+        char c2 = (char) array2->objects[i]->value.integerValue;
 
         if (c1 != c2) 
         {
@@ -274,7 +274,7 @@ struct Object *stringCopy(struct Gc *gc, struct Array *string)
 
     for (size_t i = 0; i < string->objectCount; i++)
     {
-        buffer[i] = (char) string->objects[i]->value.integer_value;
+        buffer[i] = (char) string->objects[i]->value.integerValue;
     }
 
     buffer[string->objectCount] = '\0';
@@ -295,7 +295,7 @@ Integer stringEquals(struct Array *string1, struct Array *string2)
 
     for (Integer i = 0; i < string1->objectCount; i++)
     {
-        if (string1->objects[i]->value.integer_value != string2->objects[i]->value.integer_value)
+        if (string1->objects[i]->value.integerValue != string2->objects[i]->value.integerValue)
         {
             return BOOLEAN_FALSE;
         }
@@ -310,7 +310,7 @@ Integer stringHash(struct Array *string)
 
     for (Integer i = 0; i < string->objectCount; i++)
     {
-        hash = 31 * hash + string->objects[i]->value.integer_value;
+        hash = 31 * hash + string->objects[i]->value.integerValue;
     }
 
     return hash;
@@ -326,7 +326,7 @@ void stringPrint(struct Array *string)
 {
     for (Integer i = 0; i < string->objectCount; i++)
     {
-        printf("%c", string->objects[i]->value.integer_value);
+        printf("%c", string->objects[i]->value.integerValue);
     }
     printf("\n");
 }

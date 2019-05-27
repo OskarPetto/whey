@@ -10,8 +10,8 @@
 
 struct Object *doubleNew(struct Gc *gc, Double value)
 {
-    struct Object *double1 = objectNew(gc, OBJECT_TYPE_FLOATING);
-    double1->value.double_value = value;
+    struct Object *double1 = objectNew(gc, OBJECT_TYPE_DOUBLE);
+    double1->value.doubleValue = value;
     return double1;
 }
 

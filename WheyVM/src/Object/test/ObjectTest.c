@@ -408,12 +408,12 @@ void testArrayCopy()
     assert(array2->value.array->objects[0]->type == OBJECT_TYPE_INTEGER);
     assert(array2->value.array->objects[1]->type == OBJECT_TYPE_INTEGER);
     assert(array2->value.array->objects[2]->type == OBJECT_TYPE_INTEGER);
-    assert(array2->value.array->objects[0]->value.integer_value == 97);
-    assert(array2->value.array->objects[1]->value.integer_value == 98);
-    assert(array2->value.array->objects[2]->value.integer_value == 99);
+    assert(array2->value.array->objects[0]->value.integerValue == 97);
+    assert(array2->value.array->objects[1]->value.integerValue == 98);
+    assert(array2->value.array->objects[2]->value.integerValue == 99);
 
-    integer1->value.integer_value = 55;
-    assert(array2->value.array->objects[0]->value.integer_value == 97);
+    integer1->value.integerValue = 55;
+    assert(array2->value.array->objects[0]->value.integerValue == 97);
 
     objectFree(array2->value.array->objects[0]);
     objectFree(array2->value.array->objects[1]);
@@ -447,11 +447,11 @@ void testArrayEquals()
     
     assert(arrayEquals(array1->value.array, array2->value.array) == 1);
 
-    array2->value.array->objects[0]->value.integer_value = -1;
+    array2->value.array->objects[0]->value.integerValue = -1;
 
     assert(arrayEquals(array1->value.array, array2->value.array) == 0);
 
-    array2->value.array->objects[0]->value.integer_value = 97;
+    array2->value.array->objects[0]->value.integerValue = 97;
 
     assert(arrayEquals(array1->value.array, array2->value.array) == 1);
 
@@ -522,19 +522,19 @@ void testArrayToString()
 
     assert(string1->value.array->objectCount == 13);
 
-    assert(string1->value.array->objects[0]->value.integer_value == '[');
-    assert(string1->value.array->objects[1]->value.integer_value == '7');
-    assert(string1->value.array->objects[2]->value.integer_value == ',');
-    assert(string1->value.array->objects[3]->value.integer_value == '9');
-    assert(string1->value.array->objects[4]->value.integer_value == '8');
-    assert(string1->value.array->objects[5]->value.integer_value == ',');
-    assert(string1->value.array->objects[6]->value.integer_value == '1');
-    assert(string1->value.array->objects[7]->value.integer_value == '2');
-    assert(string1->value.array->objects[8]->value.integer_value == '1');
-    assert(string1->value.array->objects[9]->value.integer_value == '2');
-    assert(string1->value.array->objects[10]->value.integer_value == '9');
-    assert(string1->value.array->objects[11]->value.integer_value == '9');
-    assert(string1->value.array->objects[12]->value.integer_value == ']');
+    assert(string1->value.array->objects[0]->value.integerValue == '[');
+    assert(string1->value.array->objects[1]->value.integerValue == '7');
+    assert(string1->value.array->objects[2]->value.integerValue == ',');
+    assert(string1->value.array->objects[3]->value.integerValue == '9');
+    assert(string1->value.array->objects[4]->value.integerValue == '8');
+    assert(string1->value.array->objects[5]->value.integerValue == ',');
+    assert(string1->value.array->objects[6]->value.integerValue == '1');
+    assert(string1->value.array->objects[7]->value.integerValue == '2');
+    assert(string1->value.array->objects[8]->value.integerValue == '1');
+    assert(string1->value.array->objects[9]->value.integerValue == '2');
+    assert(string1->value.array->objects[10]->value.integerValue == '9');
+    assert(string1->value.array->objects[11]->value.integerValue == '9');
+    assert(string1->value.array->objects[12]->value.integerValue == ']');
 
     struct Object *array2 = arrayNew(NULL, 0);
 
@@ -542,8 +542,8 @@ void testArrayToString()
 
     assert(string2->value.array->objectCount == 2);
 
-    assert(string2->value.array->objects[0]->value.integer_value == '[');
-    assert(string2->value.array->objects[1]->value.integer_value == ']');
+    assert(string2->value.array->objects[0]->value.integerValue == '[');
+    assert(string2->value.array->objects[1]->value.integerValue == ']');
 
     objectFree(string1);
     objectFree(string2);
@@ -624,9 +624,9 @@ void testStringNew()
     assert(string->type == OBJECT_TYPE_STRING);
     assert(string->value.array->slotCount == 5);
     assert(string->value.array->objectCount == 3);
-    assert(string->value.array->objects[0]->value.integer_value == 'A');
-    assert(string->value.array->objects[1]->value.integer_value == 'h');
-    assert(string->value.array->objects[2]->value.integer_value == 'a');
+    assert(string->value.array->objects[0]->value.integerValue == 'A');
+    assert(string->value.array->objects[1]->value.integerValue == 'h');
+    assert(string->value.array->objects[2]->value.integerValue == 'a');
 
     struct Object *string2 = stringNew(NULL, "");
     assert(string2 != NULL);
@@ -670,11 +670,11 @@ void testStringFromArray()
     assert(string->value.array->objects[3] != integer4);
     assert(string->value.array->objects[4] != integer5);
     
-    assert(string->value.array->objects[0]->value.integer_value == integer1->value.integer_value);
-    assert(string->value.array->objects[1]->value.integer_value == integer2->value.integer_value);
-    assert(string->value.array->objects[2]->value.integer_value == integer3->value.integer_value);
-    assert(string->value.array->objects[3]->value.integer_value == integer4->value.integer_value);
-    assert(string->value.array->objects[4]->value.integer_value == integer5->value.integer_value);
+    assert(string->value.array->objects[0]->value.integerValue == integer1->value.integerValue);
+    assert(string->value.array->objects[1]->value.integerValue == integer2->value.integerValue);
+    assert(string->value.array->objects[2]->value.integerValue == integer3->value.integerValue);
+    assert(string->value.array->objects[3]->value.integerValue == integer4->value.integerValue);
+    assert(string->value.array->objects[4]->value.integerValue == integer5->value.integerValue);
 
     objectFree(array1);
 
@@ -699,11 +699,11 @@ void testStringToArray()
 
     assert(array->type == OBJECT_TYPE_ARRAY);
     
-    assert(array->value.array->objects[0]->value.integer_value == 'h');
-    assert(array->value.array->objects[1]->value.integer_value == 'e');
-    assert(array->value.array->objects[2]->value.integer_value == 'l');
-    assert(array->value.array->objects[3]->value.integer_value == 'l');
-    assert(array->value.array->objects[4]->value.integer_value == 'o');
+    assert(array->value.array->objects[0]->value.integerValue == 'h');
+    assert(array->value.array->objects[1]->value.integerValue == 'e');
+    assert(array->value.array->objects[2]->value.integerValue == 'l');
+    assert(array->value.array->objects[3]->value.integerValue == 'l');
+    assert(array->value.array->objects[4]->value.integerValue == 'o');
 
     objectFree(string1);
 
@@ -761,12 +761,12 @@ void testStringCopy()
     assert(string2->value.array->objects[4] != string1->value.array->objects[4]);
     assert(string2->value.array->objects[5] != string1->value.array->objects[5]);
 
-    assert(string2->value.array->objects[0]->value.integer_value == string1->value.array->objects[0]->value.integer_value);
-    assert(string2->value.array->objects[1]->value.integer_value == string1->value.array->objects[1]->value.integer_value);
-    assert(string2->value.array->objects[2]->value.integer_value == string1->value.array->objects[2]->value.integer_value);
-    assert(string2->value.array->objects[3]->value.integer_value == string1->value.array->objects[3]->value.integer_value);
-    assert(string2->value.array->objects[4]->value.integer_value == string1->value.array->objects[4]->value.integer_value);
-    assert(string2->value.array->objects[5]->value.integer_value == string1->value.array->objects[5]->value.integer_value);
+    assert(string2->value.array->objects[0]->value.integerValue == string1->value.array->objects[0]->value.integerValue);
+    assert(string2->value.array->objects[1]->value.integerValue == string1->value.array->objects[1]->value.integerValue);
+    assert(string2->value.array->objects[2]->value.integerValue == string1->value.array->objects[2]->value.integerValue);
+    assert(string2->value.array->objects[3]->value.integerValue == string1->value.array->objects[3]->value.integerValue);
+    assert(string2->value.array->objects[4]->value.integerValue == string1->value.array->objects[4]->value.integerValue);
+    assert(string2->value.array->objects[5]->value.integerValue == string1->value.array->objects[5]->value.integerValue);
 
     objectFree(string1);
     objectFree(string2);
@@ -868,9 +868,9 @@ void testDoubleNew()
 {
     printf("testDoubleNew: ");
     struct Object *double1 = doubleNew(NULL, 0.001);
-    assert(double1->type == OBJECT_TYPE_FLOATING);
+    assert(double1->type == OBJECT_TYPE_DOUBLE);
     assert(double1->mark == OBJECT_MARK_FALSE);
-    assert(double1->value.double_value == 0.001);
+    assert(double1->value.doubleValue == 0.001);
     objectFree(double1);
     printf("OK\n");
 }
@@ -880,27 +880,27 @@ void testDoubleToString()
     printf("testDoubleToString: ");
     struct Object *double1 = doubleNew(NULL, 0.0010105);
 
-    struct Object *string = doubleToString(NULL, double1->value.double_value);
+    struct Object *string = doubleToString(NULL, double1->value.doubleValue);
 
     assert(string->type == OBJECT_TYPE_STRING);
 
     assert(string->value.array->objectCount == 16);
-    assert(string->value.array->objects[0]->value.integer_value == '1');
-    assert(string->value.array->objects[1]->value.integer_value == '.');
-    assert(string->value.array->objects[2]->value.integer_value == '0');
-    assert(string->value.array->objects[3]->value.integer_value == '1');
-    assert(string->value.array->objects[4]->value.integer_value == '0');
-    assert(string->value.array->objects[5]->value.integer_value == '5');
-    assert(string->value.array->objects[6]->value.integer_value == '0');
-    assert(string->value.array->objects[7]->value.integer_value == '0');
-    assert(string->value.array->objects[8]->value.integer_value == '0');
-    assert(string->value.array->objects[9]->value.integer_value == '0');
-    assert(string->value.array->objects[10]->value.integer_value == '0');
-    assert(string->value.array->objects[11]->value.integer_value == '0');
-    assert(string->value.array->objects[12]->value.integer_value == 'e');
-    assert(string->value.array->objects[13]->value.integer_value == '-');
-    assert(string->value.array->objects[14]->value.integer_value == '0');
-    assert(string->value.array->objects[15]->value.integer_value == '3');
+    assert(string->value.array->objects[0]->value.integerValue == '1');
+    assert(string->value.array->objects[1]->value.integerValue == '.');
+    assert(string->value.array->objects[2]->value.integerValue == '0');
+    assert(string->value.array->objects[3]->value.integerValue == '1');
+    assert(string->value.array->objects[4]->value.integerValue == '0');
+    assert(string->value.array->objects[5]->value.integerValue == '5');
+    assert(string->value.array->objects[6]->value.integerValue == '0');
+    assert(string->value.array->objects[7]->value.integerValue == '0');
+    assert(string->value.array->objects[8]->value.integerValue == '0');
+    assert(string->value.array->objects[9]->value.integerValue == '0');
+    assert(string->value.array->objects[10]->value.integerValue == '0');
+    assert(string->value.array->objects[11]->value.integerValue == '0');
+    assert(string->value.array->objects[12]->value.integerValue == 'e');
+    assert(string->value.array->objects[13]->value.integerValue == '-');
+    assert(string->value.array->objects[14]->value.integerValue == '0');
+    assert(string->value.array->objects[15]->value.integerValue == '3');
     
     objectFree(string);
     objectFree(double1);
@@ -1020,7 +1020,7 @@ void testIntegerNew()
     struct Object *integer = integerNew(NULL, 1231212);
 
     assert(integer->type == OBJECT_TYPE_INTEGER);
-    assert(integer->value.integer_value == 1231212);
+    assert(integer->value.integerValue == 1231212);
 
     objectFree(integer);
     printf("OK\n");
@@ -1031,16 +1031,16 @@ void testIntegerToString()
     printf("testIntegerToString: ");
     struct Object *integer1 = integerNew(NULL, 10105);
 
-    struct Object *string = integerToString(NULL, integer1->value.integer_value);
+    struct Object *string = integerToString(NULL, integer1->value.integerValue);
 
     assert(string->type == OBJECT_TYPE_STRING);
 
     assert(string->value.array->objectCount == 5);
-    assert(string->value.array->objects[0]->value.integer_value == '1');
-    assert(string->value.array->objects[1]->value.integer_value == '0');
-    assert(string->value.array->objects[2]->value.integer_value == '1');
-    assert(string->value.array->objects[3]->value.integer_value == '0');
-    assert(string->value.array->objects[4]->value.integer_value == '5');
+    assert(string->value.array->objects[0]->value.integerValue == '1');
+    assert(string->value.array->objects[1]->value.integerValue == '0');
+    assert(string->value.array->objects[2]->value.integerValue == '1');
+    assert(string->value.array->objects[3]->value.integerValue == '0');
+    assert(string->value.array->objects[4]->value.integerValue == '5');
     
     objectFree(string);
     objectFree(integer1);
@@ -1759,7 +1759,7 @@ void testObjectEquals()
     assert(objectEquals(object, copy) == BOOLEAN_TRUE);
 
     // copy changes address
-    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integer_value = 12;
+    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integerValue = 12;
     
     assert(objectEquals(object, copy) == BOOLEAN_FALSE);
 
@@ -1785,7 +1785,7 @@ void testObjectHash()
     assert(objectHash(object) == objectHash(copy));
 
     // copy changes address
-    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integer_value = 12;
+    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integerValue = 12;
     
     // copy changes address back
     mapPut(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"), integerNew(gc, 32));
@@ -2019,20 +2019,20 @@ void testPairToString()
     
     assert(pairString->type == OBJECT_TYPE_STRING);
     assert(pairString->value.array->objectCount == 14);
-    assert(pairString->value.array->objects[0]->value.integer_value == '(');
-    assert(pairString->value.array->objects[1]->value.integer_value == '1');
-    assert(pairString->value.array->objects[2]->value.integer_value == '2');
-    assert(pairString->value.array->objects[3]->value.integer_value == '3');
-    assert(pairString->value.array->objects[4]->value.integer_value == '3');
-    assert(pairString->value.array->objects[5]->value.integer_value == '1');
-    assert(pairString->value.array->objects[6]->value.integer_value == '2');
-    assert(pairString->value.array->objects[7]->value.integer_value == '3');
-    assert(pairString->value.array->objects[8]->value.integer_value == ',');
-    assert(pairString->value.array->objects[9]->value.integer_value == '1');
-    assert(pairString->value.array->objects[10]->value.integer_value == '2');
-    assert(pairString->value.array->objects[11]->value.integer_value == '3');
-    assert(pairString->value.array->objects[12]->value.integer_value == '1');
-    assert(pairString->value.array->objects[13]->value.integer_value == ')');
+    assert(pairString->value.array->objects[0]->value.integerValue == '(');
+    assert(pairString->value.array->objects[1]->value.integerValue == '1');
+    assert(pairString->value.array->objects[2]->value.integerValue == '2');
+    assert(pairString->value.array->objects[3]->value.integerValue == '3');
+    assert(pairString->value.array->objects[4]->value.integerValue == '3');
+    assert(pairString->value.array->objects[5]->value.integerValue == '1');
+    assert(pairString->value.array->objects[6]->value.integerValue == '2');
+    assert(pairString->value.array->objects[7]->value.integerValue == '3');
+    assert(pairString->value.array->objects[8]->value.integerValue == ',');
+    assert(pairString->value.array->objects[9]->value.integerValue == '1');
+    assert(pairString->value.array->objects[10]->value.integerValue == '2');
+    assert(pairString->value.array->objects[11]->value.integerValue == '3');
+    assert(pairString->value.array->objects[12]->value.integerValue == '1');
+    assert(pairString->value.array->objects[13]->value.integerValue == ')');
 
     objectFree(pairString);
     objectFree(integer1);
