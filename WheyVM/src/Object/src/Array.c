@@ -3,6 +3,7 @@
 #include "../Integer.h"
 
 #include <assert.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -164,7 +165,7 @@ Integer arrayHash(struct Array *array)
 
 struct Object *arrayToString(struct Gc *gc, struct Array *array)
 {
-    struct Object *stringObject = stringNew(gc, 0);
+    struct Object *stringObject = stringNew(gc, "");
     struct Array *string = stringObject->value.array;
 
     stringAppendCharacter(string, '[');
@@ -213,14 +214,16 @@ void arrayFree(struct Array *array)
 
 }
 
-struct Object *stringNew(struct Gc *gc, Integer initialObjectCount)
+struct Object *stringNew(struct Gc *gc, char *characters)
 {
+    Integer initialObjectCount = strlen(characters);
+
     struct Object *string = arrayNew(gc, initialObjectCount);
     string->type = OBJECT_TYPE_STRING;
 
     for (Integer i = 0; i < initialObjectCount; i++)
     {
-        string->value.array->objects[i] = NULL;
+        string->value.array->objects[i] = integerNew(NULL, characters[i]);
     }
 
     return string;
@@ -237,7 +240,7 @@ struct Object *stringToArray(struct Gc *gc, struct Array *string)
 
     for (Integer i = 0; i < string->objectCount; i++)
     {
-        array->value.array->objects[i] = integerNew(gc, string->objects[i]->value.integer_value);
+        array->value.array->objects[i] = integerNew(gc, (char) string->objects[i]->value.integer_value);
     }
     
     return array;
@@ -266,12 +269,19 @@ Integer stringCompare(struct Array *array1, struct Array *array2)
 
 struct Object *stringCopy(struct Gc *gc, struct Array *string)
 {
-    struct Object *copy = stringNew(gc, string->objectCount);
+    char *buffer = (char *)malloc((string->objectCount + 1)* sizeof(char)); 
+    assert(buffer != NULL);
 
-    for (Integer i = 0; i < string->objectCount; i++)
+    for (size_t i = 0; i < string->objectCount; i++)
     {
-        copy->value.array->objects[i] = integerNew(NULL, (char) string->objects[i]->value.integer_value);
+        buffer[i] = (char) string->objects[i]->value.integer_value;
     }
+
+    buffer[string->objectCount] = '\0';
+
+    struct Object *copy = stringNew(gc, buffer);
+
+    free(buffer);
 
     return copy;
 }
@@ -318,6 +328,7 @@ void stringPrint(struct Array *string)
     {
         printf("%c", string->objects[i]->value.integer_value);
     }
+    printf("\n");
 }
 
 void stringFree(struct Array *string)

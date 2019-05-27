@@ -403,7 +403,7 @@ void testArrayHash()
     assert(arrayHash(array1->value.array) == arrayHash(array1->value.array));
 
     struct Object *array2 = arrayCopy(NULL, array1->value.array);
-    
+
     assert(arrayHash(array1->value.array) == arrayHash(array2->value.array));
 
     struct Object *array3 = arrayNew(NULL, 0);
@@ -536,15 +536,27 @@ void testStringNew()
 {
     printf("testStringNew: ");
     
-    struct Object *string = stringNew(NULL, 3);
+    struct Object *string = stringNew(NULL, "Aha");
     assert(string != NULL);
     assert(string->value.array != NULL);
     assert(string->value.array->objects != NULL);
     assert(string->type == OBJECT_TYPE_STRING);
     assert(string->value.array->slotCount == 5);
     assert(string->value.array->objectCount == 3);
+    assert(string->value.array->objects[0]->value.integer_value == 'A');
+    assert(string->value.array->objects[1]->value.integer_value == 'h');
+    assert(string->value.array->objects[2]->value.integer_value == 'a');
+
+    struct Object *string2 = stringNew(NULL, "");
+    assert(string2 != NULL);
+    assert(string2->value.array != NULL);
+    assert(string2->value.array->objects != NULL);
+    assert(string2->type == OBJECT_TYPE_STRING);
+    assert(string2->value.array->slotCount == 1);
+    assert(string2->value.array->objectCount == 0);
 
     objectFree(string);
+    objectFree(string2);
     
     printf("OK\n");
 }
@@ -600,33 +612,17 @@ void testStringFromArray()
 void testStringToArray()
 {
     printf("testStringToArray: ");
-    struct Object *string1 = stringNew(NULL, 5);
-    struct Object *integer1 = integerNew(NULL, 'h');
-    struct Object *integer2 = integerNew(NULL, 'e');
-    struct Object *integer3 = integerNew(NULL, 'l');
-    struct Object *integer4 = integerNew(NULL, 'l');
-    struct Object *integer5 = integerNew(NULL, 'o');
-
-    string1->value.array->objects[0] = integer1;
-    string1->value.array->objects[1] = integer2;
-    string1->value.array->objects[2] = integer3;
-    string1->value.array->objects[3] = integer4;
-    string1->value.array->objects[4] = integer5;
+    struct Object *string1 = stringNew(NULL, "hello");
 
     struct Object *array = stringToArray(NULL, string1->value.array);
 
     assert(array->type == OBJECT_TYPE_ARRAY);
-    assert(array->value.array->objects[0] != integer1);
-    assert(array->value.array->objects[1] != integer2);
-    assert(array->value.array->objects[2] != integer3);
-    assert(array->value.array->objects[3] != integer4);
-    assert(array->value.array->objects[4] != integer5);
     
-    assert(array->value.array->objects[0]->value.integer_value == integer1->value.integer_value);
-    assert(array->value.array->objects[1]->value.integer_value == integer2->value.integer_value);
-    assert(array->value.array->objects[2]->value.integer_value == integer3->value.integer_value);
-    assert(array->value.array->objects[3]->value.integer_value == integer4->value.integer_value);
-    assert(array->value.array->objects[4]->value.integer_value == integer5->value.integer_value);
+    assert(array->value.array->objects[0]->value.integer_value == 'h');
+    assert(array->value.array->objects[1]->value.integer_value == 'e');
+    assert(array->value.array->objects[2]->value.integer_value == 'l');
+    assert(array->value.array->objects[3]->value.integer_value == 'l');
+    assert(array->value.array->objects[4]->value.integer_value == 'o');
 
     objectFree(string1);
 
@@ -644,50 +640,13 @@ void testStringToArray()
 void testStringCompare()
 {
     printf("testStringCompare: ");
-    struct Object *string1 = stringNew(NULL, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
+    struct Object *string1 = stringNew(NULL, "hallo1");
 
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
+    struct Object *string2 = stringNew(NULL, "hallo");
 
-    struct Object *string2 = stringNew(NULL, 5);
-    struct Object *integer21 = integerNew(NULL, 'h');
-    struct Object *integer22 = integerNew(NULL, 'a');
-    struct Object *integer23 = integerNew(NULL, 'l');
-    struct Object *integer24 = integerNew(NULL, 'l');
-    struct Object *integer25 = integerNew(NULL, 'o');
+    struct Object *string3 = stringNew(NULL, "banana");
 
-    string2->value.array->objects[0] = integer21;
-    string2->value.array->objects[1] = integer22;
-    string2->value.array->objects[2] = integer23;
-    string2->value.array->objects[3] = integer24;
-    string2->value.array->objects[4] = integer25;
-
-    struct Object *string3 = stringNew(NULL, 6);
-    struct Object *integer31 = integerNew(NULL, 'b');
-    struct Object *integer32 = integerNew(NULL, 'a');
-    struct Object *integer33 = integerNew(NULL, 'n');
-    struct Object *integer34 = integerNew(NULL, 'a');
-    struct Object *integer35 = integerNew(NULL, 'n');
-    struct Object *integer36 = integerNew(NULL, 'a');
-
-    string3->value.array->objects[0] = integer31;
-    string3->value.array->objects[1] = integer32;
-    string3->value.array->objects[2] = integer33;
-    string3->value.array->objects[3] = integer34;
-    string3->value.array->objects[4] = integer35;
-    string3->value.array->objects[5] = integer36;
-
-    struct Object *string4 = stringNew(NULL, 0);
+    struct Object *string4 = stringNew(NULL, "");
 
     assert(stringCompare(string1->value.array, string1->value.array) == 0);
     assert(stringCompare(string1->value.array, string2->value.array) > 0);
@@ -710,21 +669,7 @@ void testStringCompare()
 void testStringCopy()
 {
     printf("testStringCopy: ");
-    struct Object *string1 = stringNew(NULL, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
-
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
-
+    struct Object *string1 = stringNew(NULL, "hallo1");
     struct Object *string2 = stringCopy(NULL, string1->value.array);
 
     assert(string2->type == OBJECT_TYPE_STRING);
@@ -752,33 +697,13 @@ void testStringEquals()
 {
     printf("testStringEquals: ");
 
-    struct Object *string1 = stringNew(NULL, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
-
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
+    struct Object *string1 = stringNew(NULL, "hallo1");
 
     struct Object *string2 = stringCopy(NULL, string1->value.array);
 
-    struct Object *string3 = stringNew(NULL, 3);
-    struct Object *integer31 = integerNew(NULL, 'b');
-    struct Object *integer32 = integerNew(NULL, 'a');
-    struct Object *integer33 = integerNew(NULL, 'n');
+    struct Object *string3 = stringNew(NULL, "ban");
 
-    string3->value.array->objects[0] = integer31;
-    string3->value.array->objects[1] = integer32;
-    string3->value.array->objects[2] = integer33;
-
-    struct Object *string4 = stringNew(NULL, 0);
+    struct Object *string4 = stringNew(NULL, "");
 
     assert(stringEquals(string1->value.array, string1->value.array) == BOOLEAN_TRUE);
     assert(stringEquals(string1->value.array, string2->value.array) == BOOLEAN_TRUE);
@@ -809,25 +734,12 @@ void testStringHash()
 {
     printf("testStringHash: ");
 
-    struct Object *string1 = stringNew(NULL, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
-
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
+    struct Object *string1 = stringNew(NULL, "hallo1");
 
     struct Object *string2 = stringCopy(NULL, string1->value.array);
 
-    struct Object *string3 = stringNew(NULL, 0);
-    struct Object *string4 = stringNew(NULL, 0);
+    struct Object *string3 = stringNew(NULL, "");
+    struct Object *string4 = stringNew(NULL, "");
 
     assert(stringHash(string1->value.array) == stringHash(string2->value.array));
     assert(stringHash(string3->value.array) == stringHash(string4->value.array));
@@ -843,22 +755,10 @@ void testStringHash()
 void testStringAppendCharacter()
 {
     printf("testStringAppendCharacter: ");
-    struct Object *string1 = stringNew(NULL, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
+    struct Object *string1 = stringNew(NULL, "hallo1");
 
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
+    struct Object *string2 = stringNew(NULL, "");
 
-    struct Object *string2 = stringNew(NULL, 0);
     stringAppendCharacter(string2->value.array, 'h');
     stringAppendCharacter(string2->value.array, 'a');
     stringAppendCharacter(string2->value.array, 'l');
@@ -877,7 +777,7 @@ void testStringAppendCharacter()
 void testStringFree()
 {
     printf("testStringFree: ");
-    struct Object *string1 = stringNew(NULL, 6);
+    struct Object *string1 = stringNew(NULL, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
     objectFree(string1);
 
     printf("OK\n");
@@ -953,20 +853,7 @@ void testGcRegisterObject()
     array1->value.array->objects[1] = integer2;
     array1->value.array->objects[2] = integer3;
 
-    struct Object *string1 = stringNew(gc, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
-
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
+    struct Object *string1 = stringNew(gc, "hallo1");
 
     assert(gc->newCount == 5);
     assert(gc->freeCount == 0);
@@ -995,30 +882,17 @@ void testGcSweep()
     array1->value.array->objects[1] = integer2;
     array1->value.array->objects[2] = integer3;
 
-    struct Object *string1 = stringNew(gc, 6);
-    struct Object *integer11 = integerNew(NULL, 'h');
-    struct Object *integer12 = integerNew(NULL, 'a');
-    struct Object *integer13 = integerNew(NULL, 'l');
-    struct Object *integer14 = integerNew(NULL, 'l');
-    struct Object *integer15 = integerNew(NULL, 'o');
-    struct Object *integer16 = integerNew(NULL, '1');
-
-    string1->value.array->objects[0] = integer11;
-    string1->value.array->objects[1] = integer12;
-    string1->value.array->objects[2] = integer13;
-    string1->value.array->objects[3] = integer14;
-    string1->value.array->objects[4] = integer15;
-    string1->value.array->objects[5] = integer16;
+    struct Object *string = stringNew(gc, "hallo1");
 
     assert(gc->newCount == 5);
 
     integer1->mark = OBJECT_MARK_TRUE;
-    string1->mark = OBJECT_MARK_TRUE;
+    string->mark = OBJECT_MARK_TRUE;
 
     gcSweep(gc);
 
     assert(gc->freeCount == 3);
-    assert(gc->head->object == string1);
+    assert(gc->head->object == string);
     assert(gc->head->next->object == integer1);
     assert(gc->head->next->next == NULL);
 
@@ -1033,6 +907,17 @@ void testGcSweep()
     gcSweep(gc);
 
     assert(gc->freeCount == 5);
+    assert(gc->head == NULL);
+
+    struct Object *arrayString1 = stringNew(gc, "");
+    struct Object *arrayString2 = arrayToString(gc, stringToArray(gc, arrayString1->value.array)->value.array);
+    struct Object *arrayString3 = arrayToString(gc, stringToArray(gc, arrayString2->value.array)->value.array);
+
+    assert(arrayString3->value.array->objectCount == 7);
+
+    gcSweep(gc);
+
+    assert(gc->freeCount == 12);
     assert(gc->head == NULL);
 
     gcFree(gc);
@@ -1116,20 +1001,7 @@ void testMapGet()
     struct Object *map1 = mapNew(NULL);
     struct Object *integer1 = integerNew(NULL, 1212);
 
-    struct Object *string1 = stringNew(NULL, 6);
-    struct Object *char1 = integerNew(NULL, 'h');
-    struct Object *char2 = integerNew(NULL, 'a');
-    struct Object *char3 = integerNew(NULL, 'l');
-    struct Object *char4 = integerNew(NULL, 'l');
-    struct Object *char5 = integerNew(NULL, 'o');
-    struct Object *char6 = integerNew(NULL, '1');
-
-    string1->value.array->objects[0] = char1;
-    string1->value.array->objects[1] = char2;
-    string1->value.array->objects[2] = char3;
-    string1->value.array->objects[3] = char4;
-    string1->value.array->objects[4] = char5;
-    string1->value.array->objects[5] = char6;
+    struct Object *string1 = stringNew(NULL, "hallo1");
 
     assert(mapGet(map1->value.map, integer1) == NULL);
     assert(mapGet(map1->value.map, string1) == NULL);

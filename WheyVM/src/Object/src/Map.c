@@ -315,7 +315,7 @@ Integer mapHash(struct Map *map)
 
 struct Object *mapToString(struct Gc *gc, struct Map *map)
 {
-    struct Object *stringObject = stringNew(gc, 0);
+    struct Object *stringObject = stringNew(gc, "");
     struct Array *string = stringObject->value.array;
 
     stringAppendCharacter(string, '{');

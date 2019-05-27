@@ -115,12 +115,7 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
 
     if (object == NULL)
     {
-        struct Object *stringObject = stringNew(gc, 4);
-        stringObject->value.array->objects[0] = integerNew(NULL, 'n');
-        stringObject->value.array->objects[1] = integerNew(NULL, 'u');
-        stringObject->value.array->objects[2] = integerNew(NULL, 'l');
-        stringObject->value.array->objects[3] = integerNew(NULL, 'l');
-        return stringObject;
+        return stringNew(gc, "null");
     }
 
     switch (object->type)

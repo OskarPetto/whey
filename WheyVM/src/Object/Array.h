@@ -29,7 +29,7 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array);
 void arrayMark(struct Array *array);
 void arrayFree(struct Array *array);
 
-struct Object *stringNew(struct Gc *gc, Integer initialObjectCount);
+struct Object *stringNew(struct Gc *gc, char *characters);
 struct Object *stringFromArray(struct Gc *gc, struct Array *array);
 struct Object *stringToArray(struct Gc *gc, struct Array *string);
 Integer stringCompare(struct Array *array1, struct Array *array2);

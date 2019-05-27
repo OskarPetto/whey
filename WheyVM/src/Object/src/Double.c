@@ -21,14 +21,7 @@ struct Object *doubleToString(struct Gc *gc, Double double1)
  
     snprintf(buffer, FLOAT_STRING_BUFFER_SIZE, "%.10e", double1);
 
-    int charCount = strlen(buffer);
-
-    struct Object *stringObject = stringNew(gc, charCount);
-
-    for (Integer i = 0; i < charCount; i++)
-    {
-        stringObject->value.array->objects[i] = integerNew(NULL, buffer[i]);
-    }
+    struct Object *stringObject = stringNew(gc, buffer);
 
     return stringObject;
 }

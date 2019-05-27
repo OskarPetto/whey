@@ -20,14 +20,7 @@ struct Object *integerToString(struct Gc *gc, Integer integer)
 
     snprintf(buffer, INTEGER_STRING_BUFFER_SIZE, "%d", integer);
 
-    int charCount = strlen(buffer);
-
-    struct Object *stringObject = stringNew(gc, charCount);
-
-    for (Integer i = 0; i < charCount; i++)
-    {
-        stringObject->value.array->objects[i] = integerNew(NULL, buffer[i]);
-    }
+    struct Object *stringObject = stringNew(gc, buffer);
 
     return stringObject;
 }

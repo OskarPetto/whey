@@ -57,7 +57,7 @@ Integer pairHash(struct Pair *pair)
 
 struct Object *pairToString(struct Gc *gc, struct Pair *pair)
 {
-    struct Object *stringObject = stringNew(gc, 0);
+    struct Object *stringObject = stringNew(gc, "");
     struct Array *string = stringObject->value.array;
 
     stringAppendCharacter(string, '(');
