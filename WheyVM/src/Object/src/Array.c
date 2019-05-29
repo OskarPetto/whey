@@ -22,16 +22,6 @@ struct Object *arrayNew(struct Gc *gc, Integer initialObjectCount)
     return object;
 }
 
-Integer arraySize(struct Array *array)
-{
-    return array->objectCount;
-}
-
-struct Object *arrayGet(struct Array *array, Integer index)
-{
-    return array->objects[index];
-}
-
 struct Object *arraySet(struct Array *array, Integer index, struct Object *setObject)
 {
     struct Object *currentObject = array->objects[index];

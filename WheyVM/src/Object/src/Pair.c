@@ -15,17 +15,6 @@ struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *secon
     return pair;
 }
 
-struct Object *pairGetFirst(struct Pair *pair)
-{
-    return pair->first;
-}
-
-struct Object *pairGetSecond(struct Pair *pair)
-{
-    return pair->second;
-}
-
-
 struct Object *pairSetFirst(struct Pair *pair, struct Object *first)
 {
     struct Object *prev = pair->first;

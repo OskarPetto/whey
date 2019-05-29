@@ -24,11 +24,6 @@ struct Object *stringNew(struct Gc *gc, char *characters)
     return string;
 }
 
-Integer stringLength(struct String *string)
-{
-    return string->characterCount;
-}
-
 struct Object *stringFromArray(struct Gc *gc, struct Array *array)
 {
     struct Object *string = objectNew(gc, OBJECT_TYPE_STRING);

@@ -13,9 +13,7 @@ struct String
     Integer characterCount;
 };
 
-
 struct Object *stringNew(struct Gc *gc, char *characters);
-Integer stringLength(struct String *string);
 struct Object *stringFromArray(struct Gc *gc, struct Array *array);
 struct Object *stringToArray(struct Gc *gc, struct String *string);
 Integer stringCompare(struct String *string1, struct String *string2);

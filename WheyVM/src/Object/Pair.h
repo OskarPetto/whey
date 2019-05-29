@@ -13,8 +13,6 @@ struct Pair
 };
 
 struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *second);
-struct Object *pairGetFirst(struct Pair *pair);
-struct Object *pairGetSecond(struct Pair *pair);
 struct Object *pairSetFirst(struct Pair *pair, struct Object *first);
 struct Object *pairSetSecond(struct Pair *pair, struct Object *second);
 

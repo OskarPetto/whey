@@ -122,38 +122,6 @@ void testArrayNew()
     printf("OK\n");
 }
 
-void testArraySize()
-{
-    printf("testArraySize: ");
-    struct Object *array1 = arrayNew(NULL, 14);
-    assert(arraySize(array1->value.array) == 14);
-
-    struct Object *array2 = arrayNew(NULL, 0);
-    assert(arraySize(array2->value.array) == 0);
-
-    objectFree(array1);
-    objectFree(array2);
-
-    printf("OK\n");
-}
-
-void testArrayGet()
-{
-    printf("testArrayGet: ");
-
-    struct Object *array = arrayNew(NULL, 14);
-    struct Object *integer = integerNew(NULL, -132);
-
-    array->value.array->objects[10] = integer;
-
-    assert(arrayGet(array->value.array, 10) == integer);
-
-    objectFree(array);
-    objectFree(integer);
-
-    printf("OK\n");
-}
-
 void testArraySet()
 {
     printf("testArraySet: ");
@@ -164,7 +132,7 @@ void testArraySet()
     array->value.array->objects[10] = integer;
 
     assert(arraySet(array->value.array, 10, NULL) == integer);
-    assert(arrayGet(array->value.array, 10) == NULL);
+    assert(array->value.array->objects[10] == NULL);
 
     objectFree(array);
     objectFree(integer);
@@ -1133,21 +1101,6 @@ void testMapNew()
     printf("OK\n");
 }
 
-void testMapSize()
-{
-    printf("testMapSize: ");
-    struct Object *map1 = mapNew(NULL);
-
-    assert(map1->type == OBJECT_TYPE_MAP);
-
-    assert(map1->value.map->bucketCount == 8);
-
-    assert(mapSize(map1->value.map) == 0);
-
-    objectFree(map1);
-    printf("OK\n");
-}
-
 void testMapGet()
 {
     printf("testMapGet: ");
@@ -1185,54 +1138,54 @@ void testMapPut()
     struct Object *integer10 = integerNew(NULL, 236);
 
     assert(mapPut(map1->value.map, integer1, integer6) == NULL);
-    assert(mapSize(map1->value.map) == 1);
+    assert(map1->value.map->entryCount == 1);
     assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer2, integer7) == NULL);
-    assert(mapSize(map1->value.map) == 2);
+    assert(map1->value.map->entryCount == 2);
     assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer3, integer8) == NULL);
-    assert(mapSize(map1->value.map) == 3);
+    assert(map1->value.map->entryCount == 3);
     assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer4, integer9) == NULL);
-    assert(mapSize(map1->value.map) == 4);
+    assert(map1->value.map->entryCount == 4);
     assert(map1->value.map->bucketCount == 8);
     
     assert(mapPut(map1->value.map, integer5, integer10) == integer7);
     assert(mapGet(map1->value.map, integer5) == integer10);
-    assert(mapSize(map1->value.map) == 4);
+    assert(map1->value.map->entryCount == 4);
     assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer6, integer5) == NULL);
     assert(mapGet(map1->value.map, integer6) == integer5);
-    assert(mapSize(map1->value.map) == 5);
+    assert(map1->value.map->entryCount == 5);
     assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer7, integer4) == NULL);
     assert(mapGet(map1->value.map, integer7) == integer4);
-    assert(mapSize(map1->value.map) == 6);
+    assert(map1->value.map->entryCount == 6);
     assert(map1->value.map->bucketCount == 8);
 
     assert(mapPut(map1->value.map, integer8, integer3) == NULL);
     assert(mapGet(map1->value.map, integer8) == integer3);
-    assert(mapSize(map1->value.map) == 7);
+    assert(map1->value.map->entryCount == 7);
     assert(map1->value.map->bucketCount == 16);
 
     assert(mapPut(map1->value.map, integer9, integer2) == NULL);
     assert(mapGet(map1->value.map, integer9) == integer2);
-    assert(mapSize(map1->value.map) == 8);
+    assert(map1->value.map->entryCount == 8);
     assert(map1->value.map->bucketCount == 16);
 
     assert(mapPut(map1->value.map, NULL, integer1) == NULL);
     assert(mapGet(map1->value.map, NULL) == integer1);
-    assert(mapSize(map1->value.map) == 9);
+    assert(map1->value.map->entryCount == 9);
     assert(map1->value.map->bucketCount == 16);
 
     assert(mapPut(map1->value.map, NULL, NULL) == integer1);
     assert(mapGet(map1->value.map, NULL) == NULL);
-    assert(mapSize(map1->value.map) == 9);
+    assert(map1->value.map->entryCount == 9);
     assert(map1->value.map->bucketCount == 16);
 
     objectFree(map1);
@@ -1951,36 +1904,6 @@ void testPairNew()
     printf("OK\n");
 }
 
-void testPairGetFirst()
-{
-    printf("testPairGetFirst: ");
-    struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *pair = pairNew(NULL, NULL, integer1);
-
-    assert(pairGetFirst(pair->value.pair) == NULL);
-    pair->value.pair->first = integer1;
-    assert(pairGetFirst(pair->value.pair) == integer1);
-
-    objectFree(integer1);
-    objectFree(pair);
-    printf("OK\n");
-}
-
-void testPairGetSecond()
-{
-    printf("testPairGetSecond: ");
-    struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *pair = pairNew(NULL, NULL, integer1);
-
-    assert(pairGetSecond(pair->value.pair) == integer1);
-    pair->value.pair->second = NULL;
-    assert(pairGetSecond(pair->value.pair) == NULL);
-
-    objectFree(integer1);
-    objectFree(pair);
-    printf("OK\n");
-}
-
 void testPairSetFirst()
 {
     printf("testPairSetFirst: ");
@@ -1988,10 +1911,10 @@ void testPairSetFirst()
     struct Object *pair = pairNew(NULL, NULL, integer1);
 
     assert(pairSetFirst(pair->value.pair, integer1) == NULL);
-    assert(pairGetFirst(pair->value.pair) == integer1);
+    assert(pair->value.pair->first == integer1);
 
     assert(pairSetFirst(pair->value.pair, NULL) == integer1);
-    assert(pairGetFirst(pair->value.pair) == NULL);
+    assert(pair->value.pair->first == NULL);
 
     objectFree(integer1);
     objectFree(pair);
@@ -2005,10 +1928,10 @@ void testPairSetSecond()
     struct Object *pair = pairNew(NULL, NULL, integer1);
 
     assert(pairSetSecond(pair->value.pair, NULL) == integer1);
-    assert(pairGetSecond(pair->value.pair) == NULL);
+    assert(pair->value.pair->second == NULL);
 
     assert(pairSetSecond(pair->value.pair, integer1) == NULL);
-    assert(pairGetSecond(pair->value.pair) == integer1);
+    assert(pair->value.pair->second == integer1);
 
     objectFree(integer1);
     objectFree(pair);
@@ -2137,8 +2060,6 @@ void testPairMark()
 int main(int argc, char* argv[])
 {
     testArrayNew();
-    testArraySize();
-    testArrayGet();
     testArraySet();
     testArrayInsert();
     testArrayInsertAll();
@@ -2169,7 +2090,6 @@ int main(int argc, char* argv[])
     testIntegerNew();
     testIntegerToString();
     testMapNew();
-    testMapSize();
     testMapGet();
     testMapPut();
     //testMapPutMany();
@@ -2191,8 +2111,6 @@ int main(int argc, char* argv[])
     testObjectMark();
     testObjectFree();
     testPairNew();
-    testPairGetFirst();
-    testPairGetSecond();
     testPairSetFirst();
     testPairSetSecond();
     testPairCopy();

@@ -127,11 +127,6 @@ struct Object *mapNew(struct Gc *gc)
     return mapWithBucketCount(gc, 8);
 }
 
-Integer mapSize(struct Map *map)
-{
-    return map->entryCount;
-}
-
 struct Object *mapGet(struct Map *map, struct Object *key)
 {
     Integer improvedHash = improveHash(objectHash(key));

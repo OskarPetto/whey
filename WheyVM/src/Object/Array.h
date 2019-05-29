@@ -14,8 +14,6 @@ struct Array
 };
 
 struct Object *arrayNew(struct Gc *gc, Integer initialObjectCount);
-Integer arraySize(struct Array *array);
-struct Object *arrayGet(struct Array *array, Integer index);
 struct Object *arraySet(struct Array *array, Integer index, struct Object *setObject);
 void arrayInsert(struct Array *array, Integer index, struct Object *insertObject);
 void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArray);

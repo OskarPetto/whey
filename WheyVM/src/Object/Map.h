@@ -24,7 +24,6 @@ struct Map
 };
 
 struct Object *mapNew(struct Gc *gc);
-Integer mapSize(struct Map *map);
 struct Object *mapGet(struct Map *map, struct Object *key);
 struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value);
 void mapPutAll(struct Map *map, struct Map *mapToPut);
