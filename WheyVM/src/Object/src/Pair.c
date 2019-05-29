@@ -1,6 +1,6 @@
 #include "../Pair.h"
-#include "../Array.h"
 #include "../Object.h"
+#include "../String.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -57,30 +57,32 @@ Integer pairHash(struct Pair *pair)
 
 struct Object *pairToString(struct Gc *gc, struct Pair *pair)
 {
-    struct Object *stringObject = stringNew(gc, "");
-    struct Array *string = stringObject->value.array;
-
-    stringAppendCharacter(string, '(');
+    struct Object *stringObject = stringNew(NULL, "(");
 
     struct Object *subStringObject1 = objectToString(NULL, pair->first);
-    struct Array *subString1 = subStringObject1->value.array;
-    arrayInsertAll(string, string->objectCount, subString1);
+    
+    struct Object *temp = stringConcatenate(NULL, stringObject->value.string, subStringObject1->value.string);
 
-    free(subString1->objects);
-    free(subString1);
-    free(subStringObject1);
+    objectFree(stringObject);
+    objectFree(subStringObject1);
+    stringObject = temp;
 
-    stringAppendCharacter(string, ',');
+    stringAppendCharacter(stringObject->value.string, ',');
 
     struct Object *subStringObject2 = objectToString(NULL, pair->second);
-    struct Array *subString2 = subStringObject2->value.array;
-    arrayInsertAll(string, string->objectCount, subString2);
+    
+    temp = stringConcatenate(NULL, stringObject->value.string, subStringObject2->value.string);
+    
+    objectFree(stringObject);
+    objectFree(subStringObject2);
+    stringObject = temp;
 
-    free(subString2->objects);
-    free(subString2);
-    free(subStringObject2);
+    stringAppendCharacter(stringObject->value.string, ')');
 
-    stringAppendCharacter(string, ')');
+    if (gc != NULL)
+    {
+        gcRegisterObject(gc, stringObject);
+    }
 
     return stringObject;
 }

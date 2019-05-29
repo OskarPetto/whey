@@ -25,7 +25,7 @@ struct Object *objectCopy(struct Gc *gc, struct Object *object)
         return arrayCopy(gc, object->value.array);
 
     case OBJECT_TYPE_STRING:
-        return stringCopy(gc, object->value.array);
+        return stringCopy(gc, object->value.string);
 
     case OBJECT_TYPE_MAP:
         return mapCopy(gc, object->value.map);
@@ -67,7 +67,7 @@ Integer objectEquals(struct Object *object1, struct Object *object2)
         return arrayEquals(object1->value.array, object2->value.array);
 
     case OBJECT_TYPE_STRING:
-        return stringEquals(object1->value.array, object2->value.array);
+        return stringEquals(object1->value.string, object2->value.string);
 
     case OBJECT_TYPE_MAP:
         return mapEquals(object1->value.map, object2->value.map);
@@ -97,7 +97,7 @@ Integer objectHash(struct Object *object)
         return arrayHash(object->value.array);
 
     case OBJECT_TYPE_STRING:
-        return stringHash(object->value.array);
+        return stringHash(object->value.string);
 
     case OBJECT_TYPE_MAP:
         return mapHash(object->value.map);
@@ -130,7 +130,7 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
         return arrayToString(gc, object->value.array);
 
     case OBJECT_TYPE_STRING:
-        return stringCopy(gc, object->value.array);  // copy
+        return stringCopy(gc, object->value.string);  // copy
 
     case OBJECT_TYPE_MAP:
         return mapToString(gc, object->value.map);
@@ -199,7 +199,7 @@ void objectFree(struct Object *object)
         free(object->value.pair);
         break;
     case OBJECT_TYPE_STRING:
-        stringFree(object->value.array);
+        stringFree(object->value.string);
         break;
     }
 

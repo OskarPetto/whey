@@ -7,6 +7,7 @@
 #include "Array.h"
 #include "Map.h"
 #include "Pair.h"
+#include "String.h"
 
 #define OBJECT_TYPE_INTEGER            0x01
 #define OBJECT_TYPE_DOUBLE             0x02
@@ -24,6 +25,7 @@ union ObjectValue {
     struct Array *array;                // must not be NULL
     struct Map *map;                    // must not be NULL
     struct Pair *pair;                  // must not be NULL 
+    struct String *string;                  // must not be NULL 
 };
 
 struct Object

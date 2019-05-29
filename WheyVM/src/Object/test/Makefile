@@ -40,11 +40,13 @@ $(OBJ_DIR)/Object.o : $(SRC_DIR)/Object.c $(INC_DIR)/Object.h $(OBJ_DIR)
 $(OBJ_DIR)/Pair.o : $(SRC_DIR)/Pair.c $(INC_DIR)/Pair.h $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+$(OBJ_DIR)/String.o : $(SRC_DIR)/String.c $(INC_DIR)/String.h $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_DIR)/ObjectTest.o : ObjectTest.c $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-object.out: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Double.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o
+object.out: $(OBJ_DIR)/ObjectTest.o $(OBJ_DIR)/Array.o $(OBJ_DIR)/Double.o $(OBJ_DIR)/Gc.o $(OBJ_DIR)/Integer.o $(OBJ_DIR)/Map.o $(OBJ_DIR)/Object.o $(OBJ_DIR)/Pair.o $(OBJ_DIR)/String.o
 	$(CC) $^ -o $@ -lm
 
 clean:

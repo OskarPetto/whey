@@ -7,7 +7,7 @@ INC_DIR = ..
 OBJ_DIR = ./out
 MKDIR_P = mkdir -p
 
-all: bytecode.out
+all: wcfile.out
 
 $(OBJ_DIR):
 	$(MKDIR_P) $(OBJ_DIR)
@@ -21,17 +21,17 @@ $(OBJ_DIR)/Function.o : $(SRC_DIR)/Function.c $(INC_DIR)/Function.h $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-$(OBJ_DIR)/ByteCode.o : $(SRC_DIR)/ByteCode.c $(INC_DIR)/ByteCode.h $(OBJ_DIR)
+$(OBJ_DIR)/WcFile.o : $(SRC_DIR)/WcFile.c $(INC_DIR)/WcFile.h $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-$(OBJ_DIR)/ByteCodeTest.o : ByteCodeTest.c $(OBJ_DIR)
+$(OBJ_DIR)/WcFileTest.o : WcFileTest.c $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-bytecode.out: $(OBJ_DIR)/ByteCodeTest.o $(OBJ_DIR)/ByteCode.o $(OBJ_DIR)/Function.o $(OBJ_DIR)/Constant.o
+wcfile.out: $(OBJ_DIR)/WcFileTest.o $(OBJ_DIR)/WcFile.o $(OBJ_DIR)/Function.o $(OBJ_DIR)/Constant.o
 	$(CC) $^ -o $@ -lm
 
 clean:
-	rm -rf bytecode.out $(OBJ_DIR)
+	rm -rf wcfile.out $(OBJ_DIR)
 
 .PHONY: all clean

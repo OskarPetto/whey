@@ -1,6 +1,6 @@
 #include "../Constant.h"
 #include "../Function.h"
-#include "../ByteCode.h"
+#include "../WcFile.h"
 
 #include <assert.h>
 #include <stdlib.h>

@@ -29,18 +29,6 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array);
 void arrayMark(struct Array *array);
 void arrayFree(struct Array *array);
 
-struct Object *stringNew(struct Gc *gc, char *characters);
-struct Object *stringFromArray(struct Gc *gc, struct Array *array);
-struct Object *stringToArray(struct Gc *gc, struct Array *string);
-Integer stringCompare(struct Array *array1, struct Array *array2);
-
-struct Object *stringCopy(struct Gc *gc, struct Array *string);
-Integer stringEquals(struct Array *string1, struct Array *string2);
-Integer stringHash(struct Array *string);
-
-void stringAppendCharacter(struct Array *string, char character);
-void stringPrint(struct Array *string);
-void stringFree(struct Array *string);
 
 
 #endif
