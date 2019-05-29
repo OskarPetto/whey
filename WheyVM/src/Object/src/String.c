@@ -7,18 +7,22 @@
 #include <stdio.h>
 #include <string.h>
 
-#define STRING_MAX_LENGTH 10000
-
-struct Object *stringNew(struct Gc *gc, char *characters)
+static struct Object *stringNewWithSize(struct Gc *gc, Integer characterCount)
 {
     struct Object *string = objectNew(gc, OBJECT_TYPE_STRING);
     string->value.string = (struct String *) malloc(sizeof(struct String));
     assert(string->value.string != NULL);
-
-    string->value.string->characterCount = strlen(characters);
-
-    string->value.string->characters = (char *) malloc(string->value.string->characterCount * sizeof (char));
+    string->value.string->characterCount = characterCount;
+    string->value.string->characters = (char *) malloc(characterCount * sizeof (char));
     assert(string->value.string->characters != NULL);
+    
+    return string;
+}
+
+struct Object *stringNew(struct Gc *gc, char *characters)
+{
+    struct Object *string = stringNewWithSize(gc, strlen(characters));
+
     memcpy(string->value.string->characters, characters, string->value.string->characterCount * sizeof(char)); // no terminating null
 
     return string;
@@ -26,12 +30,7 @@ struct Object *stringNew(struct Gc *gc, char *characters)
 
 struct Object *stringFromArray(struct Gc *gc, struct Array *array)
 {
-    struct Object *string = objectNew(gc, OBJECT_TYPE_STRING);
-    string->value.string = (struct String *) malloc(sizeof(struct String));
-    assert(string->value.string != NULL);
-    string->value.string->characterCount = array->objectCount;
-    string->value.string->characters = (char *) malloc(string->value.string->characterCount * sizeof (char));
-    assert(string->value.string->characters != NULL);
+    struct Object *string = stringNewWithSize(gc, array->objectCount);
 
     for (Integer i = 0; i < array->objectCount; i++)
     {
@@ -76,12 +75,7 @@ Integer stringCompare(struct String *string1, struct String *string2)
 
 struct Object *stringConcatenate(struct Gc *gc, struct String *string1, struct String *string2)
 {
-    struct Object *concat = objectNew(gc, OBJECT_TYPE_STRING);
-    concat->value.string = (struct String *) malloc(sizeof(struct String));
-    assert(concat->value.string != NULL);
-    concat->value.string->characterCount = string1->characterCount + string2->characterCount;
-    concat->value.string->characters = (char *) malloc(concat->value.string->characterCount * sizeof (char));
-    assert(concat->value.string->characters != NULL);
+    struct Object *concat = stringNewWithSize(gc, string1->characterCount + string2->characterCount);
     memcpy(concat->value.string->characters, string1->characters, string1->characterCount * sizeof(char)); // no terminating null
     memcpy(&concat->value.string->characters[string1->characterCount], string2->characters, string2->characterCount * sizeof(char)); // no terminating null
 
@@ -90,24 +84,14 @@ struct Object *stringConcatenate(struct Gc *gc, struct String *string1, struct S
 
 struct Object *stringSubstring(struct Gc *gc, struct String *string, Integer lowerIndex, Integer upperIndex)
 {
-    struct Object *subString = objectNew(gc, OBJECT_TYPE_STRING);
-    subString->value.string = (struct String *) malloc(sizeof(struct String));
-    assert(subString->value.string != NULL);
-    subString->value.string->characterCount = upperIndex - lowerIndex;
-    subString->value.string->characters = (char *) malloc(subString->value.string->characterCount * sizeof (char));
-    assert(subString->value.string->characters != NULL);
+    struct Object *subString = stringNewWithSize(gc, upperIndex - lowerIndex);
     memcpy(subString->value.string->characters, &string->characters[lowerIndex], subString->value.string->characterCount); // no terminating null
     return subString;
 }
 
 struct Object *stringCopy(struct Gc *gc, struct String *string)
 {
-    struct Object *copy = objectNew(gc, OBJECT_TYPE_STRING);
-    copy->value.string = (struct String *) malloc(sizeof(struct String));
-    assert(copy->value.string != NULL);
-    copy->value.string->characterCount = string->characterCount;
-    copy->value.string->characters = (char *) malloc(string->characterCount * sizeof (char));
-    assert(copy->value.string->characters != NULL);
+    struct Object *copy = stringNewWithSize(gc, string->characterCount);
     memcpy(copy->value.string->characters, string->characters, string->characterCount * sizeof(char)); // no terminating null
 
     return copy;
