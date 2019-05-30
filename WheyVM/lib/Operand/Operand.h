@@ -1,7 +1,8 @@
 #ifndef OPERAND_H
 #define OPERAND_H
 
-#include "Object/Types.h"
+#include "Types.h"
+#include "Object.h"
 
 #define OPERAND_TYPE_INTEGER        0x01
 #define OPERAND_TYPE_DOUBLE         0x02

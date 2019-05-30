@@ -1,7 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include "Operand.h"
+#include "lib/Operand/Operand.h"
 
 struct Frame
 {
