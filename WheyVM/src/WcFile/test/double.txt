@@ -1,0 +1,9 @@
+BADEAFFE                            # checkSum
+03 00                               # constantCount
+02                                  # CONSTANT_TYPE_DOUBLE
+10 A3 28 19 04 12 34 00             # 1.116451670505549e-307
+02                                  # CONSTANT_TYPE_DOUBLE
+9A 99 99 99 99 99 F1 3F             # 1.1
+02                                  # CONSTANT_TYPE_DOUBLE
+01 00 00 00 00 00 00 00             # 4.940656458412465e-324
+00 00                               # functionCount

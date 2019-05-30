@@ -7,8 +7,6 @@
 
 struct WcFile
 {
-    uint32_t byteCount;
-
     uint16_t constantCount;
     struct Constant **constants;
 
