@@ -1,0 +1,11 @@
+BADEAFFE                            # checkSum
+03 00                               # constantCount
+04                                  # CONSTANT_TYPE_STRING
+0A 00                               # characterCount
+65 6E 64 69 61 6E 6E 65 73 73       # Endianness
+04                                  # CONSTANT_TYPE_STRING
+01 00                               # characterCount
+3C                                  # <
+04                                  # CONSTANT_TYPE_STRING
+00 00                               # characterCount
+00 00                               # functionCount
