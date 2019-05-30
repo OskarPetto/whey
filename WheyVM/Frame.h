@@ -7,10 +7,10 @@ struct Frame
 {
     struct Operand *locals;
 
-    uint16_t byteCount;
-    unsigned char *bytes;
+    uint16_t codeSize;
+    unsigned char *byteCode;
 
-    uint16_t instructionPointer;
+    uint16_t codePointer;
 };
 
 

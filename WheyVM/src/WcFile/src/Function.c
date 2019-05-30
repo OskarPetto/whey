@@ -10,13 +10,13 @@ struct Function *functionNew(uint8_t *bytes, uint32_t *byteIndex)
     assert(function != NULL);
     function->argumentCount = bytes[*byteIndex];
     (*byteIndex)++;
-    memcpy(&(function->byteCount), &bytes[*byteIndex], 2);
+    memcpy(&(function->codeSize), &bytes[*byteIndex], 2);
     (*byteIndex) += 2;
-    function->bytes = (unsigned char *)malloc(function->byteCount * sizeof(unsigned char));
-    assert(function->bytes != NULL);
-    for (uint16_t i = 0; i < function->byteCount; i++)
+    function->byteCode = (unsigned char *)malloc(function->codeSize * sizeof(unsigned char));
+    assert(function->byteCode != NULL);
+    for (uint16_t i = 0; i < function->codeSize; i++)
     {
-        function->bytes[i] = bytes[*byteIndex];
+        function->byteCode[i] = bytes[*byteIndex];
         (*byteIndex)++;
     }
 
@@ -25,6 +25,6 @@ struct Function *functionNew(uint8_t *bytes, uint32_t *byteIndex)
 
 void functionFree(struct Function *function)
 {
-    free(function->bytes);
+    free(function->byteCode);
     free(function);
 }

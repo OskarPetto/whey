@@ -6,8 +6,8 @@
 struct Function
 {
     uint8_t argumentCount;
-    uint16_t byteCount;
-    unsigned char *bytes;
+    uint16_t codeSize;
+    unsigned char *byteCode;
 };
 
 struct Function *functionNew(uint8_t *bytes, uint32_t *byteIndex);
