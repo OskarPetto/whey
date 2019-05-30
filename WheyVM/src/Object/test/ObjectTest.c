@@ -792,6 +792,123 @@ void testStringSubstring()
     printf("OK\n");
 }
 
+void testStringIndexOf()
+{
+    printf("testStringIndexOf: ");
+    struct Object *string1 = stringNew(NULL, "hallo1");
+
+    struct Object *string2 = stringNew(NULL, "l");
+
+    assert(stringIndexOf(string1->value.string, string2->value.string, 0) == 2);
+    assert(stringIndexOf(string1->value.string, string2->value.string, 2) == 2);
+    assert(stringIndexOf(string1->value.string, string2->value.string, 3) == 3);
+    assert(stringIndexOf(string1->value.string, string2->value.string, 4) == -1);
+
+    struct Object *string3 = stringNew(NULL, "lo1");
+
+    assert(stringIndexOf(string1->value.string, string3->value.string, 0) == 3);
+    assert(stringIndexOf(string1->value.string, string3->value.string, 3) == 3);
+    assert(stringIndexOf(string1->value.string, string3->value.string, 4) == -1);
+
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+
+    printf("OK\n");
+}
+
+void testStringReplace()
+{
+    printf("testStringReplace: ");
+
+    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string2 = stringNew(NULL, "l");
+    struct Object *string3 = stringNew(NULL, "x");
+    struct Object *string4 = stringNew(NULL, "lo1");
+    struct Object *string5 = stringNew(NULL, "");
+
+    struct Object *replacementString1 = stringReplace(NULL, string1->value.string, string2->value.string, string3->value.string);
+
+    assert(replacementString1->value.string->characterCount == 6);
+    assert(replacementString1->value.string->characters[0] == 'h');
+    assert(replacementString1->value.string->characters[1] == 'a');
+    assert(replacementString1->value.string->characters[2] == 'x');
+    assert(replacementString1->value.string->characters[3] == 'x');
+    assert(replacementString1->value.string->characters[4] == 'o');
+    assert(replacementString1->value.string->characters[5] == '1');
+
+    struct Object *replacementString2 = stringReplace(NULL, string1->value.string, string2->value.string, string4->value.string);
+
+    assert(replacementString2->value.string->characterCount == 10);
+    assert(replacementString2->value.string->characters[0] == 'h');
+    assert(replacementString2->value.string->characters[1] == 'a');
+    assert(replacementString2->value.string->characters[2] == 'l');
+    assert(replacementString2->value.string->characters[3] == 'o');
+    assert(replacementString2->value.string->characters[4] == '1');
+    assert(replacementString2->value.string->characters[5] == 'l');
+    assert(replacementString2->value.string->characters[6] == 'o');
+    assert(replacementString2->value.string->characters[7] == '1');
+    assert(replacementString2->value.string->characters[8] == 'o');
+    assert(replacementString2->value.string->characters[9] == '1');
+
+    struct Object *replacementString3 = stringReplace(NULL, string1->value.string, string4->value.string, string3->value.string);
+
+    assert(replacementString3->value.string->characterCount == 4);
+    assert(replacementString3->value.string->characters[0] == 'h');
+    assert(replacementString3->value.string->characters[1] == 'a');
+    assert(replacementString3->value.string->characters[2] == 'l');
+    assert(replacementString3->value.string->characters[3] == 'x');
+
+    struct Object *replacementString4 = stringReplace(NULL, string1->value.string, string4->value.string, string5->value.string);
+
+    assert(replacementString4->value.string->characterCount == 3);
+    assert(replacementString4->value.string->characters[0] == 'h');
+    assert(replacementString4->value.string->characters[1] == 'a');
+    assert(replacementString4->value.string->characters[2] == 'l');
+
+    struct Object *replacementString5 = stringReplace(NULL, string1->value.string, string1->value.string, string5->value.string);
+
+    assert(replacementString5->value.string->characterCount == 0);
+
+    struct Object *replacementString6 = stringReplace(NULL, string1->value.string, string1->value.string, string1->value.string);
+
+    assert(replacementString6->value.string->characterCount == 6);
+    assert(replacementString6->value.string->characters[0] == 'h');
+    assert(replacementString6->value.string->characters[1] == 'a');
+    assert(replacementString6->value.string->characters[2] == 'l');
+    assert(replacementString6->value.string->characters[3] == 'l');
+    assert(replacementString6->value.string->characters[4] == 'o');
+    assert(replacementString6->value.string->characters[5] == '1');
+
+    struct Object *replacementString7 = stringReplace(NULL, string3->value.string, string4->value.string, string1->value.string);
+
+    assert(replacementString7->value.string->characterCount == 1);
+    assert(replacementString7->value.string->characters[0] == 'x');
+
+
+    struct Object *replacementString8 = stringReplace(NULL, string4->value.string, string5->value.string, string1->value.string);
+
+    assert(replacementString8->value.string->characterCount == 3);
+    assert(replacementString8->value.string->characters[0] == 'l');
+    assert(replacementString8->value.string->characters[1] == 'o');
+    assert(replacementString8->value.string->characters[2] == '1');
+
+    objectFree(string1);
+    objectFree(string2);
+    objectFree(string3);
+    objectFree(string4);
+    objectFree(string5);
+    objectFree(replacementString1);
+    objectFree(replacementString2);
+    objectFree(replacementString3);
+    objectFree(replacementString4);
+    objectFree(replacementString5);
+    objectFree(replacementString6);
+    objectFree(replacementString7);
+    objectFree(replacementString8);
+    printf("OK\n");
+}
+
 void testStringCopy()
 {
     printf("testStringCopy: ");
@@ -2076,6 +2193,8 @@ int main(int argc, char* argv[])
     testStringCompare();
     testStringConcatenate();
     testStringSubstring();
+    testStringIndexOf();
+    testStringReplace();
     testStringCopy();
     testStringEquals();
     testStringHash();

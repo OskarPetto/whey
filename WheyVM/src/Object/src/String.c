@@ -89,6 +89,91 @@ struct Object *stringSubstring(struct Gc *gc, struct String *string, Integer low
     return subString;
 }
 
+
+Integer stringIndexOf(struct String *string1, struct String *string2, Integer fromIndex)
+{
+    for (Integer i = fromIndex; i < string1->characterCount; i++)
+    {
+        uint8_t occurred = BOOLEAN_TRUE;
+
+        for (Integer j = 0; j < string2->characterCount && i + j < string1->characterCount; j++)
+        {
+            if (string1->characters[i+j] != string2->characters[j]) 
+            {
+                occurred = BOOLEAN_FALSE;
+                break;
+            }
+        }
+        
+        if (occurred == BOOLEAN_TRUE)
+        {
+            return i;
+        } 
+        
+    }
+
+    return -1;
+}
+
+struct Object *stringReplace(struct Gc *gc, struct String *string, struct String *stringToReplace, struct String *replacementString)
+{
+    if (stringToReplace->characterCount == 0)
+    {
+        return stringCopy(gc, string);
+    }
+
+    Integer occurrencesCount = 0;
+
+    Integer i = 0;
+
+    while((i = stringIndexOf(string, stringToReplace, i)) >= 0)
+    {
+        i += stringToReplace->characterCount;
+        occurrencesCount++;
+    }
+
+    Integer newSize = string->characterCount + occurrencesCount * (replacementString->characterCount - stringToReplace->characterCount);
+
+    struct Object *replacedString = stringNewWithSize(gc, newSize);
+    
+    Integer newStringIndex = 0;
+    Integer oldStringIndex = 0;
+
+    while(newStringIndex < newSize)
+    {
+        uint8_t occurred = BOOLEAN_TRUE;
+
+        for (Integer i = 0; i < stringToReplace->characterCount && oldStringIndex + i < string->characterCount; i++)
+        {
+            if (string->characters[oldStringIndex + i] != stringToReplace->characters[i]) 
+            {
+                occurred = BOOLEAN_FALSE;
+                break;
+            }
+        }
+        
+        if (occurred == BOOLEAN_TRUE)
+        {
+            for (Integer i = 0; i < replacementString->characterCount; i++)
+            {
+                replacedString->value.string->characters[newStringIndex + i] = replacementString->characters[i];
+            }
+
+            newStringIndex += replacementString->characterCount;
+            oldStringIndex += stringToReplace->characterCount;
+        } 
+        else
+        {
+            replacedString->value.string->characters[newStringIndex] = string->characters[oldStringIndex];
+            newStringIndex++;
+            oldStringIndex++;
+        }
+        
+    }
+
+    return replacedString;
+}
+
 struct Object *stringCopy(struct Gc *gc, struct String *string)
 {
     struct Object *copy = stringNewWithSize(gc, string->characterCount);
