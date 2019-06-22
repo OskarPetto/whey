@@ -24,7 +24,7 @@ struct Gc
     uint8_t outOfMemory;
 };
 
-struct Gc *gcNew(uint64_t maxSize, double loadFactor);
+struct Gc *gcNew(uint32_t maxSize, double loadFactor);
 void gcRegisterObject(struct Gc *gc, struct Object *object);
 void gcRequestMemory(struct Gc *gc, uint32_t size);
 void gcReleaseMemory(struct Gc *gc, uint32_t size);

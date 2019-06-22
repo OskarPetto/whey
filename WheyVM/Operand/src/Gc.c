@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Gc *gcNew(uint64_t maxSize, double loadFactor)
+struct Gc *gcNew(uint32_t maxSize, double loadFactor)
 {
     struct Gc *gc = (struct Gc *)malloc(sizeof(struct Gc));
     assert(gc != NULL);

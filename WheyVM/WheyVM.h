@@ -7,23 +7,26 @@
 #include "Operand/Gc.h"
 #include "WcFile/WcFile.h"
 
-#define WHEYVM_OPERAND_STACK_SIZE 255
-#define WHEYVM_CALL_STACK_SIZE 1000
+#define WHEYVM_STATE_STOPPED  1
+#define WHEYVM_STATE_DEBUG    2 
 
 struct WheyVM 
 {
-    struct Operand operandStack[WHEYVM_OPERAND_STACK_SIZE];
+    struct Operand *operandStack;
 
-    uint8_t operandStackPointer;
+    int32_t operandStackPointer;
 
-    struct Frame *callStack[WHEYVM_CALL_STACK_SIZE];
+    struct Frame **callStack;
 
-    uint16_t callStackPointer;
+    int32_t callStackPointer;
 
     struct Gc *gc;
 
     struct WcFile *wcFile;
 
+    uint8_t state;
 };
+
+void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint8_t state);
 
 #endif

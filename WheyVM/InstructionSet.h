@@ -51,6 +51,8 @@ void opObjectCopy(struct WheyVM *wvm);
 void opObjectEquals(struct WheyVM *wvm);
 void opObjectHash(struct WheyVM *wvm);
 void opObjectToString(struct WheyVM *wvm);
+void opObjectBox(struct WheyVM *wvm);
+void opObjectUnbox(struct WheyVM *wvm);
 
 void opArrayNew(struct WheyVM *wvm);
 void opArraySize(struct WheyVM *wvm);
@@ -60,9 +62,6 @@ void opArrayInsert(struct WheyVM *wvm);
 void opArrayInsertAll(struct WheyVM *wvm);
 void opArrayRemove(struct WheyVM *wvm);
 void opArrayForEach(struct WheyVM *wvm);
-void opArrayMap(struct WheyVM *wvm);
-void opArrayFilter(struct WheyVM *wvm);
-void opArrayReduce(struct WheyVM *wvm);
 
 void opMapNew(struct WheyVM *wvm);
 void opMapSize(struct WheyVM *wvm);
@@ -191,8 +190,8 @@ Instruction const instructionSet[256] =
         /* 0x62 */ &opObjectEquals,
         /* 0x63 */ &opObjectHash,
         /* 0x64 */ &opObjectToString,
-        /* 0x65 */ &opUnknown,
-        /* 0x66 */ &opUnknown,
+        /* 0x65 */ &opObjectBox,
+        /* 0x66 */ &opObjectUnbox,
         /* 0x67 */ &opUnknown,
         /* 0x68 */ &opUnknown,
         /* 0x69 */ &opUnknown,
@@ -210,9 +209,9 @@ Instruction const instructionSet[256] =
         /* 0x75 */ &opArrayInsertAll,
         /* 0x76 */ &opArrayRemove,
         /* 0x77 */ &opArrayForEach,
-        /* 0x78 */ &opArrayMap,
-        /* 0x79 */ &opArrayFilter,
-        /* 0x7A */ &opArrayReduce,
+        /* 0x78 */ &opUnknown,
+        /* 0x79 */ &opUnknown,
+        /* 0x7A */ &opUnknown,
         /* 0x7B */ &opUnknown,
         /* 0x7C */ &opUnknown,
         /* 0x7D */ &opUnknown,

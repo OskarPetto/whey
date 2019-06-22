@@ -9,7 +9,7 @@
 #include <string.h>
 #include <math.h>
 
-#define JUMP_END(frame) frame->codePointer = frame->function->codeSize
+#define STOP(wvm) wvm->state %= WHEYVM_STATE_STOPPED 
 
 #define CURRENT_FRAME(wvm) ((wvm->callStack[wvm->callStackPointer]))
 
@@ -25,30 +25,13 @@
     frame->codePointer = newLocation;                                                     \
     } while (0)
 
-#define CAST_TO_DOUBLE(op1, op2)                                                                \
-    do                                                                                          \
-    {                                                                                           \
-        if (operand1.type == OPERAND_TYPE_DOUBLE && operand2.type == OPERAND_TYPE_INTEGER)      \
-        {                                                                                       \
-            operand2.type = OPERAND_TYPE_DOUBLE;                                                \
-            operand2.value.doubleValue = (double)operand2.value.integerValue;                   \
-        }                                                                                       \
-        else if (operand2.type == OPERAND_TYPE_DOUBLE && operand1.type == OPERAND_TYPE_INTEGER) \
-        {                                                                                       \
-            operand1.type = OPERAND_TYPE_DOUBLE;                                                \
-            operand1.value.doubleValue = (double)operand1.value.integerValue;                   \
-        }                                                                                       \
-    } while (0)
-
 #define OP_COMPARISON(wvm, operator)                                                                                                             \
     do                                                                                                                                           \
-    {                                                                                                                \
+    {                                                                                                                                            \
         struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];                                                                 \
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                                   \
-        CAST_TO_DOUBLE(operand1, operand2);                                                                                                      \
         assert(operand1.type == operand2.type);                                                                                                  \
         wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;                                                                 \
-                                                                                                                                                 \
         switch (operand1.type)                                                                                                                   \
         {                                                                                                                                        \
         case OPERAND_TYPE_INTEGER:                                                                                                               \
@@ -65,13 +48,11 @@
 
 #define OP_ARITHMETIC(wvm, operator)                                                                                                             \
     do                                                                                                                                           \
-    {                                                                                                                 \
+    {                                                                                                                                            \
         struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];                                                                 \
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                                   \
-        CAST_TO_DOUBLE(operand1, operand2);                                                                                                      \
         assert(operand1.type == operand2.type);                                                                                                  \
         assert(operand1.type != OPERAND_TYPE_REFERENCE);                                                                                         \
-        wvm->operandStack[wvm->operandStackPointer].type = operand1.type;                                                                        \
                                                                                                                                                  \
         switch (operand1.type)                                                                                                                   \
         {                                                                                                                                        \
@@ -86,7 +67,7 @@
 
 #define OP_INTEGER_BINARY(wvm, operator)                                                                                                     \
     do                                                                                                                                       \
-    {                                                                                                                \
+    {                                                                                                                                        \
         struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];                                                             \
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                               \
         assert(operand1.type == OPERAND_TYPE_INTEGER);                                                                                       \
@@ -96,7 +77,7 @@
 
 #define OP_INTEGER_UNARY(wvm, operator)                                                                       \
     do                                                                                                        \
-    {                                                                                \
+    {                                                                                                         \
         struct Operand operand = wvm->operandStack[wvm->operandStackPointer];                                 \
         assert(operand.type == OPERAND_TYPE_INTEGER);                                                         \
         wvm->operandStack[wvm->operandStackPointer].value.integerValue = operator operand.value.integerValue; \
@@ -104,45 +85,10 @@
 
 #define OP_DOUBLE_UNARY(wvm, fun)                                                                       \
     do                                                                                                  \
-    {                                                                          \
+    {                                                                                                   \
         struct Operand operand = wvm->operandStack[wvm->operandStackPointer];                           \
         assert(operand.type == OPERAND_TYPE_DOUBLE);                                                    \
         wvm->operandStack[wvm->operandStackPointer].value.doubleValue = fun(operand.value.doubleValue); \
-    } while (0)
-
-#define OP_UNBOX(wvm, offset)                                                                                                          \
-    do                                                                                                                                 \
-    {                                                                                                        \
-        struct Operand operand = wvm->operandStack[wvm->operandStackPointer - offset];                                                 \
-        if (operand.type == OPERAND_TYPE_REFERENCE)                                                                                    \
-        {                                                                                                                              \
-            assert(operand.value.reference->type == OBJECT_TYPE_DOUBLE || operand.value.reference->type == OBJECT_TYPE_INTEGER);       \
-            switch (operand.value.reference->type)                                                                                     \
-            {                                                                                                                          \
-            case OBJECT_TYPE_INTEGER:                                                                                                  \
-                wvm->operandStack[wvm->operandStackPointer - offset].value.integerValue = operand.value.reference->value.integerValue; \
-                break;                                                                                                                 \
-            case OBJECT_TYPE_DOUBLE:                                                                                                   \
-                wvm->operandStack[wvm->operandStackPointer - offset].value.doubleValue = operand.value.reference->value.doubleValue;   \
-                break;                                                                                                                 \
-            }                                                                                                                          \
-        }                                                                                                                              \
-    } while (0)
-
-#define OP_BOX(wvm, offset)                                                                                                         \
-    do                                                                                                                              \
-    {                                                                                                       \
-        struct Operand operand = wvm->operandStack[wvm->operandStackPointer - offset];                                              \
-        wvm->operandStack[wvm->operandStackPointer - offset].type = OPERAND_TYPE_REFERENCE;                                         \
-        switch (operand.type)                                                                                                       \
-        {                                                                                                                           \
-        case OPERAND_TYPE_INTEGER:                                                                                                  \
-            wvm->operandStack[wvm->operandStackPointer - offset].value.reference = integerNew(wvm->gc, operand.value.integerValue); \
-            break;                                                                                                                  \
-        case OPERAND_TYPE_DOUBLE:                                                                                                   \
-            wvm->operandStack[wvm->operandStackPointer - offset].value.doubleValue = doubleNew(wvm->gc, operand.value.doubleValue); \
-            break;                                                                                                                  \
-        }                                                                                                                           \
     } while (0)
 
 void opUnknown(struct WheyVM *wvm)
@@ -155,7 +101,7 @@ void opUnknown(struct WheyVM *wvm)
 void opHalt(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
-    JUMP_END(frame);
+    STOP(wvm);
 }
 
 void opJump(struct WheyVM *wvm)
@@ -230,15 +176,27 @@ void opReturn(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
 
+    if (frame->iterator != NULL && frame->iterator->index + 1 < frame->iterator->array->value.array->objectCount)
+    {
+        frame->codePointer = 0;
+        frame->iterator->index++;
+        struct Operand operand;
+        operand.type = OPERAND_TYPE_REFERENCE;
+        operand.value.reference = frame->iterator->array->value.array->objects[frame->iterator->index];
+        frameSetLocal(frame, 0, operand);
+        return;
+    }
+
     if (wvm->callStackPointer == 0)
     {
-        JUMP_END(frame);
+        STOP(wvm);
     }
     else
     {
-        frameFree(frame);
         wvm->callStackPointer--;
     }
+
+    frameFree(frame);
 }
 
 void opConstant(struct WheyVM *wvm)
@@ -290,8 +248,6 @@ void opPrint(struct WheyVM *wvm)
         assert(operand.value.reference->type == OBJECT_TYPE_STRING);
         stringPrint(operand.value.reference->value.string);
         break;
-    default:
-        fprintf(stderr, "Unknown operand error.\n");
     }
 }
 
@@ -303,64 +259,64 @@ void opPop(struct WheyVM *wvm)
 }
 
 void opEqual(struct WheyVM *wvm)
-{                                                                                                            
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_COMPARISON(wvm, ==);
 }
 
 void opNotEqual(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_COMPARISON(wvm, !=);
 }
 
 void opGreaterThan(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_COMPARISON(wvm, >);
 }
 
 void opGreaterThanOrEqual(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_COMPARISON(wvm, >=);
 }
 
 void opLessThan(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_COMPARISON(wvm, <);
 }
 
 void opLessThanOrEqual(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_COMPARISON(wvm, <=);
 }
 
 void opAdd(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_ARITHMETIC(wvm, +);
 }
 
 void opSubtract(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_ARITHMETIC(wvm, -);
 }
 
 void opMultiply(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_ARITHMETIC(wvm, *);
 }
@@ -440,42 +396,42 @@ void opIntegerToDouble(struct WheyVM *wvm)
 
 void opIntegerIncrement(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_INTEGER_UNARY(wvm, 1 +);
 }
 
 void opIntegerDecrement(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_INTEGER_UNARY(wvm, -1 +);
 }
 
 void opIntegerModulo(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_INTEGER_BINARY(wvm, %);
 }
 
 void opIntegerAnd(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_INTEGER_BINARY(wvm, &);
 }
 
 void opIntegerOr(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_INTEGER_BINARY(wvm, %);
 }
 
 void opIntegerNot(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_INTEGER_UNARY(wvm, ~);
 }
@@ -491,14 +447,14 @@ void opDoubleToInteger(struct WheyVM *wvm)
 
 void opDoubleCeil(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_DOUBLE_UNARY(wvm, ceil);
 }
 
 void opDoubleFloor(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
     OP_DOUBLE_UNARY(wvm, floor);
 }
@@ -552,9 +508,49 @@ void opObjectToString(struct WheyVM *wvm)
     wvm->operandStack[wvm->operandStackPointer].value.reference = objectToString(wvm->gc, operand.value.reference);
 }
 
+void opObjectBox(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+    struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
+    assert(operand.type == OPERAND_TYPE_INTEGER || operand.type == OPERAND_TYPE_DOUBLE);
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+
+    switch (operand.type)
+    {
+    case OPERAND_TYPE_INTEGER:
+        wvm->operandStack[wvm->operandStackPointer].value.reference = integerNew(wvm->gc, operand.value.integerValue);
+        break;
+    case OPERAND_TYPE_DOUBLE:
+        wvm->operandStack[wvm->operandStackPointer].value.reference = doubleNew(wvm->gc, operand.value.doubleValue);
+        break;
+    }
+}
+
+void opObjectUnbox(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+    struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
+    assert(operand.type == OPERAND_TYPE_REFERENCE);
+    assert(operand.value.reference->type == OBJECT_TYPE_INTEGER || operand.value.reference->type == OBJECT_TYPE_DOUBLE);
+
+    switch (operand.value.reference->type)
+    {
+    case OBJECT_TYPE_INTEGER:
+        wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
+        wvm->operandStack[wvm->operandStackPointer].value.integerValue = operand.value.reference->value.integerValue;
+        break;
+    case OBJECT_TYPE_DOUBLE:
+        wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_DOUBLE;
+        wvm->operandStack[wvm->operandStackPointer].value.doubleValue = operand.value.reference->value.doubleValue;
+        break;
+    }
+}
+
 void opArrayNew(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);                                                                                   
+    struct Frame *frame = CURRENT_FRAME(wvm);
 
     uint16_t constantIndex;
     memcpy(&constantIndex, &frame->function->byteCode[frame->codePointer + 1], 2);
@@ -586,7 +582,6 @@ void opArrayGet(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
-    OP_UNBOX(wvm, 0);
     struct Operand index = wvm->operandStack[wvm->operandStackPointer];
     assert(index.type == OPERAND_TYPE_INTEGER);
     assert(index.value.integerValue >= 0);
@@ -601,9 +596,9 @@ void opArraySet(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
-    OP_BOX(wvm, 0);
     struct Operand value = wvm->operandStack[wvm->operandStackPointer];
-    OP_UNBOX(wvm, 1);
+    assert(value.type == OPERAND_TYPE_REFERENCE);
+
     struct Operand index = wvm->operandStack[wvm->operandStackPointer - 1];
     assert(index.type == OPERAND_TYPE_INTEGER);
     assert(index.value.integerValue >= 0);
@@ -612,16 +607,16 @@ void opArraySet(struct WheyVM *wvm)
     assert(array.type == OPERAND_TYPE_REFERENCE);
     assert(array.value.reference->type == OBJECT_TYPE_ARRAY);
     wvm->operandStack[wvm->operandStackPointer - 2].value.reference = arraySet(array.value.reference->value.array, index.value.integerValue, value.value.reference);
-    wvm->operandStackPointer-=2;
+    wvm->operandStackPointer -= 2;
 }
 
 void opArrayInsert(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
-    OP_BOX(wvm, 0);
     struct Operand value = wvm->operandStack[wvm->operandStackPointer];
-    OP_UNBOX(wvm, 1);
+    assert(value.type == OPERAND_TYPE_REFERENCE);
+
     struct Operand index = wvm->operandStack[wvm->operandStackPointer - 1];
     assert(index.type == OPERAND_TYPE_INTEGER);
     assert(index.value.integerValue >= 0);
@@ -630,7 +625,7 @@ void opArrayInsert(struct WheyVM *wvm)
     assert(array.type == OPERAND_TYPE_REFERENCE);
     assert(array.value.reference->type == OBJECT_TYPE_ARRAY);
     arrayInsert(wvm->gc, array.value.reference->value.array, index.value.integerValue, value.value.reference);
-    wvm->operandStackPointer-=3;
+    wvm->operandStackPointer -= 3;
 }
 
 void opArrayInsertAll(struct WheyVM *wvm)
@@ -640,25 +635,28 @@ void opArrayInsertAll(struct WheyVM *wvm)
     struct Operand array1 = wvm->operandStack[wvm->operandStackPointer];
     assert(array1.type == OPERAND_TYPE_REFERENCE);
     assert(array1.value.reference->type == OBJECT_TYPE_ARRAY);
-    OP_UNBOX(wvm, 1);
+
     struct Operand index = wvm->operandStack[wvm->operandStackPointer - 1];
     assert(index.type == OPERAND_TYPE_INTEGER);
     assert(index.value.integerValue >= 0);
+
     struct Operand array2 = wvm->operandStack[wvm->operandStackPointer - 2];
     assert(array2.type == OPERAND_TYPE_REFERENCE);
     assert(array2.value.reference->type == OBJECT_TYPE_ARRAY);
 
     arrayInsertAll(wvm->gc, array2.value.reference->value.array, index.value.integerValue, array1.value.reference->value.array);
-    wvm->operandStackPointer-=3;
+    wvm->operandStackPointer -= 3;
 }
 
 void opArrayRemove(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
+
     struct Operand index = wvm->operandStack[wvm->operandStackPointer];
     assert(index.type == OPERAND_TYPE_INTEGER);
     assert(index.value.integerValue >= 0);
+
     struct Operand array = wvm->operandStack[wvm->operandStackPointer - 1];
     assert(array.type == OPERAND_TYPE_REFERENCE);
     assert(array.value.reference->type == OBJECT_TYPE_ARRAY);
@@ -667,31 +665,370 @@ void opArrayRemove(struct WheyVM *wvm)
     wvm->operandStackPointer--;
 }
 
-void opArrayForEach(struct WheyVM *wvm);
-void opArrayMap(struct WheyVM *wvm);
-void opArrayFilter(struct WheyVM *wvm);
-void opArrayReduce(struct WheyVM *wvm);
+void opArrayForEach(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    uint16_t functionIndex;
+    memcpy(&functionIndex, &frame->function->byteCode[frame->codePointer + 1], 2);
+    frame->codePointer += 3;
+    struct Function *nextFunction = wcFileGetFunction(wvm->wcFile, functionIndex);
 
-void opMapNew(struct WheyVM *wvm);
-void opMapSize(struct WheyVM *wvm);
-void opMapGet(struct WheyVM *wvm);
-void opMapPut(struct WheyVM *wvm);
-void opMapPutAll(struct WheyVM *wvm);
-void opMapRemove(struct WheyVM *wvm);
-void opMapHasKey(struct WheyVM *wvm);
-void opMapEntries(struct WheyVM *wvm);
+    struct Operand array = wvm->operandStack[wvm->operandStackPointer];
+    assert(array.type == OPERAND_TYPE_REFERENCE);
+    assert(array.value.reference->type == OBJECT_TYPE_ARRAY);
+    wvm->operandStackPointer--;
 
-void opPairNew(struct WheyVM *wvm);
-void opPairGetFirst(struct WheyVM *wvm);
-void opPairGetSecond(struct WheyVM *wvm);
-void opPairSetFirst(struct WheyVM *wvm);
-void opPairSetSecond(struct WheyVM *wvm);
+    if (array.value.reference->value.array->objectCount > 0)
+    {
+        struct Frame *nextFrame = frameNewWithIterator(nextFunction, array.value.reference);
+        wvm->callStack[++wvm->callStackPointer] = nextFrame;
+    }
+}
 
-void opStringLength(struct WheyVM *wvm);
-void opStringFromArray(struct WheyVM *wvm);
-void opStringToArray(struct WheyVM *wvm);
-void opStringCompare(struct WheyVM *wvm);
-void opStringConcatenate(struct WheyVM *wvm);
-void opStringSubstring(struct WheyVM *wvm);
-void opStringIndexOf(struct WheyVM *wvm);
-void opStringReplace(struct WheyVM *wvm);
+void opMapNew(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    wvm->operandStackPointer++;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = mapNew(wvm->gc);
+}
+
+void opMapSize(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
+    assert(operand.type == OPERAND_TYPE_REFERENCE);
+    assert(operand.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
+    wvm->operandStack[wvm->operandStackPointer].value.integerValue = operand.value.reference->value.map->entryCount;
+}
+
+void opMapGet(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand key = wvm->operandStack[wvm->operandStackPointer];
+    assert(key.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand map = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(map.type == OPERAND_TYPE_REFERENCE);
+    assert(map.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = mapGet(map.value.reference->value.map, key.value.reference);
+}
+
+void opMapPut(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand value = wvm->operandStack[wvm->operandStackPointer];
+    assert(value.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand key = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(key.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand map = wvm->operandStack[wvm->operandStackPointer - 2];
+    assert(map.type == OPERAND_TYPE_REFERENCE);
+    assert(map.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStackPointer -= 2;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = mapPut(wvm->gc, map.value.reference->value.map, key.value.reference, value.value.reference);
+}
+
+void opMapPutAll(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand map1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(map1.type == OPERAND_TYPE_REFERENCE);
+    assert(map1.value.reference->type == OBJECT_TYPE_MAP);
+
+    struct Operand map2 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(map2.type == OPERAND_TYPE_REFERENCE);
+    assert(map2.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStackPointer--;
+
+    mapPutAll(wvm->gc, map2.value.reference->value.map, map1.value.reference->value.map);
+}
+
+void opMapRemove(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand key = wvm->operandStack[wvm->operandStackPointer];
+    assert(key.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand map = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(map.type == OPERAND_TYPE_REFERENCE);
+    assert(map.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = mapRemove(wvm->gc, map.value.reference->value.map, key.value.reference);
+}
+
+void opMapHasKey(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand key = wvm->operandStack[wvm->operandStackPointer];
+    assert(key.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand map = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(map.type == OPERAND_TYPE_REFERENCE);
+    assert(map.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = mapHasKey(map.value.reference->value.map, key.value.reference);
+}
+
+void opMapEntries(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand map = wvm->operandStack[wvm->operandStackPointer];
+    assert(map.type == OPERAND_TYPE_REFERENCE);
+    assert(map.value.reference->type == OBJECT_TYPE_MAP);
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = mapEntries(wvm->gc, map.value.reference->value.map);
+}
+
+void opPairNew(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand first = wvm->operandStack[wvm->operandStackPointer];
+    assert(first.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand second = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(second.type == OPERAND_TYPE_REFERENCE);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = pairNew(wvm->gc, first.value.reference, second.value.reference);
+}
+
+void opPairGetFirst(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand pair = wvm->operandStack[wvm->operandStackPointer];
+    assert(pair.type == OPERAND_TYPE_REFERENCE);
+    assert(pair.value.reference->type == OBJECT_TYPE_PAIR);
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = pair.value.reference->value.pair->first;
+}
+
+void opPairGetSecond(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand pair = wvm->operandStack[wvm->operandStackPointer];
+    assert(pair.type == OPERAND_TYPE_REFERENCE);
+    assert(pair.value.reference->type == OBJECT_TYPE_PAIR);
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = pair.value.reference->value.pair->second;
+}
+
+void opPairSetFirst(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand first = wvm->operandStack[wvm->operandStackPointer];
+    assert(first.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand pair = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(pair.type == OPERAND_TYPE_REFERENCE);
+    assert(pair.value.reference->type == OBJECT_TYPE_PAIR);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = pairSetFirst(pair.value.reference->value.pair, first.value.reference);
+}
+
+void opPairSetSecond(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand second = wvm->operandStack[wvm->operandStackPointer];
+    assert(second.type == OPERAND_TYPE_REFERENCE);
+
+    struct Operand pair = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(pair.type == OPERAND_TYPE_REFERENCE);
+    assert(pair.value.reference->type == OBJECT_TYPE_PAIR);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = pairSetSecond(pair.value.reference->value.pair, second.value.reference);
+}
+
+void opStringLength(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand string = wvm->operandStack[wvm->operandStackPointer];
+    assert(string.type == OPERAND_TYPE_REFERENCE);
+    assert(string.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
+    wvm->operandStack[wvm->operandStackPointer].value.reference = string.value.reference->value.string->characterCount;
+}
+
+void opStringFromArray(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand array = wvm->operandStack[wvm->operandStackPointer];
+    assert(array.type == OPERAND_TYPE_REFERENCE);
+    assert(array.value.reference->type == OBJECT_TYPE_ARRAY);
+
+    wvm->operandStack[wvm->operandStackPointer].value.reference = stringFromArray(wvm->gc, array.value.reference->value.array);
+}
+
+void opStringToArray(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand string = wvm->operandStack[wvm->operandStackPointer];
+    assert(string.type == OPERAND_TYPE_REFERENCE);
+    assert(string.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStack[wvm->operandStackPointer].value.reference = stringToArray(wvm->gc, string.value.reference->value.string);
+}
+
+void opStringCompare(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(string1.type == OPERAND_TYPE_REFERENCE);
+    assert(string1.value.reference->type == OBJECT_TYPE_STRING);
+
+    struct Operand string2 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(string2.type == OPERAND_TYPE_REFERENCE);
+    assert(string2.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
+    wvm->operandStack[wvm->operandStackPointer].value.integerValue = stringCompare(string2.value.reference->value.string, string1.value.reference->value.string);
+}
+
+void opStringConcatenate(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(string1.type == OPERAND_TYPE_REFERENCE);
+    assert(string1.value.reference->type == OBJECT_TYPE_STRING);
+
+    struct Operand string2 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(string2.type == OPERAND_TYPE_REFERENCE);
+    assert(string2.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].value.reference = stringConcatenate(wvm->gc, string2.value.reference->value.string, string1.value.reference->value.string);
+}
+
+void opStringSubstring(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand integer1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(integer1.type == OPERAND_TYPE_INTEGER);
+
+    struct Operand integer2 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(integer2.type == OPERAND_TYPE_INTEGER);
+
+    struct Operand string = wvm->operandStack[wvm->operandStackPointer - 2];
+    assert(string.type == OPERAND_TYPE_REFERENCE);
+    assert(string.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStackPointer-=2;
+
+    wvm->operandStack[wvm->operandStackPointer].value.reference = stringSubstring(wvm->gc, string.value.reference->value.string, integer2.value.integerValue, integer1.value.integerValue);
+}
+
+void opStringIndexOf(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand integer1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(integer1.type == OPERAND_TYPE_INTEGER);
+
+    struct Operand string1 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(string1.type == OPERAND_TYPE_REFERENCE);
+    assert(string1.value.reference->type == OBJECT_TYPE_STRING);
+
+    struct Operand string2 = wvm->operandStack[wvm->operandStackPointer - 2];
+    assert(string2.type == OPERAND_TYPE_REFERENCE);
+    assert(string2.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStackPointer-=2;
+
+    wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
+    wvm->operandStack[wvm->operandStackPointer].value.integerValue = stringIndexOf(string2.value.reference->value.string, string1.value.reference->value.string, integer1.value.integerValue);
+}
+
+void opStringReplace(struct WheyVM *wvm)
+{
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    frame->codePointer++;
+
+    struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(string1.type == OPERAND_TYPE_REFERENCE);
+    assert(string1.value.reference->type == OBJECT_TYPE_STRING);
+
+    struct Operand string2 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(string2.type == OPERAND_TYPE_REFERENCE);
+    assert(string2.value.reference->type == OBJECT_TYPE_STRING);
+
+    struct Operand string3 = wvm->operandStack[wvm->operandStackPointer - 2];
+    assert(string3.type == OPERAND_TYPE_REFERENCE);
+    assert(string3.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStackPointer-=2;
+
+    wvm->operandStack[wvm->operandStackPointer].value.reference = stringReplace(wvm->gc, string3.value.reference->value.string, string2.value.reference->value.string, string1.value.reference->value.string);
+
+}

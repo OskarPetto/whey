@@ -11,8 +11,21 @@ struct Frame *frameNew(struct Function *function)
     assert(frame->locals != NULL);
     frame->function = function;
     frame->codePointer = 0;
+    frame->iterator = NULL;
     return frame;
 }
+
+struct Frame *frameNewWithIterator(struct Function *function, struct Object *array)
+{
+    struct Frame *frame = frameNew(function);
+    frame->iterator = (struct Iterator *)malloc(sizeof(struct Iterator));
+    assert(frame->iterator != NULL);
+    frame->iterator->array = array;
+    frame->iterator->index = 0;
+    frame->locals[0].type = OPERAND_TYPE_REFERENCE;
+    frame->locals[0].value.reference = array->value.array->objects[0];
+}
+
 
 struct Operand frameGetLocal(struct Frame *frame, uint8_t localIndex)
 {
@@ -42,6 +55,10 @@ void frameMark(struct Frame *frame)
 
 void frameFree(struct Frame *frame)
 {
+    if (frame->iterator != NULL)
+    {
+        free(frame->iterator);
+    }
     free(frame->locals);
     free(frame);
 }

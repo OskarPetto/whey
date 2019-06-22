@@ -58,7 +58,7 @@ struct WcFile *wcFileNew(char *fileName)
     {
         free(buffer);
         free(wcFile);
-        fprintf(stderr, "could not read file\n");
+        fprintf(stderr, "Could not read file\n");
         exit(1);
     }
 
