@@ -84,11 +84,13 @@ struct WcFile *wcFileNew(char *fileName)
 
 struct Constant *wcFileGetConstant(struct WcFile *wcFile, uint16_t constantIndex)
 {
+    assert(constantIndex < wcFile->constantCount);
     return wcFile->constants[constantIndex];
 }
 
 struct Function *wcFileGetFunction(struct WcFile *wcFile, uint16_t functionIndex)
 {
+    assert(functionIndex < wcFile->functionCount);
     return wcFile->functions[functionIndex];
 }
 

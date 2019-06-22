@@ -20,7 +20,7 @@ struct Object *integerToString(struct Gc *gc, Integer integer)
 
     snprintf(buffer, INTEGER_STRING_BUFFER_SIZE, "%d", integer);
 
-    struct Object *stringObject = stringNew(gc, buffer);
+    struct Object *stringObject = stringNewFromCString(gc, buffer);
 
     return stringObject;
 }

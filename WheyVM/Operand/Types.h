@@ -8,5 +8,6 @@
 
 typedef int32_t Integer;
 typedef double Double;
+typedef char Char;
 
 #endif

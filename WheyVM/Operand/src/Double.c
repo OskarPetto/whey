@@ -21,7 +21,7 @@ struct Object *doubleToString(struct Gc *gc, Double double1)
  
     snprintf(buffer, FLOAT_STRING_BUFFER_SIZE, "%.10e", double1);
 
-    struct Object *stringObject = stringNew(gc, buffer);
+    struct Object *stringObject = stringNewFromCString(gc, buffer);
 
     return stringObject;
 }

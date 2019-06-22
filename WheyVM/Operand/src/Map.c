@@ -3,6 +3,7 @@
 #include "../Object.h"
 #include "../Integer.h"
 #include "../String.h"
+#include "../Gc.h"
 
 #include <stdlib.h>
 #include <assert.h>
@@ -23,6 +24,7 @@ static Integer improveHash(Integer hash)
 static struct Object *mapWithBucketCount(struct Gc *gc, Integer initialBucketCount)
 {
     struct Object *map = objectNew(gc, OBJECT_TYPE_MAP);
+    gcRequestMemory(gc, sizeof(struct Map) + initialBucketCount * sizeof(struct MapEntry *));
     map->value.map = (struct Map *)malloc(sizeof(struct Map));
     assert(map->value.map != NULL);
     map->value.map->buckets = (struct MapEntry **)calloc(initialBucketCount, sizeof(struct MapEntry *));
@@ -32,8 +34,9 @@ static struct Object *mapWithBucketCount(struct Gc *gc, Integer initialBucketCou
     return map;
 }
 
-static void mapResize(struct Map *map, Integer newBucketCount)
+static void mapResize(struct Gc *gc, struct Map *map, Integer newBucketCount)
 {
+    gcRequestMemory(gc, newBucketCount * sizeof(struct MapEntry *));
     struct MapEntry **buckets = (struct MapEntry **)calloc(newBucketCount, sizeof(struct MapEntry *));
     assert(buckets != NULL);
 
@@ -69,18 +72,19 @@ static void mapResize(struct Map *map, Integer newBucketCount)
         }
     }
 
+    gcReleaseMemory(gc, map->bucketCount * sizeof(struct MapEntry *));
     free(map->buckets);
     map->buckets = buckets;
     map->bucketCount = newBucketCount;
 }
 
-static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct Object *value, Integer hash)
+static struct Object *mapPutWithHash(struct Gc *gc, struct Map *map, struct Object *key, struct Object *value, Integer hash)
 {
     if (map->entryCount >= map->bucketCount * 3 / 4)
     {
         Integer newBucketCount = map->bucketCount * 2;
 
-        mapResize(map, newBucketCount);
+        mapResize(gc, map, newBucketCount);
     }
 
     Integer index = indexFor(hash, map->bucketCount);
@@ -101,6 +105,7 @@ static struct Object *mapPutWithHash(struct Map *map, struct Object *key, struct
         return previousValue;
     }
 
+    gcRequestMemory(gc, sizeof(struct MapEntry));
     struct MapEntry *newEntry = (struct MapEntry *)malloc(sizeof(struct MapEntry));
     assert(newEntry != NULL);
     newEntry->key = key;
@@ -146,16 +151,16 @@ struct Object *mapGet(struct Map *map, struct Object *key)
     return currEntry->value;
 }
 
-struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value)
+struct Object *mapPut(struct Gc *gc, struct Map *map, struct Object *key, struct Object *value)
 {
     Integer improvedHash = improveHash(objectHash(key));
 
-    struct Object *prevObject = mapPutWithHash(map, key, value, improvedHash);
+    struct Object *prevObject = mapPutWithHash(gc, map, key, value, improvedHash);
 
     return prevObject;
 }
 
-void mapPutAll(struct Map *map, struct Map *mapToPut)
+void mapPutAll(struct Gc *gc, struct Map *map, struct Map *mapToPut)
 {
     for (Integer i = 0; i < mapToPut->bucketCount; i++)
     {
@@ -163,13 +168,13 @@ void mapPutAll(struct Map *map, struct Map *mapToPut)
 
         while (currEntry != NULL)
         {
-            mapPutWithHash(map, currEntry->key, currEntry->value, currEntry->hash);
+            mapPutWithHash(gc, map, currEntry->key, currEntry->value, currEntry->hash);
             currEntry = currEntry->next;
         }
     }
 }
 
-struct Object *mapRemove(struct Map *map, struct Object *key)
+struct Object *mapRemove(struct Gc *gc, struct Map *map, struct Object *key)
 {
     if (map->entryCount == 0)
     {
@@ -203,6 +208,8 @@ struct Object *mapRemove(struct Map *map, struct Object *key)
     {
         prevEntry->next = currEntry->next;
     }
+
+    gcReleaseMemory(gc, sizeof(struct MapEntry));
     free(currEntry);
     map->entryCount--;
     return previousValue;
@@ -229,7 +236,7 @@ Integer mapHasKey(struct Map *map, struct Object *key)
 
 struct Object *mapEntries(struct Gc *gc, struct Map *map)
 {
-    struct Object *entries = arrayNew(gc, map->entryCount);
+    struct Object *entries = arrayNew(gc, map->entryCount, map->entryCount);
     struct Array *entriesArray = entries->value.array;
     Integer entriesAdded = 0;
 
@@ -260,7 +267,7 @@ struct Object *mapCopy(struct Gc *gc, struct Map *map)
 
         while (currEntry != NULL)
         {
-            mapPutWithHash(copyMap, objectCopy(gc, currEntry->key), objectCopy(gc, currEntry->value), currEntry->hash);
+            mapPutWithHash(gc, copyMap, objectCopy(gc, currEntry->key), objectCopy(gc, currEntry->value), currEntry->hash);
             currEntry = currEntry->next;
         }
     }
@@ -316,7 +323,7 @@ Integer mapHash(struct Map *map)
 
 struct Object *mapToString(struct Gc *gc, struct Map *map)
 {
-    struct Object *stringObject = stringNew(NULL, "{");
+    struct Object *stringObject = stringNewFromCString(NULL, "{");
 
     for (Integer i = 0; i < map->bucketCount; i++)
     {
@@ -328,8 +335,8 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
             struct Object *temp = stringConcatenate(NULL, stringObject->value.string, subStringObject1->value.string);
 
-            objectFree(stringObject);
-            objectFree(subStringObject1);
+            objectFree(NULL, stringObject);
+            objectFree(NULL, subStringObject1);
             stringObject = temp;
 
             stringAppendCharacter(stringObject->value.string, ':');
@@ -338,8 +345,8 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
 
             temp = stringConcatenate(NULL, stringObject->value.string, subStringObject2->value.string);
 
-            objectFree(stringObject);
-            objectFree(subStringObject2);
+            objectFree(NULL, stringObject);
+            objectFree(NULL, subStringObject2);
             stringObject = temp;
 
             stringAppendCharacter(stringObject->value.string, ',');
@@ -357,10 +364,8 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
         stringAppendCharacter(stringObject->value.string, '}');
     }
 
-    if (gc != NULL)
-    {
-        gcRegisterObject(gc, stringObject);
-    }
+    gcRequestMemory(gc, sizeof(struct Object) + sizeof(struct String) + stringObject->value.string->characterCount * sizeof(Char));
+    gcRegisterObject(gc, stringObject);
 
     return stringObject;
 }
@@ -381,7 +386,7 @@ void mapMark(struct Map *map)
     }
 }
 
-void mapFree(struct Map *map)
+void mapFree(struct Gc *gc, struct Map *map)
 {
     for (Integer i = 0; i < map->bucketCount; i++)
     {
@@ -391,12 +396,14 @@ void mapFree(struct Map *map)
         {
             struct MapEntry *nextEntry = currEntry->next;
 
+            gcReleaseMemory(gc, sizeof(struct MapEntry));
             free(currEntry);
 
             currEntry = nextEntry;
         }
     }
 
+    gcReleaseMemory(gc, sizeof(struct Map) + map->bucketCount * sizeof(struct MapEntry *));
     free(map->buckets);
     free(map);
 }

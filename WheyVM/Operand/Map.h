@@ -25,9 +25,9 @@ struct Map
 
 struct Object *mapNew(struct Gc *gc);
 struct Object *mapGet(struct Map *map, struct Object *key);
-struct Object *mapPut(struct Map *map, struct Object *key, struct Object *value);
-void mapPutAll(struct Map *map, struct Map *mapToPut);
-struct Object *mapRemove(struct Map *map, struct Object *key);
+struct Object *mapPut(struct Gc *gc, struct Map *map, struct Object *key, struct Object *value);
+void mapPutAll(struct Gc *gc, struct Map *map, struct Map *mapToPut);
+struct Object *mapRemove(struct Gc *gc, struct Map *map, struct Object *key);
 Integer mapHasKey(struct Map *map, struct Object *key);
 struct Object *mapEntries(struct Gc *gc, struct Map *map);
 
@@ -37,7 +37,7 @@ Integer mapHash(struct Map *map);
 struct Object *mapToString(struct Gc *gc, struct Map *map);
 
 void mapMark(struct Map *map);
-void mapFree(struct Map *map);
+void mapFree(struct Gc *gc, struct Map *map);
 
 
 #endif

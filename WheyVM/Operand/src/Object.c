@@ -1,5 +1,5 @@
 #include "../Object.h"
-
+#include "../Gc.h"
 #include "../Integer.h"
 #include "../Double.h"
 
@@ -112,10 +112,9 @@ Integer objectHash(struct Object *object)
 
 struct Object *objectToString(struct Gc *gc, struct Object *object)
 {
-
     if (object == NULL)
     {
-        return stringNew(gc, "null");
+        return stringNewFromCString(gc, "null");
     }
 
     switch (object->type)
@@ -145,15 +144,13 @@ struct Object *objectToString(struct Gc *gc, struct Object *object)
 
 struct Object *objectNew(struct Gc *gc, uint8_t type)
 {
+    gcRequestMemory(gc, sizeof(struct Object));
     struct Object *object = (struct Object *)malloc(sizeof(struct Object));
     assert(object != NULL);
     object->mark = OBJECT_MARK_FALSE;
     object->type = type;
 
-    if (gc != NULL)
-    {
-        gcRegisterObject(gc, object);
-    }
+    gcRegisterObject(gc, object);
 
     return object;
 }
@@ -182,7 +179,7 @@ void objectMark(struct Object *object)
     }
 }
 
-void objectFree(struct Object *object)
+void objectFree(struct Gc *gc, struct Object *object)
 {
     if (object == NULL)
         return;
@@ -190,18 +187,20 @@ void objectFree(struct Object *object)
     switch (object->type)
     {
     case OBJECT_TYPE_ARRAY:
-        arrayFree(object->value.array);
+        arrayFree(gc, object->value.array);
         break;
     case OBJECT_TYPE_MAP:
-        mapFree(object->value.map);
+        mapFree(gc, object->value.map);
         break;
     case OBJECT_TYPE_PAIR:
+        gcReleaseMemory(gc, sizeof(struct Pair));
         free(object->value.pair);
         break;
     case OBJECT_TYPE_STRING:
-        stringFree(object->value.string);
+        stringFree(gc, object->value.string);
         break;
     }
 
+    gcReleaseMemory(gc, sizeof(struct Object));
     free(object);
 }

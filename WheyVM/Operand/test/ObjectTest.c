@@ -15,80 +15,84 @@ static struct Object *getComplexObject(struct Gc *gc)
 {
     struct Object *mapNameToPersonWithAdresses = mapNew(gc);
 
-    struct Object *nameKey1 = stringNew(gc, "Willi");
-    struct Object *nameKey2 = stringNew(gc, "Otto");
-    struct Object *nameKey3 = stringNew(gc, "Lisa");
+    struct Object *nameKey1 = stringNewFromCString(gc, "Willi");
+    struct Object *nameKey2 = stringNewFromCString(gc, "Otto");
+    struct Object *nameKey3 = stringNewFromCString(gc, "Lisa");
 
-    struct Object *personNameKey = stringNew(gc, "name");
-    struct Object *personAgeKey = stringNew(gc, "age");
-    struct Object *personHeightKey = stringNew(gc, "height");
+    struct Object *personNameKey1 = stringNewFromCString(gc, "name");
+    struct Object *personAgeKey1 = stringNewFromCString(gc, "age");
+    struct Object *personAgeKey2 = stringNewFromCString(gc, "age");
+    struct Object *personAgeKey3 = stringNewFromCString(gc, "age");
+    struct Object *personHeightKey1 = stringNewFromCString(gc, "height");
+    struct Object *personHeightKey2 = stringNewFromCString(gc, "height");
+    struct Object *personHeightKey3 = stringNewFromCString(gc, "height");
 
     struct Object *person1 = mapNew(gc);
-    struct Object *person1NameValue = stringNew(gc, "Willi");
+    struct Object *person1NameValue = stringNewFromCString(gc, "Willi");
     struct Object *person1AgeValue = integerNew(gc, 25);
     struct Object *person1HeightValue = doubleNew(gc, 1.81);
-    mapPut(person1->value.map, personNameKey, person1NameValue);
-    mapPut(person1->value.map, personAgeKey, person1AgeValue);
-    mapPut(person1->value.map, personHeightKey, person1HeightValue);
+    mapPut(gc, person1->value.map, personNameKey1, person1NameValue);
+    mapPut(gc, person1->value.map, personAgeKey1, person1AgeValue);
+    mapPut(gc, person1->value.map, personHeightKey1, person1HeightValue);
 
     struct Object *person2 = mapNew(gc);
-    struct Object *person2NameValue = stringNew(gc, "Otto");
+    struct Object *person2NameValue = stringNewFromCString(gc, "Otto");
     struct Object *person2AgeValue = integerNew(gc, 64);
     struct Object *person2HeightValue = doubleNew(gc, 1.65);
-    mapPut(person2->value.map, personNameKey, person2NameValue);
-    mapPut(person2->value.map, personAgeKey, person2AgeValue);
-    mapPut(person2->value.map, personHeightKey, person2HeightValue);
+    mapPut(gc, person2->value.map, personNameKey1, person2NameValue);
+    mapPut(gc, person2->value.map, personAgeKey2, person2AgeValue);
+    mapPut(gc, person2->value.map, personHeightKey2, person2HeightValue);
 
     struct Object *person3 = mapNew(gc);
-    struct Object *person3NameValue = stringNew(gc, "Lisa");
+    struct Object *person3NameValue = stringNewFromCString(gc, "Lisa");
     struct Object *person3AgeValue = integerNew(gc, 33);
     struct Object *person3HeightValue = doubleNew(gc, 1.68);
-    mapPut(person3->value.map, personNameKey, person3NameValue);
-    mapPut(person3->value.map, personAgeKey, person3AgeValue);
-    mapPut(person3->value.map, personHeightKey, person3HeightValue);
+    mapPut(gc, person3->value.map, personNameKey1, person3NameValue);
+    mapPut(gc, person3->value.map, personAgeKey3, person3AgeValue);
+    mapPut(gc, person3->value.map, personHeightKey3, person3HeightValue);
 
     struct Object *address1 = mapNew(gc);
-    struct Object *address1StreetKey = stringNew(gc, "street");
-    struct Object *address1NumberKey = stringNew(gc, "number");
-    struct Object *address1StreetValue = stringNew(gc, "Hausdorf");
+    struct Object *address1StreetKey = stringNewFromCString(gc, "street");
+    struct Object *address1NumberKey = stringNewFromCString(gc, "number");
+    struct Object *address1StreetValue = stringNewFromCString(gc, "Hausdorf");
     struct Object *address1NumberValue = integerNew(gc, 121);
-    mapPut(address1->value.map, address1StreetKey, address1StreetValue);
-    mapPut(address1->value.map, address1NumberKey, address1NumberValue);
+    mapPut(gc, address1->value.map, address1StreetKey, address1StreetValue);
+    mapPut(gc, address1->value.map, address1NumberKey, address1NumberValue);
 
     struct Object *address2 = mapNew(gc);
-    struct Object *address2StreetKey = stringNew(gc, "street");
-    struct Object *address2NumberKey = stringNew(gc, "number");
-    struct Object *address2StreetValue = stringNew(gc, "Hausdorf");
+    struct Object *address2StreetKey = stringNewFromCString(gc, "street");
+    struct Object *address2NumberKey = stringNewFromCString(gc, "number");
+    struct Object *address2StreetValue = stringNewFromCString(gc, "Hausdorf");
     struct Object *address2NumberValue = integerNew(gc, 122);
-    mapPut(address2->value.map, address2StreetKey, address2StreetValue);
-    mapPut(address2->value.map, address2NumberKey, address2NumberValue);
+    mapPut(gc, address2->value.map, address2StreetKey, address2StreetValue);
+    mapPut(gc, address2->value.map, address2NumberKey, address2NumberValue);
 
     struct Object *address3 = mapNew(gc);
-    struct Object *address3StreetKey = stringNew(gc, "street");
-    struct Object *address3NumberKey = stringNew(gc, "number");
-    struct Object *address3StreetValue = stringNew(gc, "Siebenseiten");
+    struct Object *address3StreetKey = stringNewFromCString(gc, "street");
+    struct Object *address3NumberKey = stringNewFromCString(gc, "number");
+    struct Object *address3StreetValue = stringNewFromCString(gc, "Siebenseiten");
     struct Object *address3NumberValue = integerNew(gc, 32);
-    mapPut(address3->value.map, address3StreetKey, address3StreetValue);
-    mapPut(address3->value.map, address3NumberKey, address3NumberValue);
+    mapPut(gc, address3->value.map, address3StreetKey, address3StreetValue);
+    mapPut(gc, address3->value.map, address3NumberKey, address3NumberValue);
 
-    struct Object *person1AddressArray = arrayNew(gc, 2);
+    struct Object *person1AddressArray = arrayNew(gc, 2, 2);
 
     person1AddressArray->value.array->objects[0] = address1;
     person1AddressArray->value.array->objects[1] = address2;
 
-    struct Object *person2AddressArray = arrayNew(gc, 1);
+    struct Object *person2AddressArray = arrayNew(gc, 1, 1);
 
     person2AddressArray->value.array->objects[0] = address3;
 
-    struct Object *person3AddressArray = arrayNew(gc, 0);
+    struct Object *person3AddressArray = arrayNew(gc, 0, 0);
 
     struct Object *person1Pair = pairNew(gc, person1, person1AddressArray);
     struct Object *person2Pair = pairNew(gc, person2, person2AddressArray);
     struct Object *person3Pair = pairNew(gc, person3, person3AddressArray);
 
-    mapPut(mapNameToPersonWithAdresses->value.map, nameKey1, person1Pair);
-    mapPut(mapNameToPersonWithAdresses->value.map, nameKey2, person2Pair);
-    mapPut(mapNameToPersonWithAdresses->value.map, nameKey3, person3Pair);
+    mapPut(gc, mapNameToPersonWithAdresses->value.map, nameKey1, person1Pair);
+    mapPut(gc, mapNameToPersonWithAdresses->value.map, nameKey2, person2Pair);
+    mapPut(gc, mapNameToPersonWithAdresses->value.map, nameKey3, person3Pair);
 
     return mapNameToPersonWithAdresses;
 }
@@ -97,27 +101,27 @@ void testArrayNew()
 {
     printf("testArrayNew: ");
 
-    struct Object *array1 = arrayNew(NULL, 14);
+    struct Object *array1 = arrayNew(NULL, 14, 14);
     assert(array1->type == OBJECT_TYPE_ARRAY);
     assert(array1->mark == OBJECT_MARK_FALSE);
     assert(array1->value.array != NULL);
     assert(array1->value.array->objectCount == 14);
-    assert(array1->value.array->slotCount == 22);
+    assert(array1->value.array->slotCount == 14);
     array1->value.array->objects[0] = NULL;
     assert(array1->value.array->objects[0] == NULL);
 
-    struct Object *array2 = arrayNew(NULL, 0);
+    struct Object *array2 = arrayNew(NULL, 0, 0);
     assert(array2->type == OBJECT_TYPE_ARRAY);
     assert(array2->mark == OBJECT_MARK_FALSE);
     assert(array2->value.array != NULL);
     assert(array2->value.array->objectCount == 0);
-    assert(array2->value.array->slotCount == 1);
+    assert(array2->value.array->slotCount == 0);
 
     array1->value.array->objects[13] = array2;
     assert(array1->value.array->objects[13] == array2);
 
-    objectFree(array1);
-    objectFree(array2);
+    objectFree(NULL, array1);
+    objectFree(NULL, array2);
 
     printf("OK\n");
 }
@@ -126,7 +130,7 @@ void testArraySet()
 {
     printf("testArraySet: ");
 
-    struct Object *array = arrayNew(NULL, 14);
+    struct Object *array = arrayNew(NULL, 14, 14);
     struct Object *integer = integerNew(NULL, -132);
 
     array->value.array->objects[10] = integer;
@@ -134,8 +138,8 @@ void testArraySet()
     assert(arraySet(array->value.array, 10, NULL) == integer);
     assert(array->value.array->objects[10] == NULL);
 
-    objectFree(array);
-    objectFree(integer);
+    objectFree(NULL, array);
+    objectFree(NULL, integer);
 
     printf("OK\n");
 }
@@ -143,31 +147,31 @@ void testArraySet()
 void testArrayInsert()
 {
     printf("testArrayInsert: ");
-    struct Object *array = arrayNew(NULL, 0);
+    struct Object *array = arrayNew(NULL, 0, 0);
     struct Object *integer1 = integerNew(NULL, 97);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 99);
 
     assert(array->value.array->objectCount == 0);
-    assert(array->value.array->slotCount == 1);
+    assert(array->value.array->slotCount == 0);
 
-    arrayInsert(array->value.array, 0, integer1);
-    arrayInsert(array->value.array, 0, integer2);
-    arrayInsert(array->value.array, 0, integer3);
+    arrayInsert(NULL, array->value.array, 0, integer1);
+    arrayInsert(NULL, array->value.array, 0, integer2);
+    arrayInsert(NULL, array->value.array, 0, integer3);
 
     assert(array->value.array->objectCount == 3);
-    assert(array->value.array->slotCount == 4);
+    assert(array->value.array->slotCount == 5);
 
     assert(array->value.array->objects[0] == integer3);
     assert(array->value.array->objects[1] == integer2);
     assert(array->value.array->objects[2] == integer1);
 
-    arrayInsert(array->value.array, 0, integer1);
-    arrayInsert(array->value.array, 1, integer2);
-    arrayInsert(array->value.array, 2, integer3);
+    arrayInsert(NULL, array->value.array, 0, integer1);
+    arrayInsert(NULL, array->value.array, 1, integer2);
+    arrayInsert(NULL, array->value.array, 2, integer3);
 
     assert(array->value.array->objectCount == 6);
-    assert(array->value.array->slotCount == 8);
+    assert(array->value.array->slotCount == 10);
 
     assert(array->value.array->objects[0] == integer1);
     assert(array->value.array->objects[1] == integer2);
@@ -176,17 +180,17 @@ void testArrayInsert()
     assert(array->value.array->objects[4] == integer2);
     assert(array->value.array->objects[5] == integer1);
 
-    arrayInsert(array->value.array, 6, integer2);
+    arrayInsert(NULL, array->value.array, 6, integer2);
 
     assert(array->value.array->objectCount == 7);
-    assert(array->value.array->slotCount == 8);
+    assert(array->value.array->slotCount == 10);
     assert(array->value.array->objects[6] == integer2);
 
-    objectFree(array);
+    objectFree(NULL, array);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
     printf("OK\n");
 }
@@ -194,9 +198,9 @@ void testArrayInsert()
 void testArrayInsertAll()
 {
     printf("testArrayInsertAll: ");
-    struct Object *array1 = arrayNew(NULL, 3);
-    struct Object *array2 = arrayNew(NULL, 2);
-    struct Object *array3 = arrayNew(NULL, 0);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
+    struct Object *array2 = arrayNew(NULL, 2, 2);
+    struct Object *array3 = arrayNew(NULL, 0, 0);
     struct Object *integer1 = integerNew(NULL, 97);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 99);
@@ -209,16 +213,16 @@ void testArrayInsertAll()
     array2->value.array->objects[1] = integer2;
 
     assert(array1->value.array->objectCount == 3);
-    assert(array1->value.array->slotCount == 5);
+    assert(array1->value.array->slotCount == 3);
     assert(array2->value.array->objectCount == 2);
-    assert(array2->value.array->slotCount == 4);
+    assert(array2->value.array->slotCount == 2);
 
-    arrayInsertAll(array1->value.array, 0, array2->value.array);
+    arrayInsertAll(NULL, array1->value.array, 0, array2->value.array);
 
     assert(array1->value.array->objectCount == 5);
-    assert(array1->value.array->slotCount == 5);
+    assert(array1->value.array->slotCount == 8);
     assert(array2->value.array->objectCount == 2);
-    assert(array2->value.array->slotCount == 4);
+    assert(array2->value.array->slotCount == 2);
 
     assert(array1->value.array->objects[0] == integer3);
     assert(array1->value.array->objects[1] == integer2);
@@ -226,7 +230,7 @@ void testArrayInsertAll()
     assert(array1->value.array->objects[3] == integer2);
     assert(array1->value.array->objects[4] == integer3);
 
-    arrayInsertAll(array1->value.array, 3, array1->value.array);
+    arrayInsertAll(NULL, array1->value.array, 3, array1->value.array);
 
     assert(array1->value.array->objectCount == 10);
     assert(array1->value.array->slotCount == 16);
@@ -242,7 +246,7 @@ void testArrayInsertAll()
     assert(array1->value.array->objects[8] == integer2);
     assert(array1->value.array->objects[9] == integer3);
 
-    arrayInsertAll(array1->value.array, 1, array2->value.array);
+    arrayInsertAll(NULL, array1->value.array, 1, array2->value.array);
 
     assert(array1->value.array->objectCount == 12);
     assert(array1->value.array->slotCount == 16);
@@ -260,29 +264,29 @@ void testArrayInsertAll()
     assert(array1->value.array->objects[10] == integer2);
     assert(array1->value.array->objects[11] == integer3);
 
-    arrayInsertAll(array2->value.array, 2, array2->value.array);
+    arrayInsertAll(NULL, array2->value.array, 2, array2->value.array);
 
     assert(array2->value.array->objectCount == 4);
-    assert(array2->value.array->slotCount == 4);
+    assert(array2->value.array->slotCount == 7);
 
     assert(array2->value.array->objects[0] == integer3);
     assert(array2->value.array->objects[1] == integer2);
     assert(array2->value.array->objects[2] == integer3);
     assert(array2->value.array->objects[3] == integer2);
 
-    arrayInsertAll(array2->value.array, 2, array3->value.array);
+    arrayInsertAll(NULL, array2->value.array, 2, array3->value.array);
 
     assert(array2->value.array->objectCount == 4);
-    assert(array2->value.array->slotCount == 4);
+    assert(array2->value.array->slotCount == 7);
     assert(array3->value.array->objectCount == 0);
-    assert(array3->value.array->slotCount == 1);
+    assert(array3->value.array->slotCount == 0);
 
     assert(array2->value.array->objects[0] == integer3);
     assert(array2->value.array->objects[1] == integer2);
     assert(array2->value.array->objects[2] == integer3);
     assert(array2->value.array->objects[3] == integer2);
 
-    arrayInsertAll(array2->value.array, 4, array1->value.array);
+    arrayInsertAll(NULL, array2->value.array, 4, array1->value.array);
 
     assert(array2->value.array->objectCount == 16);
     assert(array2->value.array->slotCount == 25);
@@ -304,13 +308,13 @@ void testArrayInsertAll()
     assert(array2->value.array->objects[14] == integer2);
     assert(array2->value.array->objects[15] == integer3);
 
-    objectFree(array1);
-    objectFree(array2);
-    objectFree(array3);
+    objectFree(NULL, array1);
+    objectFree(NULL, array2);
+    objectFree(NULL, array3);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
     printf("OK\n");
 }
@@ -318,7 +322,7 @@ void testArrayInsertAll()
 void testArrayRemove()
 {
     printf("testArrayRemove: ");
-    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
     struct Object *integer1 = integerNew(NULL, 97);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 99);
@@ -330,7 +334,7 @@ void testArrayRemove()
     assert(arrayRemove(array1->value.array, 1) == integer2);
 
     assert(array1->value.array->objectCount == 2);
-    assert(array1->value.array->slotCount == 5);
+    assert(array1->value.array->slotCount == 3);
 
     assert(array1->value.array->objects[0] == integer1);
     assert(array1->value.array->objects[1] == integer3);
@@ -338,20 +342,20 @@ void testArrayRemove()
     assert(arrayRemove(array1->value.array, 0) == integer1);
 
     assert(array1->value.array->objectCount == 1);
-    assert(array1->value.array->slotCount == 5);
+    assert(array1->value.array->slotCount == 3);
 
     assert(array1->value.array->objects[0] == integer3);
 
     assert(arrayRemove(array1->value.array, 0) == integer3);
 
     assert(array1->value.array->objectCount == 0);
-    assert(array1->value.array->slotCount == 5);
+    assert(array1->value.array->slotCount == 3);
 
-    objectFree(array1);
+    objectFree(NULL, array1);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
     printf("OK\n");
 }
@@ -359,7 +363,7 @@ void testArrayRemove()
 void testArrayCopy()
 {
     printf("testArrayCopy: ");
-    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
     struct Object *integer1 = integerNew(NULL, 97);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 99);
@@ -384,16 +388,16 @@ void testArrayCopy()
     integer1->value.integerValue = 55;
     assert(array2->value.array->objects[0]->value.integerValue == 97);
 
-    objectFree(array2->value.array->objects[0]);
-    objectFree(array2->value.array->objects[1]);
-    objectFree(array2->value.array->objects[2]);
+    objectFree(NULL, array2->value.array->objects[0]);
+    objectFree(NULL, array2->value.array->objects[1]);
+    objectFree(NULL, array2->value.array->objects[2]);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
-    objectFree(array2);
-    objectFree(array1);
+    objectFree(NULL, array2);
+    objectFree(NULL, array1);
 
     printf("OK\n");
 }
@@ -401,7 +405,7 @@ void testArrayCopy()
 void testArrayEquals()
 {
     printf("testArrayEquals: ");
-    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
     struct Object *integer1 = integerNew(NULL, 97);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 99);
@@ -424,16 +428,16 @@ void testArrayEquals()
 
     assert(arrayEquals(array1->value.array, array2->value.array) == 1);
 
-    objectFree(array2->value.array->objects[0]);
-    objectFree(array2->value.array->objects[1]);
-    objectFree(array2->value.array->objects[2]);
+    objectFree(NULL, array2->value.array->objects[0]);
+    objectFree(NULL, array2->value.array->objects[1]);
+    objectFree(NULL, array2->value.array->objects[2]);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
-    objectFree(array2);
-    objectFree(array1);
+    objectFree(NULL, array2);
+    objectFree(NULL, array1);
 
     printf("OK\n");
 }
@@ -441,7 +445,7 @@ void testArrayEquals()
 void testArrayHash()
 {
     printf("testArrayHash: ");
-    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
     struct Object *integer1 = integerNew(NULL, 97);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 99);
@@ -456,21 +460,21 @@ void testArrayHash()
 
     assert(arrayHash(array1->value.array) == arrayHash(array2->value.array));
 
-    struct Object *array3 = arrayNew(NULL, 0);
+    struct Object *array3 = arrayNew(NULL, 0, 0);
 
     assert(arrayHash(array3->value.array) == 1);
 
-    objectFree(array2->value.array->objects[0]);
-    objectFree(array2->value.array->objects[1]);
-    objectFree(array2->value.array->objects[2]);
+    objectFree(NULL, array2->value.array->objects[0]);
+    objectFree(NULL, array2->value.array->objects[1]);
+    objectFree(NULL, array2->value.array->objects[2]);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
-    objectFree(array3);
-    objectFree(array2);
-    objectFree(array1);
+    objectFree(NULL, array3);
+    objectFree(NULL, array2);
+    objectFree(NULL, array1);
 
     printf("OK\n");
 }
@@ -478,7 +482,7 @@ void testArrayHash()
 void testArrayToString()
 {
     printf("testArrayToString: ");
-    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
     struct Object *integer1 = integerNew(NULL, 7);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 121299);
@@ -505,7 +509,7 @@ void testArrayToString()
     assert(string1->value.string->characters[11] == '9');
     assert(string1->value.string->characters[12] == ']');
 
-    struct Object *array2 = arrayNew(NULL, 0);
+    struct Object *array2 = arrayNew(NULL, 0, 0);
 
     struct Object *string2 = arrayToString(NULL, array2->value.array);
 
@@ -514,15 +518,15 @@ void testArrayToString()
     assert(string2->value.string->characters[0] == '[');
     assert(string2->value.string->characters[1] == ']');
 
-    objectFree(string1);
-    objectFree(string2);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
     
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
-    objectFree(array1);
-    objectFree(array2);
+    objectFree(NULL, array1);
+    objectFree(NULL, array2);
 
     printf("OK\n");
 }
@@ -530,8 +534,8 @@ void testArrayToString()
 void testArrayMark()
 {
     printf("testArrayMark: ");
-    struct Object *array1 = arrayNew(NULL, 3);
-    struct Object *array2 = arrayNew(NULL, 0);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
+    struct Object *array2 = arrayNew(NULL, 0, 0);
     struct Object *integer1 = integerNew(NULL, 7);
     struct Object *integer2 = integerNew(NULL, 98);
     struct Object *integer3 = integerNew(NULL, 121299);
@@ -562,12 +566,12 @@ void testArrayMark()
     
     assert(array2->mark == OBJECT_MARK_TRUE);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
 
-    objectFree(array1);
-    objectFree(array2);
+    objectFree(NULL, array1);
+    objectFree(NULL, array2);
 
     printf("OK\n");
 }
@@ -575,9 +579,9 @@ void testArrayMark()
 void testArrayFree()
 {
     printf("testArrayFree: ");
-    struct Object *array1 = arrayNew(NULL, 3);
+    struct Object *array1 = arrayNew(NULL, 3, 3);
     assert(array1->type == OBJECT_TYPE_ARRAY);
-    objectFree(array1);
+    objectFree(NULL, array1);
 
     printf("OK\n");
 }
@@ -586,7 +590,7 @@ void testStringNew()
 {
     printf("testStringNew: ");
     
-    struct Object *string = stringNew(NULL, "Aha");
+    struct Object *string = stringNewFromCString(NULL, "Aha");
     assert(string != NULL);
     assert(string->value.string != NULL);
     assert(string->value.string->characters != NULL);
@@ -596,15 +600,15 @@ void testStringNew()
     assert(string->value.string->characters[1] == 'h');
     assert(string->value.string->characters[2] == 'a');
 
-    struct Object *string2 = stringNew(NULL, "");
+    struct Object *string2 = stringNewFromCString(NULL, "");
     assert(string2 != NULL);
     assert(string2->value.string != NULL);
     assert(string2->value.string->characters != NULL);
     assert(string2->type == OBJECT_TYPE_STRING);
     assert(string2->value.string->characterCount == 0);
 
-    objectFree(string);
-    objectFree(string2);
+    objectFree(NULL, string);
+    objectFree(NULL, string2);
     
     printf("OK\n");
 }
@@ -612,7 +616,7 @@ void testStringNew()
 void testStringFromArray()
 {
     printf("testStringFromArray: ");
-    struct Object *array1 = arrayNew(NULL, 5);
+    struct Object *array1 = arrayNew(NULL, 5, 5);
     struct Object *integer1 = integerNew(NULL, 'h');
     struct Object *integer2 = integerNew(NULL, 'e');
     struct Object *integer3 = integerNew(NULL, 'l');
@@ -636,15 +640,15 @@ void testStringFromArray()
     assert(string->value.string->characters[3] == (char) integer4->value.integerValue);
     assert(string->value.string->characters[4] == (char) integer5->value.integerValue);
 
-    objectFree(array1);
+    objectFree(NULL, array1);
 
-    objectFree(string);
+    objectFree(NULL, string);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
-    objectFree(integer4);
-    objectFree(integer5);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
+    objectFree(NULL, integer4);
+    objectFree(NULL, integer5);
 
     printf("OK\n");
 }
@@ -652,7 +656,7 @@ void testStringFromArray()
 void testStringToArray()
 {
     printf("testStringToArray: ");
-    struct Object *string1 = stringNew(NULL, "hello");
+    struct Object *string1 = stringNewFromCString(NULL, "hello");
 
     struct Object *array = stringToArray(NULL, string1->value.string);
 
@@ -664,15 +668,15 @@ void testStringToArray()
     assert(array->value.array->objects[3]->value.integerValue == 'l');
     assert(array->value.array->objects[4]->value.integerValue == 'o');
 
-    objectFree(string1);
+    objectFree(NULL, string1);
 
-    objectFree(array->value.array->objects[0]);
-    objectFree(array->value.array->objects[1]);
-    objectFree(array->value.array->objects[2]);
-    objectFree(array->value.array->objects[3]);
-    objectFree(array->value.array->objects[4]);
+    objectFree(NULL, array->value.array->objects[0]);
+    objectFree(NULL, array->value.array->objects[1]);
+    objectFree(NULL, array->value.array->objects[2]);
+    objectFree(NULL, array->value.array->objects[3]);
+    objectFree(NULL, array->value.array->objects[4]);
 
-    objectFree(array);
+    objectFree(NULL, array);
 
     printf("OK\n");
 }
@@ -680,13 +684,13 @@ void testStringToArray()
 void testStringCompare()
 {
     printf("testStringCompare: ");
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
-    struct Object *string2 = stringNew(NULL, "hallo");
+    struct Object *string2 = stringNewFromCString(NULL, "hallo");
 
-    struct Object *string3 = stringNew(NULL, "banana");
+    struct Object *string3 = stringNewFromCString(NULL, "banana");
 
-    struct Object *string4 = stringNew(NULL, "");
+    struct Object *string4 = stringNewFromCString(NULL, "");
 
     assert(stringCompare(string1->value.string, string1->value.string) == 0);
     assert(stringCompare(string1->value.string, string2->value.string) > 0);
@@ -698,10 +702,10 @@ void testStringCompare()
     assert(stringCompare(string3->value.string, string2->value.string) < 0);
     assert(stringCompare(string3->value.string, string3->value.string) == 0);
 
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
 
     printf("OK\n");
 }
@@ -709,11 +713,11 @@ void testStringCompare()
 void testStringConcatenate()
 {
     printf("testStringConcatenate: ");
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
-    struct Object *string2 = stringNew(NULL, "hallo");
+    struct Object *string2 = stringNewFromCString(NULL, "hallo");
 
-    struct Object *string3 = stringNew(NULL, "");
+    struct Object *string3 = stringNewFromCString(NULL, "");
 
     struct Object *stringConcat1 = stringConcatenate(NULL, string1->value.string, string2->value.string);
 
@@ -740,11 +744,11 @@ void testStringConcatenate()
     assert(stringConcat2->value.string->characters[4] == 'o');
     assert(stringConcat2->value.string->characters[5] == '1');
 
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(stringConcat1);
-    objectFree(stringConcat2);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, stringConcat1);
+    objectFree(NULL, stringConcat2);
 
     printf("OK\n");
 }
@@ -752,9 +756,9 @@ void testStringConcatenate()
 void testStringSubstring()
 {
     printf("testStringSubstring: ");
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
-    struct Object *string2 = stringNew(NULL, "");
+    struct Object *string2 = stringNewFromCString(NULL, "");
 
     struct Object *subString1 = stringSubstring(NULL, string1->value.string, 0, 6);
 
@@ -781,13 +785,13 @@ void testStringSubstring()
 
     assert(subString4->value.string->characterCount == 0);
 
-    objectFree(string1);
-    objectFree(string2);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
 
-    objectFree(subString1);
-    objectFree(subString2);
-    objectFree(subString3);
-    objectFree(subString4);
+    objectFree(NULL, subString1);
+    objectFree(NULL, subString2);
+    objectFree(NULL, subString3);
+    objectFree(NULL, subString4);
 
     printf("OK\n");
 }
@@ -795,24 +799,24 @@ void testStringSubstring()
 void testStringIndexOf()
 {
     printf("testStringIndexOf: ");
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
-    struct Object *string2 = stringNew(NULL, "l");
+    struct Object *string2 = stringNewFromCString(NULL, "l");
 
     assert(stringIndexOf(string1->value.string, string2->value.string, 0) == 2);
     assert(stringIndexOf(string1->value.string, string2->value.string, 2) == 2);
     assert(stringIndexOf(string1->value.string, string2->value.string, 3) == 3);
     assert(stringIndexOf(string1->value.string, string2->value.string, 4) == -1);
 
-    struct Object *string3 = stringNew(NULL, "lo1");
+    struct Object *string3 = stringNewFromCString(NULL, "lo1");
 
     assert(stringIndexOf(string1->value.string, string3->value.string, 0) == 3);
     assert(stringIndexOf(string1->value.string, string3->value.string, 3) == 3);
     assert(stringIndexOf(string1->value.string, string3->value.string, 4) == -1);
 
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
 
     printf("OK\n");
 }
@@ -821,11 +825,11 @@ void testStringReplace()
 {
     printf("testStringReplace: ");
 
-    struct Object *string1 = stringNew(NULL, "hallo1");
-    struct Object *string2 = stringNew(NULL, "l");
-    struct Object *string3 = stringNew(NULL, "x");
-    struct Object *string4 = stringNew(NULL, "lo1");
-    struct Object *string5 = stringNew(NULL, "");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
+    struct Object *string2 = stringNewFromCString(NULL, "l");
+    struct Object *string3 = stringNewFromCString(NULL, "x");
+    struct Object *string4 = stringNewFromCString(NULL, "lo1");
+    struct Object *string5 = stringNewFromCString(NULL, "");
 
     struct Object *replacementString1 = stringReplace(NULL, string1->value.string, string2->value.string, string3->value.string);
 
@@ -893,26 +897,26 @@ void testStringReplace()
     assert(replacementString8->value.string->characters[1] == 'o');
     assert(replacementString8->value.string->characters[2] == '1');
 
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
-    objectFree(string5);
-    objectFree(replacementString1);
-    objectFree(replacementString2);
-    objectFree(replacementString3);
-    objectFree(replacementString4);
-    objectFree(replacementString5);
-    objectFree(replacementString6);
-    objectFree(replacementString7);
-    objectFree(replacementString8);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
+    objectFree(NULL, string5);
+    objectFree(NULL, replacementString1);
+    objectFree(NULL, replacementString2);
+    objectFree(NULL, replacementString3);
+    objectFree(NULL, replacementString4);
+    objectFree(NULL, replacementString5);
+    objectFree(NULL, replacementString6);
+    objectFree(NULL, replacementString7);
+    objectFree(NULL, replacementString8);
     printf("OK\n");
 }
 
 void testStringCopy()
 {
     printf("testStringCopy: ");
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
     struct Object *string2 = stringCopy(NULL, string1->value.string);
 
     assert(string2->type == OBJECT_TYPE_STRING);
@@ -924,8 +928,8 @@ void testStringCopy()
     assert(string2->value.string->characters[4] == string1->value.string->characters[4]);
     assert(string2->value.string->characters[5] == string1->value.string->characters[5]);
 
-    objectFree(string1);
-    objectFree(string2);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
 
     printf("OK\n");
 }
@@ -934,13 +938,13 @@ void testStringEquals()
 {
     printf("testStringEquals: ");
 
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
     struct Object *string2 = stringCopy(NULL, string1->value.string);
 
-    struct Object *string3 = stringNew(NULL, "ban");
+    struct Object *string3 = stringNewFromCString(NULL, "ban");
 
-    struct Object *string4 = stringNew(NULL, "");
+    struct Object *string4 = stringNewFromCString(NULL, "");
 
     assert(stringEquals(string1->value.string, string1->value.string) == BOOLEAN_TRUE);
     assert(stringEquals(string1->value.string, string2->value.string) == BOOLEAN_TRUE);
@@ -959,10 +963,10 @@ void testStringEquals()
     assert(stringEquals(string4->value.string, string3->value.string) == BOOLEAN_FALSE);
     assert(stringEquals(string4->value.string, string4->value.string) == BOOLEAN_TRUE);
 
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
 
     printf("OK\n");
 }
@@ -971,20 +975,20 @@ void testStringHash()
 {
     printf("testStringHash: ");
 
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
     struct Object *string2 = stringCopy(NULL, string1->value.string);
 
-    struct Object *string3 = stringNew(NULL, "");
-    struct Object *string4 = stringNew(NULL, "");
+    struct Object *string3 = stringNewFromCString(NULL, "");
+    struct Object *string4 = stringNewFromCString(NULL, "");
 
     assert(stringHash(string1->value.string) == stringHash(string2->value.string));
     assert(stringHash(string3->value.string) == stringHash(string4->value.string));
 
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
 
     printf("OK\n");
 }
@@ -992,9 +996,9 @@ void testStringHash()
 void testStringAppendCharacter()
 {
     printf("testStringAppendCharacter: ");
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
-    struct Object *string2 = stringNew(NULL, "");
+    struct Object *string2 = stringNewFromCString(NULL, "");
 
     stringAppendCharacter(string2->value.string, 'h');
     stringAppendCharacter(string2->value.string, 'a');
@@ -1005,8 +1009,8 @@ void testStringAppendCharacter()
 
     assert(stringEquals(string1->value.string, string2->value.string) == BOOLEAN_TRUE);
 
-    objectFree(string1);
-    objectFree(string2);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
 
     printf("OK\n");
 }
@@ -1014,8 +1018,8 @@ void testStringAppendCharacter()
 void testStringFree()
 {
     printf("testStringFree: ");
-    struct Object *string1 = stringNew(NULL, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-    objectFree(string1);
+    struct Object *string1 = stringNewFromCString(NULL, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    objectFree(NULL, string1);
 
     printf("OK\n");
 }
@@ -1027,7 +1031,7 @@ void testDoubleNew()
     assert(double1->type == OBJECT_TYPE_DOUBLE);
     assert(double1->mark == OBJECT_MARK_FALSE);
     assert(double1->value.doubleValue == 0.001);
-    objectFree(double1);
+    objectFree(NULL, double1);
     printf("OK\n");
 }
 
@@ -1058,15 +1062,15 @@ void testDoubleToString()
     assert(string->value.string->characters[14] == '0');
     assert(string->value.string->characters[15] == '3');
     
-    objectFree(string);
-    objectFree(double1);
+    objectFree(NULL, string);
+    objectFree(NULL, double1);
     printf("OK\n");
 }
 
 void testGcNew()
 {
     printf("testGcNew: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(1, 0.5);
 
     assert(gc->freeCount == 0);
     assert(gc->newCount == 0);
@@ -1080,17 +1084,18 @@ void testGcNew()
 void testGcRegisterObject()
 {
     printf("testGcRegisterObject: ");
-    struct Gc *gc = gcNew();
-    struct Object *array1 = arrayNew(gc, 3);
+    struct Gc *gc = gcNew(150, 0.4);
+    struct Object *array1 = arrayNew(gc, 3, 3);
     struct Object *integer1 = integerNew(gc, 7);
     struct Object *integer2 = integerNew(gc, 98);
     struct Object *integer3 = integerNew(gc, 121299);
+    assert(gc->size == 4 * sizeof(struct Object) + sizeof(struct Array) + 3 * sizeof(struct Object *));
 
     array1->value.array->objects[0] = integer1;
     array1->value.array->objects[1] = integer2;
     array1->value.array->objects[2] = integer3;
 
-    struct Object *string1 = stringNew(gc, "hallo1");
+    struct Object *string1 = stringNewFromCString(gc, "hallo1");
 
     assert(gc->newCount == 5);
     assert(gc->freeCount == 0);
@@ -1101,6 +1106,160 @@ void testGcRegisterObject()
     assert(gc->head->next->next->next->next->object == array1);
     assert(gc->head->next->next->next->next->next == NULL);
 
+    assert(gc->outOfMemory == 0);
+    assert(gc->size == 5 * sizeof(struct Object) + sizeof(struct Array) + 3 * sizeof(struct Object *) + sizeof(struct String) + 6 * sizeof(Char));
+
+    gcFree(gc);
+
+    printf("OK\n");
+}
+
+void testGcRegisterObjectFull1()
+{
+    printf("testGcRegisterObjectFull1: ");
+    struct Gc *gc = gcNew(sizeof(struct Object) + sizeof(struct Array), 0.5);
+    arrayNew(gc, 3, 3);
+    assert(gc->outOfMemory == 1);
+    assert(gc->size == sizeof(struct Object) + sizeof(struct Array) + 3 * sizeof(struct Object *));
+
+    gcFree(gc);
+
+    printf("OK\n");
+}
+
+void testGcRegisterObjectFull2()
+{
+    printf("testGcRegisterObjectFull2: ");
+    struct Gc *gc = gcNew(2 * sizeof(struct Object), 0.5);
+    integerNew(gc, 23);
+    assert(gc->outOfMemory == 0);
+    assert(gc->size == sizeof(struct Object));
+
+    integerNew(gc, 13);
+    assert(gc->outOfMemory == 0);
+    assert(gc->size == 2 * sizeof(struct Object));
+
+    integerNew(gc, 16);
+    assert(gc->outOfMemory == 1);
+    assert(gc->size == 3 * sizeof(struct Object));
+
+    gcFree(gc);
+
+    printf("OK\n");
+}
+
+void testGcRequestMemory()
+{
+    printf("testGcRequestMemory: ");
+    struct Gc *gc = gcNew(1000, 0.5);
+    arrayNew(gc, 23, 23);
+    assert(gc->size == sizeof(struct Object) + sizeof(struct Array) + 23 * sizeof(struct Object *));
+    uint32_t oldSize = gc->size;
+
+    struct Object *double1 = doubleNew(gc, 13);
+    assert(gc->size == oldSize + sizeof(struct Object));
+    oldSize = gc->size;
+
+    struct Object *integer1 = integerNew(gc, 16);
+    assert(gc->size == oldSize + sizeof(struct Object));
+    oldSize = gc->size;
+
+    struct Object *map = mapNew(gc);
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct Map) + 8 * sizeof(struct MapEntry *));
+    oldSize = gc->size;
+
+    mapPut(gc, map->value.map, integer1, double1);
+    assert(gc->size == oldSize + sizeof(struct MapEntry));
+    oldSize = gc->size;
+
+    pairNew(gc, integer1, double1);
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct Pair));
+    oldSize = gc->size;
+
+    stringNewFromCString(gc, "double1");
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct String) + 7 * sizeof(Char));
+    oldSize = gc->size;
+
+    gcSweep(gc);
+
+    assert(gc->size == 0);
+
+    gcFree(gc);
+
+    printf("OK\n");
+}
+
+void testGcReleaseMemory()
+{
+    printf("testGcReleaseMemory: ");
+    struct Gc *gc = gcNew(1000, 0.5);
+    struct Object *array = arrayNew(gc, 4, 4);
+    assert(gc->size == sizeof(struct Object) + sizeof(struct Array) + 4 * sizeof(struct Object *));
+    uint32_t oldSize = gc->size;
+
+    struct Object *double1 = doubleNew(gc, 13);
+    assert(gc->size == oldSize + sizeof(struct Object));
+    oldSize = gc->size;
+
+    struct Object *integer1 = integerNew(gc, 16);
+    assert(gc->size == oldSize + sizeof(struct Object));
+    oldSize = gc->size;
+
+    arraySet(array->value.array, 0, double1);
+    arraySet(array->value.array, 1, integer1);
+
+    struct Object *map = mapNew(gc);
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct Map) + 8 * sizeof(struct MapEntry *));
+    oldSize = gc->size;
+
+    mapPut(gc, map->value.map, integer1, double1);
+    assert(gc->size == oldSize + sizeof(struct MapEntry));
+    oldSize = gc->size;
+
+    mapPut(gc, map->value.map, array, double1);
+    assert(gc->size == oldSize + sizeof(struct MapEntry));
+    oldSize = gc->size;
+
+    struct Object *pair = pairNew(gc, integer1, double1);
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct Pair));
+    oldSize = gc->size;
+
+    struct Object *string = stringNewFromCString(gc, "double1");
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct String) + 7 * sizeof(Char));
+    oldSize = gc->size;
+
+    arraySet(array->value.array, 2, string);
+
+    pairNew(gc, pair, array);
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct Pair));
+    oldSize = gc->size;
+
+    pairNew(gc, string, map);
+    assert(gc->size == oldSize + sizeof(struct Object) + sizeof(struct Pair));
+    oldSize = gc->size;
+
+    gcSweep(gc);
+
+    assert(gc->size == 0);
+
+    gcFree(gc);
+
+    printf("OK\n");
+}
+
+void testGcShouldMarkAndSweep()
+{
+    printf("testGcShouldMarkAndSweep: ");
+    struct Gc *gc = gcNew(3 * sizeof(struct Object), 0.5);
+    integerNew(gc, 23);
+    assert(gcShouldMarkAndSweep(gc) == 0);
+    assert(gc->size == sizeof(struct Object));
+
+    integerNew(gc, 13);
+    assert(gcShouldMarkAndSweep(gc) == 1);
+    assert(gc->outOfMemory == 0);
+    assert(gc->size == 2 * sizeof(struct Object));
+
     gcFree(gc);
 
     printf("OK\n");
@@ -1109,8 +1268,8 @@ void testGcRegisterObject()
 void testGcSweep()
 {
     printf("testGcSweep: ");
-    struct Gc *gc = gcNew();
-    struct Object *array1 = arrayNew(gc, 3);
+    struct Gc *gc = gcNew(250, 0.6);
+    struct Object *array1 = arrayNew(gc, 3, 3);
     struct Object *integer1 = integerNew(gc, 7);
     struct Object *integer2 = integerNew(gc, 98);
     struct Object *integer3 = integerNew(gc, 121299);
@@ -1119,9 +1278,10 @@ void testGcSweep()
     array1->value.array->objects[1] = integer2;
     array1->value.array->objects[2] = integer3;
 
-    struct Object *string = stringNew(gc, "hallo1");
+    struct Object *string = stringNewFromCString(gc, "hallo1");
 
     assert(gc->newCount == 5);
+    assert(gc->size == 5 * sizeof(struct Object) + sizeof(struct Array) + 3 * sizeof(struct Object *) + sizeof(struct String) + 6 * sizeof(Char));
 
     integer1->mark = OBJECT_MARK_TRUE;
     string->mark = OBJECT_MARK_TRUE;
@@ -1132,6 +1292,7 @@ void testGcSweep()
     assert(gc->head->object == string);
     assert(gc->head->next->object == integer1);
     assert(gc->head->next->next == NULL);
+    assert(gc->size == 2 * sizeof(struct Object) + sizeof(struct String) + 6 * sizeof(Char));
 
     integer1->mark = OBJECT_MARK_TRUE;
 
@@ -1140,13 +1301,15 @@ void testGcSweep()
     assert(gc->freeCount == 4);
     assert(gc->head->object == integer1);
     assert(gc->head->next == NULL);
+    assert(gc->size == sizeof(struct Object));
 
     gcSweep(gc);
 
     assert(gc->freeCount == 5);
     assert(gc->head == NULL);
+    assert(gc->size == 0);
 
-    struct Object *arrayString1 = stringNew(gc, "");
+    struct Object *arrayString1 = stringNewFromCString(gc, "");
     struct Object *arrayString2 = arrayToString(gc, stringToArray(gc, arrayString1->value.string)->value.array);
     struct Object *arrayString3 = arrayToString(gc, stringToArray(gc, arrayString2->value.string)->value.array);
 
@@ -1157,6 +1320,7 @@ void testGcSweep()
     assert(gc->freeCount == 12);
     assert(gc->freeCount == gc->newCount);
     assert(gc->head == NULL);
+    assert(gc->size == 0);
 
     gcFree(gc);
 
@@ -1166,7 +1330,7 @@ void testGcSweep()
 void testGcFree()
 {
     printf("testGcFree: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(100, 0.6);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1179,7 +1343,7 @@ void testIntegerNew()
     assert(integer->type == OBJECT_TYPE_INTEGER);
     assert(integer->value.integerValue == 1231212);
 
-    objectFree(integer);
+    objectFree(NULL, integer);
     printf("OK\n");
 }
 
@@ -1199,8 +1363,8 @@ void testIntegerToString()
     assert(string->value.string->characters[3] == '0');
     assert(string->value.string->characters[4] == '5');
     
-    objectFree(string);
-    objectFree(integer1);
+    objectFree(NULL, string);
+    objectFree(NULL, integer1);
     printf("OK\n");
 }
 
@@ -1213,7 +1377,7 @@ void testMapNew()
 
     assert(map1->value.map->bucketCount == 8);
 
-    objectFree(map1);
+    objectFree(NULL, map1);
 
     printf("OK\n");
 }
@@ -1224,15 +1388,15 @@ void testMapGet()
     struct Object *map1 = mapNew(NULL);
     struct Object *integer1 = integerNew(NULL, 1212);
 
-    struct Object *string1 = stringNew(NULL, "hallo1");
+    struct Object *string1 = stringNewFromCString(NULL, "hallo1");
 
     assert(mapGet(map1->value.map, integer1) == NULL);
     assert(mapGet(map1->value.map, string1) == NULL);
     assert(mapGet(map1->value.map, map1) == NULL);
 
-    objectFree(map1);
-    objectFree(integer1);
-    objectFree(string1);
+    objectFree(NULL, map1);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
 
     printf("OK\n");
 }
@@ -1254,68 +1418,68 @@ void testMapPut()
     struct Object *integer9 = integerNew(NULL, 874);
     struct Object *integer10 = integerNew(NULL, 236);
 
-    assert(mapPut(map1->value.map, integer1, integer6) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer1, integer6) == NULL);
     assert(map1->value.map->entryCount == 1);
     assert(map1->value.map->bucketCount == 8);
 
-    assert(mapPut(map1->value.map, integer2, integer7) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer2, integer7) == NULL);
     assert(map1->value.map->entryCount == 2);
     assert(map1->value.map->bucketCount == 8);
 
-    assert(mapPut(map1->value.map, integer3, integer8) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer3, integer8) == NULL);
     assert(map1->value.map->entryCount == 3);
     assert(map1->value.map->bucketCount == 8);
 
-    assert(mapPut(map1->value.map, integer4, integer9) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer4, integer9) == NULL);
     assert(map1->value.map->entryCount == 4);
     assert(map1->value.map->bucketCount == 8);
     
-    assert(mapPut(map1->value.map, integer5, integer10) == integer7);
+    assert(mapPut(NULL, map1->value.map, integer5, integer10) == integer7);
     assert(mapGet(map1->value.map, integer5) == integer10);
     assert(map1->value.map->entryCount == 4);
     assert(map1->value.map->bucketCount == 8);
 
-    assert(mapPut(map1->value.map, integer6, integer5) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer6, integer5) == NULL);
     assert(mapGet(map1->value.map, integer6) == integer5);
     assert(map1->value.map->entryCount == 5);
     assert(map1->value.map->bucketCount == 8);
 
-    assert(mapPut(map1->value.map, integer7, integer4) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer7, integer4) == NULL);
     assert(mapGet(map1->value.map, integer7) == integer4);
     assert(map1->value.map->entryCount == 6);
     assert(map1->value.map->bucketCount == 8);
 
-    assert(mapPut(map1->value.map, integer8, integer3) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer8, integer3) == NULL);
     assert(mapGet(map1->value.map, integer8) == integer3);
     assert(map1->value.map->entryCount == 7);
     assert(map1->value.map->bucketCount == 16);
 
-    assert(mapPut(map1->value.map, integer9, integer2) == NULL);
+    assert(mapPut(NULL, map1->value.map, integer9, integer2) == NULL);
     assert(mapGet(map1->value.map, integer9) == integer2);
     assert(map1->value.map->entryCount == 8);
     assert(map1->value.map->bucketCount == 16);
 
-    assert(mapPut(map1->value.map, NULL, integer1) == NULL);
+    assert(mapPut(NULL, map1->value.map, NULL, integer1) == NULL);
     assert(mapGet(map1->value.map, NULL) == integer1);
     assert(map1->value.map->entryCount == 9);
     assert(map1->value.map->bucketCount == 16);
 
-    assert(mapPut(map1->value.map, NULL, NULL) == integer1);
+    assert(mapPut(NULL, map1->value.map, NULL, NULL) == integer1);
     assert(mapGet(map1->value.map, NULL) == NULL);
     assert(map1->value.map->entryCount == 9);
     assert(map1->value.map->bucketCount == 16);
 
-    objectFree(map1);
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
-    objectFree(integer4);
-    objectFree(integer5);
-    objectFree(integer6);
-    objectFree(integer7);
-    objectFree(integer8);
-    objectFree(integer9);
-    objectFree(integer10);
+    objectFree(NULL, map1);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
+    objectFree(NULL, integer4);
+    objectFree(NULL, integer5);
+    objectFree(NULL, integer6);
+    objectFree(NULL, integer7);
+    objectFree(NULL, integer8);
+    objectFree(NULL, integer9);
+    objectFree(NULL, integer10);
 
     printf("OK\n");
 }
@@ -1332,7 +1496,7 @@ void testMapPutMany()
     for (int i = 0; i < largeNum; i++)
     {
         objects[i] = integerNew(NULL, i);
-        assert(mapPut(map->value.map, objects[i], objects[i]) == NULL);
+        assert(mapPut(NULL, map->value.map, objects[i], objects[i]) == NULL);
     }
     
     for (int i = 0; i < largeNum; i++)
@@ -1342,7 +1506,7 @@ void testMapPutMany()
     }
 
     free(objects);
-    objectFree(map);
+    objectFree(NULL, map);
 
     printf("OK\n");
 }
@@ -1366,15 +1530,15 @@ void testMapPutAll()
     struct Object *integer9 = integerNew(NULL, 874);
     struct Object *integer10 = integerNew(NULL, 236);
 
-    mapPut(map1->value.map, integer1, integer6);
-    mapPut(map1->value.map, integer2, integer7);
-    mapPut(map1->value.map, integer3, integer8);
-    mapPut(map1->value.map, integer4, integer9);
+    mapPut(NULL, map1->value.map, integer1, integer6);
+    mapPut(NULL, map1->value.map, integer2, integer7);
+    mapPut(NULL, map1->value.map, integer3, integer8);
+    mapPut(NULL, map1->value.map, integer4, integer9);
 
-    mapPut(map2->value.map, integer5, integer10);
-    mapPut(map2->value.map, integer7, integer1);
+    mapPut(NULL, map2->value.map, integer5, integer10);
+    mapPut(NULL, map2->value.map, integer7, integer1);
 
-    mapPutAll(map1->value.map, map2->value.map);
+    mapPutAll(NULL, map1->value.map, map2->value.map);
 
     assert(map1->value.map->entryCount == 5);
     assert(map1->value.map->bucketCount == 8);
@@ -1385,34 +1549,34 @@ void testMapPutAll()
     assert(mapGet(map1->value.map, integer5) == integer10);
     assert(mapGet(map1->value.map, integer7) == integer1);
 
-    mapPutAll(map2->value.map, map3->value.map);
+    mapPutAll(NULL, map2->value.map, map3->value.map);
 
     assert(map2->value.map->entryCount == 2);
     assert(map2->value.map->bucketCount == 8);
     assert(mapGet(map2->value.map, integer5) == integer10);
     assert(mapGet(map2->value.map, integer7) == integer1);
 
-    mapPutAll(map2->value.map, map2->value.map);
+    mapPutAll(NULL, map2->value.map, map2->value.map);
 
     assert(map2->value.map->entryCount == 2);
     assert(map2->value.map->bucketCount == 8);
     assert(mapGet(map2->value.map, integer5) == integer10);
     assert(mapGet(map2->value.map, integer7) == integer1);
 
-    objectFree(map1);
-    objectFree(map2);
-    objectFree(map3);
+    objectFree(NULL, map1);
+    objectFree(NULL, map2);
+    objectFree(NULL, map3);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
-    objectFree(integer4);
-    objectFree(integer5);
-    objectFree(integer6);
-    objectFree(integer7);
-    objectFree(integer8);
-    objectFree(integer9);
-    objectFree(integer10);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
+    objectFree(NULL, integer4);
+    objectFree(NULL, integer5);
+    objectFree(NULL, integer6);
+    objectFree(NULL, integer7);
+    objectFree(NULL, integer8);
+    objectFree(NULL, integer9);
+    objectFree(NULL, integer10);
 
     printf("OK\n");
 }
@@ -1434,45 +1598,45 @@ void testMapRemove()
     struct Object *integer9 = integerNew(NULL, 874);
     struct Object *integer10 = integerNew(NULL, 236);
 
-    mapPut(map1->value.map, integer1, integer6);
-    mapPut(map1->value.map, integer2, integer7);
-    mapPut(map1->value.map, integer3, integer8);
-    mapPut(map1->value.map, integer4, integer9);
+    mapPut(NULL, map1->value.map, integer1, integer6);
+    mapPut(NULL, map1->value.map, integer2, integer7);
+    mapPut(NULL, map1->value.map, integer3, integer8);
+    mapPut(NULL, map1->value.map, integer4, integer9);
 
-    assert(mapRemove(map1->value.map, integer2) == integer7);
+    assert(mapRemove(NULL, map1->value.map, integer2) == integer7);
     assert(map1->value.map->entryCount == 3);
     assert(mapGet(map1->value.map, integer2) == NULL);
 
-    assert(mapRemove(map1->value.map, integer2) == NULL);
+    assert(mapRemove(NULL, map1->value.map, integer2) == NULL);
     assert(map1->value.map->entryCount == 3);
 
-    assert(mapRemove(map1->value.map, integer4) == integer9);
+    assert(mapRemove(NULL, map1->value.map, integer4) == integer9);
     assert(map1->value.map->entryCount == 2);
     assert(mapGet(map1->value.map, integer4) == NULL);
 
-    assert(mapRemove(map1->value.map, integer3) == integer8);
+    assert(mapRemove(NULL, map1->value.map, integer3) == integer8);
     assert(map1->value.map->entryCount == 1);
     assert(mapGet(map1->value.map, integer3) == NULL);
 
-    assert(mapRemove(map1->value.map, integer1) == integer6);
+    assert(mapRemove(NULL, map1->value.map, integer1) == integer6);
     assert(map1->value.map->entryCount == 0);
     assert(mapGet(map1->value.map, integer1) == NULL);
 
-    assert(mapRemove(map1->value.map, NULL) == NULL);
+    assert(mapRemove(NULL, map1->value.map, NULL) == NULL);
     assert(map1->value.map->entryCount == 0);
 
-    objectFree(map1);
+    objectFree(NULL, map1);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
-    objectFree(integer4);
-    objectFree(integer5);
-    objectFree(integer6);
-    objectFree(integer7);
-    objectFree(integer8);
-    objectFree(integer9);
-    objectFree(integer10);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
+    objectFree(NULL, integer4);
+    objectFree(NULL, integer5);
+    objectFree(NULL, integer6);
+    objectFree(NULL, integer7);
+    objectFree(NULL, integer8);
+    objectFree(NULL, integer9);
+    objectFree(NULL, integer10);
 
     printf("OK\n");
 }
@@ -1487,16 +1651,16 @@ void testMapHasKey()
     assert(mapHasKey(map1->value.map, integer1) == BOOLEAN_FALSE);
     assert(mapHasKey(map1->value.map, NULL) == BOOLEAN_FALSE);
 
-    mapPut(map1->value.map, integer1, NULL);
+    mapPut(NULL, map1->value.map, integer1, NULL);
 
     assert(mapHasKey(map1->value.map, integer1) == BOOLEAN_TRUE);
 
-    mapRemove(map1->value.map, integer1);
+    mapRemove(NULL, map1->value.map, integer1);
 
     assert(mapHasKey(map1->value.map, integer1) == BOOLEAN_FALSE);
 
-    objectFree(map1);
-    objectFree(integer1);
+    objectFree(NULL, map1);
+    objectFree(NULL, integer1);
 
     printf("OK\n");
 }
@@ -1520,11 +1684,11 @@ void testMapEntries()
     struct Object *integer9 = integerNew(NULL, 874);
     struct Object *integer10 = integerNew(NULL, 236);
 
-    mapPut(map1->value.map, integer1, integer6);
-    mapPut(map1->value.map, integer2, integer7);
-    mapPut(map1->value.map, integer3, integer8);
-    mapPut(map1->value.map, integer4, integer9);
-    mapPut(map1->value.map, integer5, integer10);
+    mapPut(NULL, map1->value.map, integer1, integer6);
+    mapPut(NULL, map1->value.map, integer2, integer7);
+    mapPut(NULL, map1->value.map, integer3, integer8);
+    mapPut(NULL, map1->value.map, integer4, integer9);
+    mapPut(NULL, map1->value.map, integer5, integer10);
 
     struct Object *emptyArray = mapEntries(NULL, map2->value.map);
     assert(emptyArray->value.array->objectCount == 0);
@@ -1533,7 +1697,7 @@ void testMapEntries()
 
     assert(array->type == OBJECT_TYPE_ARRAY);
     assert(array->value.array->objectCount == 5);
-    assert(array->value.array->slotCount == 8);
+    assert(array->value.array->slotCount == 5);
 
     assert(array->value.array->objects[0]->type == OBJECT_TYPE_PAIR);
     assert(array->value.array->objects[1]->type == OBJECT_TYPE_PAIR);
@@ -1565,27 +1729,27 @@ void testMapEntries()
     assert(s1 == integer9 || s2 == integer9 || s3 == integer9 || s4 == integer9 || s5 == integer9);
     assert(s1 == integer10 || s2 == integer10 || s3 == integer10 || s4 == integer10 || s5 == integer10);
 
-    objectFree(array->value.array->objects[0]);
-    objectFree(array->value.array->objects[1]);
-    objectFree(array->value.array->objects[2]);
-    objectFree(array->value.array->objects[3]);
-    objectFree(array->value.array->objects[4]);
+    objectFree(NULL, array->value.array->objects[0]);
+    objectFree(NULL, array->value.array->objects[1]);
+    objectFree(NULL, array->value.array->objects[2]);
+    objectFree(NULL, array->value.array->objects[3]);
+    objectFree(NULL, array->value.array->objects[4]);
 
-    objectFree(array);
-    objectFree(emptyArray);
-    objectFree(map1);
-    objectFree(map2);
+    objectFree(NULL, array);
+    objectFree(NULL, emptyArray);
+    objectFree(NULL, map1);
+    objectFree(NULL, map2);
 
-    objectFree(integer1);
-    objectFree(integer2);
-    objectFree(integer3);
-    objectFree(integer4);
-    objectFree(integer5);
-    objectFree(integer6);
-    objectFree(integer7);
-    objectFree(integer8);
-    objectFree(integer9);
-    objectFree(integer10);
+    objectFree(NULL, integer1);
+    objectFree(NULL, integer2);
+    objectFree(NULL, integer3);
+    objectFree(NULL, integer4);
+    objectFree(NULL, integer5);
+    objectFree(NULL, integer6);
+    objectFree(NULL, integer7);
+    objectFree(NULL, integer8);
+    objectFree(NULL, integer9);
+    objectFree(NULL, integer10);
     printf("OK\n");
 }
 
@@ -1594,16 +1758,16 @@ void testMapCopy()
     printf("testMapCopy: ");
     struct Object *map1 = mapNew(NULL);
 
-    struct Object *string1 = stringNew(NULL, "hier");
-    struct Object *string2 = stringNew(NULL, "dort");
-    struct Object *string3 = stringNew(NULL, "nah");
-    struct Object *string4 = stringNew(NULL, "fern");
+    struct Object *string1 = stringNewFromCString(NULL, "hier");
+    struct Object *string2 = stringNewFromCString(NULL, "dort");
+    struct Object *string3 = stringNewFromCString(NULL, "nah");
+    struct Object *string4 = stringNewFromCString(NULL, "fern");
     struct Object *integer1 = integerNew(NULL, 2);
 
-    mapPut(map1->value.map, string1, string2);
-    mapPut(map1->value.map, string3, string4);
-    mapPut(map1->value.map, integer1, NULL);
-    mapPut(map1->value.map, NULL, integer1);
+    mapPut(NULL, map1->value.map, string1, string2);
+    mapPut(NULL, map1->value.map, string3, string4);
+    mapPut(NULL, map1->value.map, integer1, NULL);
+    mapPut(NULL, map1->value.map, NULL, integer1);
 
     struct Object *map2 = mapCopy(NULL, map1->value.map);
 
@@ -1623,42 +1787,42 @@ void testMapCopy()
 
         while (currEntry != NULL)
         {
-            objectFree(currEntry->key);
-            objectFree(currEntry->value);
+            objectFree(NULL, currEntry->key);
+            objectFree(NULL, currEntry->value);
 
             currEntry = currEntry->next;
         }
     }
 
-    objectFree(integer1);
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
-    objectFree(map1);
-    objectFree(map2);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
+    objectFree(NULL, map1);
+    objectFree(NULL, map2);
     printf("OK\n");
 }
 
 void testMapEquals()
 {
     printf("testMapEquals: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(1000, 0.9);
     struct Object *map1 = mapNew(gc);
     struct Object *map2 = mapNew(gc);
 
-    struct Object *string1 = stringNew(gc, "hier");
-    struct Object *string2 = stringNew(gc, "dort");
-    struct Object *string3 = stringNew(gc, "nah");
-    struct Object *string4 = stringNew(gc, "fern");
+    struct Object *string1 = stringNewFromCString(gc, "hier");
+    struct Object *string2 = stringNewFromCString(gc, "dort");
+    struct Object *string3 = stringNewFromCString(gc, "nah");
+    struct Object *string4 = stringNewFromCString(gc, "fern");
     struct Object *integer1 = integerNew(gc, 2);
 
-    mapPut(map1->value.map, string1, string2);
-    mapPut(map1->value.map, string3, string4);
-    mapPut(map1->value.map, integer1, NULL);
-    mapPut(map1->value.map, NULL, integer1);
+    mapPut(gc, map1->value.map, string1, string2);
+    mapPut(gc, map1->value.map, string3, string4);
+    mapPut(gc, map1->value.map, integer1, NULL);
+    mapPut(gc, map1->value.map, NULL, integer1);
 
-    mapPut(map2->value.map, string1, string2);
+    mapPut(gc, map2->value.map, string1, string2);
 
     assert(mapEquals(map1->value.map, map2->value.map) == BOOLEAN_FALSE);
     assert(mapEquals(map2->value.map, map1->value.map) == BOOLEAN_FALSE);
@@ -1668,15 +1832,15 @@ void testMapEquals()
     assert(mapEquals(map1->value.map, map1->value.map) == BOOLEAN_TRUE);
     assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_TRUE);
     
-    mapRemove(mapCopy1->value.map, integer1);
+    mapRemove(gc, mapCopy1->value.map, integer1);
     
     assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_FALSE);
 
-    mapPut(mapCopy1->value.map, integer1, integer1);
+    mapPut(gc, mapCopy1->value.map, integer1, integer1);
 
     assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_FALSE);
 
-    mapPut(mapCopy1->value.map, integer1, NULL);
+    mapPut(gc, mapCopy1->value.map, integer1, NULL);
 
     assert(mapEquals(map1->value.map, mapCopy1->value.map) == BOOLEAN_TRUE);
 
@@ -1684,6 +1848,7 @@ void testMapEquals()
 
     assert(gc->freeCount == 14);
     assert(gc->head == NULL);
+    assert(gc->size == 0);
 
     gcFree(gc);
     printf("OK\n");
@@ -1692,28 +1857,28 @@ void testMapEquals()
 void testMapHash()
 {
     printf("testMapHash: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(1000, 0.9);
     struct Object *map1 = mapNew(gc);
 
-    struct Object *string1 = stringNew(gc, "hier");
-    struct Object *string2 = stringNew(gc, "dort");
-    struct Object *string3 = stringNew(gc, "nah");
-    struct Object *string4 = stringNew(gc, "fern");
+    struct Object *string1 = stringNewFromCString(gc, "hier");
+    struct Object *string2 = stringNewFromCString(gc, "dort");
+    struct Object *string3 = stringNewFromCString(gc, "nah");
+    struct Object *string4 = stringNewFromCString(gc, "fern");
     struct Object *integer1 = integerNew(gc, 2);
 
-    mapPut(map1->value.map, string1, string2);
-    mapPut(map1->value.map, string3, string4);
-    mapPut(map1->value.map, integer1, NULL);
-    mapPut(map1->value.map, NULL, integer1);
+    mapPut(gc, map1->value.map, string1, string2);
+    mapPut(gc, map1->value.map, string3, string4);
+    mapPut(gc, map1->value.map, integer1, NULL);
+    mapPut(gc, map1->value.map, NULL, integer1);
 
     struct Object *map2 = mapCopy(gc, map1->value.map);
 
     assert(mapHash(map1->value.map) == mapHash(map1->value.map));
     assert(mapHash(map1->value.map) == mapHash(map2->value.map));
     
-    mapRemove(map2->value.map, integer1);
-    mapPut(map2->value.map, integer1, integer1);
-    mapPut(map2->value.map, integer1, NULL);
+    mapRemove(gc, map2->value.map, integer1);
+    mapPut(gc, map2->value.map, integer1, integer1);
+    mapPut(gc, map2->value.map, integer1, NULL);
 
     assert(mapHash(map1->value.map) == mapHash(map2->value.map));
 
@@ -1721,6 +1886,7 @@ void testMapHash()
 
     assert(gc->freeCount == 13);
     assert(gc->head == NULL);
+    assert(gc->size == 0);
 
     gcFree(gc);
     printf("OK\n");
@@ -1731,29 +1897,29 @@ void testMapToString()
     printf("testMapToString: ");
     struct Object *map1 = mapNew(NULL);
 
-    struct Object *string1 = stringNew(NULL, "hier");
-    struct Object *string2 = stringNew(NULL, "dort");
-    struct Object *string3 = stringNew(NULL, "nah");
-    struct Object *string4 = stringNew(NULL, "fern");
+    struct Object *string1 = stringNewFromCString(NULL, "hier");
+    struct Object *string2 = stringNewFromCString(NULL, "dort");
+    struct Object *string3 = stringNewFromCString(NULL, "nah");
+    struct Object *string4 = stringNewFromCString(NULL, "fern");
     struct Object *integer1 = integerNew(NULL, 2);
 
-    mapPut(map1->value.map, string1, string2);
-    mapPut(map1->value.map, string3, string4);
-    mapPut(map1->value.map, integer1, NULL);
-    mapPut(map1->value.map, NULL, integer1);
+    mapPut(NULL, map1->value.map, string1, string2);
+    mapPut(NULL, map1->value.map, string3, string4);
+    mapPut(NULL, map1->value.map, integer1, NULL);
+    mapPut(NULL, map1->value.map, NULL, integer1);
 
     struct Object *mapString1 = mapToString(NULL, map1->value.map);
 
     assert(mapString1->type == OBJECT_TYPE_STRING);
     assert(mapString1->value.string->characterCount == 34);
 
-    objectFree(map1);
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
-    objectFree(integer1);
-    objectFree(mapString1);
+    objectFree(NULL, map1);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
+    objectFree(NULL, integer1);
+    objectFree(NULL, mapString1);
 
     printf("OK\n");
 }
@@ -1763,16 +1929,16 @@ void testMapMark()
     printf("testMapMark: ");
     struct Object *map1 = mapNew(NULL);
 
-    struct Object *string1 = stringNew(NULL, "hier");
-    struct Object *string2 = stringNew(NULL, "dort");
-    struct Object *string3 = stringNew(NULL, "nah");
-    struct Object *string4 = stringNew(NULL, "fern");
+    struct Object *string1 = stringNewFromCString(NULL, "hier");
+    struct Object *string2 = stringNewFromCString(NULL, "dort");
+    struct Object *string3 = stringNewFromCString(NULL, "nah");
+    struct Object *string4 = stringNewFromCString(NULL, "fern");
     struct Object *integer1 = integerNew(NULL, 2);
 
-    mapPut(map1->value.map, string1, string2);
-    mapPut(map1->value.map, string3, string4);
-    mapPut(map1->value.map, integer1, NULL);
-    mapPut(map1->value.map, NULL, integer1);
+    mapPut(NULL, map1->value.map, string1, string2);
+    mapPut(NULL, map1->value.map, string3, string4);
+    mapPut(NULL, map1->value.map, integer1, NULL);
+    mapPut(NULL, map1->value.map, NULL, integer1);
 
     assert(map1->mark == OBJECT_MARK_FALSE);
     assert(string1->mark == OBJECT_MARK_FALSE);
@@ -1790,12 +1956,12 @@ void testMapMark()
     assert(string4->mark == OBJECT_MARK_TRUE);
     assert(integer1->mark == OBJECT_MARK_TRUE);
 
-    objectFree(map1);
-    objectFree(string1);
-    objectFree(string2);
-    objectFree(string3);
-    objectFree(string4);
-    objectFree(integer1);
+    objectFree(NULL, map1);
+    objectFree(NULL, string1);
+    objectFree(NULL, string2);
+    objectFree(NULL, string3);
+    objectFree(NULL, string4);
+    objectFree(NULL, integer1);
 
     printf("OK\n");
 }
@@ -1804,88 +1970,98 @@ void testMapFree()
 {
     printf("testMapFree: ");
     struct Object *map = mapNew(NULL);
-    objectFree(map);
+    objectFree(NULL, map);
     printf("OK\n");
 }
 
 void testObjectCopy()
 {
     printf("testObjectCopy: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(10000, 0.9);
+
     struct Object *object = getComplexObject(gc);
-    
+
+    uint32_t oldSize = gc->size;
+    uint32_t oldNewCount = gc->newCount;
+
     struct Object *copy = objectCopy(gc, object);
     
+    // if object is in container multiple times copy is called multiple times on said object 
+    assert(gc->newCount >= oldNewCount * 2); 
+    assert(gc->size >= oldSize * 2);
+
     assert(copy != object);
 
-    assert(mapGet(object->value.map, stringNew(gc, "Willi")) != mapGet(copy->value.map, stringNew(gc, "Willi")));
-    assert(mapGet(object->value.map, stringNew(gc, "Otto")) != mapGet(copy->value.map, stringNew(gc, "Otto")));
-    assert(mapGet(object->value.map, stringNew(gc, "Lisa")) != mapGet(copy->value.map, stringNew(gc, "Lisa")));
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Willi")) != mapGet(copy->value.map, stringNewFromCString(gc, "Willi")));
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Otto")) != mapGet(copy->value.map, stringNewFromCString(gc, "Otto")));
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Lisa")) != mapGet(copy->value.map, stringNewFromCString(gc, "Lisa")));
 
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first);
-    assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first != mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first);
-    assert(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first != mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first != mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first != mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first != mapGet(copy->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first);
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "name")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "name")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first->value.map, stringNewFromCString(gc, "name")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first->value.map, stringNewFromCString(gc, "name")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "name"))  
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "name")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first->value.map, stringNewFromCString(gc, "name"))  
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first->value.map, stringNewFromCString(gc, "name")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "name"))  
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "name")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first->value.map, stringNewFromCString(gc, "name"))  
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first->value.map, stringNewFromCString(gc, "name")));
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "age")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "age")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first->value.map, stringNewFromCString(gc, "age")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first->value.map, stringNewFromCString(gc, "age")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "age"))  
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "age")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first->value.map, stringNewFromCString(gc, "age"))  
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first->value.map, stringNewFromCString(gc, "age")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "age"))  
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "age")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first->value.map, stringNewFromCString(gc, "age"))  
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first->value.map, stringNewFromCString(gc, "age")));
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "height")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->first->value.map, stringNew(gc, "height")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first->value.map, stringNewFromCString(gc, "height")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->first->value.map, stringNewFromCString(gc, "height")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "height"))  
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->first->value.map, stringNew(gc, "height")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first->value.map, stringNewFromCString(gc, "height"))  
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->first->value.map, stringNewFromCString(gc, "height")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "height"))  
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->first->value.map, stringNew(gc, "height")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first->value.map, stringNewFromCString(gc, "height"))  
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->first->value.map, stringNewFromCString(gc, "height")));
 
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second);
-    assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second != mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second);
-    assert(mapGet(object->value.map, stringNew(gc, "Lisa"))->value.pair->second != mapGet(copy->value.map, stringNew(gc, "Lisa"))->value.pair->second);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second != mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second != mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->second != mapGet(copy->value.map, stringNewFromCString(gc, "Lisa"))->value.pair->second);
 
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0] 
-        != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[0] 
+        != mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[0]);
     
-    assert(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1] 
-        != mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[1] 
+        != mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[1]);
 
-    assert(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0] 
-        != mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]);
+    assert(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0] 
+        != mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]);
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "street")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "street")));
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number")));
     
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "street")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "street")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNewFromCString(gc, "street")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNewFromCString(gc, "street")));
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "number")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNew(gc, "number")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNewFromCString(gc, "number")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Willi"))->value.pair->second->value.array->objects[1]->value.map, stringNewFromCString(gc, "number")));
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "street")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "street")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "street")));
 
-    assert(mapGet(mapGet(object->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")) 
-        != mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number")));
+    assert(mapGet(mapGet(object->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number")) 
+        != mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number")));
+
 
     gcSweep(gc);
     assert(gc->freeCount == gc->newCount);
+    assert(gc->size == 0);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1893,7 +2069,7 @@ void testObjectCopy()
 void testObjectEquals()
 {
     printf("testObjectEquals: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(10000, 0.9);
     struct Object *object = getComplexObject(gc);
     
     struct Object *copy = objectCopy(gc, object);
@@ -1901,17 +2077,18 @@ void testObjectEquals()
     assert(objectEquals(object, copy) == BOOLEAN_TRUE);
 
     // copy changes address
-    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integerValue = 12;
+    mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number"))->value.integerValue = 12;
     
     assert(objectEquals(object, copy) == BOOLEAN_FALSE);
 
     // copy changes address back
-    mapPut(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"), integerNew(gc, 32));
+    mapPut(gc, mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number"), integerNew(gc, 32));
     
     assert(objectEquals(object, copy) == BOOLEAN_TRUE);
 
     gcSweep(gc);
     assert(gc->freeCount == gc->newCount);
+    assert(gc->size == 0);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1919,7 +2096,7 @@ void testObjectEquals()
 void testObjectHash()
 {
     printf("testObjectHash: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(10000, 0.7);
     struct Object *object = getComplexObject(gc);
     
     struct Object *copy = objectCopy(gc, object);
@@ -1927,15 +2104,16 @@ void testObjectHash()
     assert(objectHash(object) == objectHash(copy));
 
     // copy changes address
-    mapGet(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"))->value.integerValue = 12;
+    mapGet(mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number"))->value.integerValue = 12;
     
     // copy changes address back
-    mapPut(mapGet(copy->value.map, stringNew(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNew(gc, "number"), integerNew(gc, 32));
+    mapPut(gc, mapGet(copy->value.map, stringNewFromCString(gc, "Otto"))->value.pair->second->value.array->objects[0]->value.map, stringNewFromCString(gc, "number"), integerNew(gc, 32));
     
     assert(objectHash(object) == objectHash(copy));
 
     gcSweep(gc);
     assert(gc->freeCount == gc->newCount);
+    assert(gc->size == 0);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1943,15 +2121,16 @@ void testObjectHash()
 void testObjectToString()
 {
     printf("testObjectToString: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(10000, 0.7);
     struct Object *object = getComplexObject(gc);
-
+    
     struct Object *string = objectToString(gc, object);
 
     stringPrint(string->value.string);
 
     gcSweep(gc);
     assert(gc->freeCount == gc->newCount);
+    assert(gc->size == 0);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1959,13 +2138,16 @@ void testObjectToString()
 void testObjectNew()
 {
     printf("testObjectNew: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(16, 0.7);
     
     objectNew(gc, 200);
+
+    assert(gc->size == sizeof(struct Object));
 
     gcSweep(gc);
 
     assert(gc->freeCount == gc->newCount);
+    assert(gc->size == 0);
     assert(gc->freeCount == 1);
     assert(gc->head == NULL);
 
@@ -1977,17 +2159,21 @@ void testObjectNew()
 void testObjectMark()
 {
     printf("testObjectMark: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(10000, 0.7);
     struct Object *object = getComplexObject(gc);
+
+    uint32_t oldSize = gc->size;
 
     objectMark(object);
 
     gcSweep(gc);
 
     assert(gc->freeCount == 0);
+    assert(gc->size == oldSize);
 
     gcSweep(gc);
     assert(gc->freeCount == gc->newCount);
+    assert(gc->size == 0);
     gcFree(gc);
 
     printf("OK\n");
@@ -1996,7 +2182,7 @@ void testObjectMark()
 void testObjectFree()
 {
     printf("testObjectFree: ");
-    struct Gc *gc = gcNew();
+    struct Gc *gc = gcNew(10000, 0.7);
     getComplexObject(gc);
 
     gcSweep(gc);
@@ -2015,8 +2201,8 @@ void testPairNew()
     assert(pair->value.pair->first == NULL);
     assert(pair->value.pair->second == integer1);
 
-    objectFree(integer1);
-    objectFree(pair);
+    objectFree(NULL, integer1);
+    objectFree(NULL, pair);
 
     printf("OK\n");
 }
@@ -2033,8 +2219,8 @@ void testPairSetFirst()
     assert(pairSetFirst(pair->value.pair, NULL) == integer1);
     assert(pair->value.pair->first == NULL);
 
-    objectFree(integer1);
-    objectFree(pair);
+    objectFree(NULL, integer1);
+    objectFree(NULL, pair);
     printf("OK\n");
 }
 
@@ -2050,8 +2236,8 @@ void testPairSetSecond()
     assert(pairSetSecond(pair->value.pair, integer1) == NULL);
     assert(pair->value.pair->second == integer1);
 
-    objectFree(integer1);
-    objectFree(pair);
+    objectFree(NULL, integer1);
+    objectFree(NULL, pair);
     printf("OK\n");
 }
 
@@ -2059,7 +2245,7 @@ void testPairCopy()
 {
     printf("testPairCopy: ");
     struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *string1 = stringNewFromCString(NULL, "1233123");
     struct Object *pair = pairNew(NULL, string1, integer1);
 
     struct Object *copy = pairCopy(NULL, pair->value.pair);
@@ -2068,12 +2254,12 @@ void testPairCopy()
     assert(copy->value.pair->first != pair->value.pair->first);
     assert(copy->value.pair->second != pair->value.pair->second);
 
-    objectFree(integer1);
-    objectFree(string1);
-    objectFree(pair);
-    objectFree(copy->value.pair->first);
-    objectFree(copy->value.pair->second);
-    objectFree(copy);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
+    objectFree(NULL, pair);
+    objectFree(NULL, copy->value.pair->first);
+    objectFree(NULL, copy->value.pair->second);
+    objectFree(NULL, copy);
     printf("OK\n");
 }
 
@@ -2081,7 +2267,7 @@ void testPairEquals()
 {
     printf("testPairEquals: ");
     struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *string1 = stringNewFromCString(NULL, "1233123");
     struct Object *pair = pairNew(NULL, string1, integer1);
 
     struct Object *copy = pairCopy(NULL, pair->value.pair);
@@ -2092,12 +2278,12 @@ void testPairEquals()
     pairSetFirst(pair->value.pair, NULL);
     assert(pairEquals(copy->value.pair, pair->value.pair) == BOOLEAN_FALSE);
 
-    objectFree(integer1);
-    objectFree(string1);
-    objectFree(pair);
-    objectFree(copy->value.pair->first);
-    objectFree(copy->value.pair->second);
-    objectFree(copy);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
+    objectFree(NULL, pair);
+    objectFree(NULL, copy->value.pair->first);
+    objectFree(NULL, copy->value.pair->second);
+    objectFree(NULL, copy);
     printf("OK\n");
 }
 
@@ -2105,7 +2291,7 @@ void testPairHash()
 {
     printf("testPairHash: ");
     struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *string1 = stringNewFromCString(NULL, "1233123");
     struct Object *pair = pairNew(NULL, string1, integer1);
 
     struct Object *copy = pairCopy(NULL, pair->value.pair);
@@ -2113,12 +2299,12 @@ void testPairHash()
     assert(pairHash(pair->value.pair) == pairHash(pair->value.pair));
     assert(pairHash(copy->value.pair) == pairHash(pair->value.pair));
 
-    objectFree(integer1);
-    objectFree(string1);
-    objectFree(pair);
-    objectFree(copy->value.pair->first);
-    objectFree(copy->value.pair->second);
-    objectFree(copy);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
+    objectFree(NULL, pair);
+    objectFree(NULL, copy->value.pair->first);
+    objectFree(NULL, copy->value.pair->second);
+    objectFree(NULL, copy);
     printf("OK\n");
 }
 
@@ -2126,7 +2312,7 @@ void testPairToString()
 {
     printf("testPairToString: ");
     struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *string1 = stringNewFromCString(NULL, "1233123");
     struct Object *pair = pairNew(NULL, string1, integer1);
 
     struct Object *pairString = pairToString(NULL, pair->value.pair);
@@ -2148,10 +2334,10 @@ void testPairToString()
     assert(pairString->value.string->characters[12] == '1');
     assert(pairString->value.string->characters[13] == ')');
 
-    objectFree(pairString);
-    objectFree(integer1);
-    objectFree(string1);
-    objectFree(pair);
+    objectFree(NULL, pairString);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
+    objectFree(NULL, pair);
     printf("OK\n");
 }
 
@@ -2159,7 +2345,7 @@ void testPairMark()
 {
     printf("testPairMark: ");
     struct Object *integer1 = integerNew(NULL, 1231);
-    struct Object *string1 = stringNew(NULL, "1233123");
+    struct Object *string1 = stringNewFromCString(NULL, "1233123");
     struct Object *pair = pairNew(NULL, string1, integer1);
 
     objectMark(pair);
@@ -2168,9 +2354,9 @@ void testPairMark()
     assert(string1->mark == OBJECT_MARK_TRUE);
     assert(pair->mark == OBJECT_MARK_TRUE);
 
-    objectFree(integer1);
-    objectFree(string1);
-    objectFree(pair);
+    objectFree(NULL, integer1);
+    objectFree(NULL, string1);
+    objectFree(NULL, pair);
     printf("OK\n");
 }
 
@@ -2204,6 +2390,11 @@ int main(int argc, char* argv[])
     testDoubleToString();
     testGcNew();
     testGcRegisterObject();
+    testGcRegisterObjectFull1();
+    testGcRegisterObjectFull2();
+    testGcRequestMemory();
+    testGcReleaseMemory();
+    testGcShouldMarkAndSweep();
     testGcSweep();
     testGcFree();
     testIntegerNew();

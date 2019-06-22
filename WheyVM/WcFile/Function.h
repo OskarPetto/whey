@@ -5,7 +5,7 @@
 
 struct Function
 {
-    uint8_t argumentCount;
+    uint8_t localsCount;
     uint16_t codeSize;
     unsigned char *byteCode;
 };

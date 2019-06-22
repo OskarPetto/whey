@@ -16,12 +16,19 @@ struct GcObject
 struct Gc
 {
     struct GcObject *head;
-    Integer newCount;
-    Integer freeCount;
+    uint64_t newCount;
+    uint64_t freeCount;
+    uint32_t size;
+    uint32_t maxSize;
+    double loadFactor;
+    uint8_t outOfMemory;
 };
 
-struct Gc *gcNew();
+struct Gc *gcNew(uint64_t maxSize, double loadFactor);
 void gcRegisterObject(struct Gc *gc, struct Object *object);
+void gcRequestMemory(struct Gc *gc, uint32_t size);
+void gcReleaseMemory(struct Gc *gc, uint32_t size);
+uint8_t gcShouldMarkAndSweep(struct Gc *gc);
 void gcSweep(struct Gc *gc);
 void gcFree(struct Gc *gc);
 

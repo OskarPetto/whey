@@ -25,7 +25,7 @@ union ObjectValue {
     struct Array *array;                // must not be NULL
     struct Map *map;                    // must not be NULL
     struct Pair *pair;                  // must not be NULL 
-    struct String *string;                  // must not be NULL 
+    struct String *string;              // must not be NULL 
 };
 
 struct Object
@@ -42,6 +42,6 @@ struct Object *objectToString(struct Gc *gc, struct Object *object);
 
 struct Object *objectNew(struct Gc *gc, uint8_t type);
 void objectMark(struct Object *object);
-void objectFree(struct Object *object);
+void objectFree(struct Gc *gc, struct Object *object);
 
 #endif

@@ -143,7 +143,7 @@ void testOneFunctionFile()
     assert(file->constantCount == 0);
     assert(file->functionCount == 1);
 
-    assert(file->functions[0]->argumentCount == 1);
+    assert(file->functions[0]->localsCount == 1);
     assert(file->functions[0]->codeSize == 10);
     assert(file->functions[0]->byteCode[0] == 1);
     assert(file->functions[0]->byteCode[1] == 2);
@@ -168,7 +168,7 @@ void testMultipleFunctionsFile()
     assert(file->constantCount == 0);
     assert(file->functionCount == 3);
 
-    assert(file->functions[0]->argumentCount == 1);
+    assert(file->functions[0]->localsCount == 1);
     assert(file->functions[0]->codeSize == 10);
     assert(file->functions[0]->byteCode[0] == 1);
     assert(file->functions[0]->byteCode[1] == 2);
@@ -181,10 +181,10 @@ void testMultipleFunctionsFile()
     assert(file->functions[0]->byteCode[8] == 9);
     assert(file->functions[0]->byteCode[9] == 10);
 
-    assert(file->functions[1]->argumentCount == 0);
+    assert(file->functions[1]->localsCount == 0);
     assert(file->functions[1]->codeSize == 0);
 
-    assert(file->functions[2]->argumentCount == 5);
+    assert(file->functions[2]->localsCount == 5);
     assert(file->functions[2]->codeSize == 1);
     assert(file->functions[2]->byteCode[0] == 1);
     
@@ -241,7 +241,7 @@ void testCompleteFile()
 
     assert(file->functionCount == 3);
 
-    assert(file->functions[0]->argumentCount == 1);
+    assert(file->functions[0]->localsCount == 1);
     assert(file->functions[0]->codeSize == 10);
     assert(file->functions[0]->byteCode[0] == 1);
     assert(file->functions[0]->byteCode[1] == 2);
@@ -254,10 +254,10 @@ void testCompleteFile()
     assert(file->functions[0]->byteCode[8] == 9);
     assert(file->functions[0]->byteCode[9] == 10);
 
-    assert(file->functions[1]->argumentCount == 0);
+    assert(file->functions[1]->localsCount == 0);
     assert(file->functions[1]->codeSize == 0);
 
-    assert(file->functions[2]->argumentCount == 5);
+    assert(file->functions[2]->localsCount == 5);
     assert(file->functions[2]->codeSize == 1);
     assert(file->functions[2]->byteCode[0] == 1);
     

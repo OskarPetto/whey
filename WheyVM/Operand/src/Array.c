@@ -1,5 +1,6 @@
 #include "../Array.h"
 #include "../Object.h"
+#include "../Gc.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -9,15 +10,15 @@ static Integer getNextLargerSlotCount(Integer slotCount)
     return slotCount + (slotCount >> 1) + 1;
 }
 
-struct Object *arrayNew(struct Gc *gc, Integer initialObjectCount)
+struct Object *arrayNew(struct Gc *gc, Integer initialObjectCount, Integer initialSlotCount)
 {
-    Integer slotCount = getNextLargerSlotCount(initialObjectCount);
     struct Object *object = objectNew(gc, OBJECT_TYPE_ARRAY);
+    gcRequestMemory(gc, sizeof(struct Array) + initialSlotCount * sizeof(struct Object *));
     object->value.array = (struct Array *) malloc(sizeof(struct Array));
     assert(object->value.array != NULL);
-    object->value.array->objects = (struct Object **)malloc(slotCount * sizeof(struct Object *));
+    object->value.array->objects = (struct Object **)calloc(initialSlotCount, sizeof(struct Object *));
     assert(object->value.array->objects != NULL);
-    object->value.array->slotCount = slotCount;
+    object->value.array->slotCount = initialSlotCount;
     object->value.array->objectCount = initialObjectCount;
     return object;
 }
@@ -29,13 +30,17 @@ struct Object *arraySet(struct Array *array, Integer index, struct Object *setOb
     return currentObject;
 }
 
-void arrayInsert(struct Array *array, Integer index, struct Object *insertObject)
+void arrayInsert(struct Gc *gc, struct Array *array, Integer index, struct Object *insertObject)
 {
     array->objectCount++;
 
     if (array->objectCount > array->slotCount)
     {
+        gcReleaseMemory(gc, array->slotCount * sizeof(struct Object *));
+
         array->slotCount = getNextLargerSlotCount(array->objectCount);
+
+        gcRequestMemory(gc, array->slotCount * sizeof(struct Object *));
 
         array->objects = (struct Object **)realloc(array->objects,
                                                    array->slotCount * sizeof(struct Object *));
@@ -52,7 +57,7 @@ void arrayInsert(struct Array *array, Integer index, struct Object *insertObject
 
 }
 
-void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArray)
+void arrayInsertAll(struct Gc *gc, struct Array *array, Integer index, struct Array *insertArray)
 {
     if (insertArray->objectCount == 0)
     {
@@ -71,7 +76,12 @@ void arrayInsertAll(struct Array *array, Integer index, struct Array *insertArra
 
     if (newObjectCount > array->slotCount)
     {
+
+        gcReleaseMemory(gc, array->slotCount * sizeof(struct Object *));
+
         array->slotCount = getNextLargerSlotCount(newObjectCount);
+
+        gcRequestMemory(gc, array->slotCount * sizeof(struct Object *));
 
         array->objects = (struct Object **)realloc(array->objects,
                                                    array->slotCount * sizeof(struct Object *));
@@ -110,7 +120,7 @@ struct Object *arrayRemove(struct Array *array, Integer index)
 
 struct Object *arrayCopy(struct Gc *gc, struct Array *array)
 {
-    struct Object *copy = arrayNew(gc, array->objectCount);
+    struct Object *copy = arrayNew(gc, array->objectCount, array->slotCount);
 
     for (Integer i = 0; i < array->objectCount; i++)
     {
@@ -152,7 +162,7 @@ Integer arrayHash(struct Array *array)
 
 struct Object *arrayToString(struct Gc *gc, struct Array *array)
 {
-    struct Object *stringObject = stringNew(NULL, "[");
+    struct Object *stringObject = stringNewFromCString(NULL, "[");
 
     for (Integer i = 0; i < array->objectCount; i++)
     {
@@ -160,8 +170,8 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array)
 
         struct Object *temp = stringConcatenate(NULL, stringObject->value.string, subStringObject->value.string);
 
-        objectFree(stringObject);
-        objectFree(subStringObject);
+        objectFree(NULL, stringObject);
+        objectFree(NULL, subStringObject);
         stringObject = temp;
 
         stringAppendCharacter(stringObject->value.string, ',');
@@ -176,11 +186,9 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array)
         stringAppendCharacter(stringObject->value.string, ']');
     }
 
-    if (gc != NULL)
-    {
-        gcRegisterObject(gc, stringObject);
-    }
-
+    gcRequestMemory(gc, sizeof(struct Object) + sizeof(struct String) + stringObject->value.string->characterCount * sizeof(Char));
+    gcRegisterObject(gc, stringObject);
+    
     return stringObject;    
 }
 
@@ -192,9 +200,9 @@ void arrayMark(struct Array *array)
     }
 }
 
-void arrayFree(struct Array *array)
+void arrayFree(struct Gc *gc, struct Array *array)
 {
+    gcReleaseMemory(gc, sizeof(struct Array) + array->slotCount * sizeof(struct Object *));
     free(array->objects);
     free(array);
-
 }

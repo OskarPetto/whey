@@ -13,7 +13,8 @@ struct String
     Integer characterCount;
 };
 
-struct Object *stringNew(struct Gc *gc, char *characters);
+struct Object *stringNew(struct Gc *gc, Integer characterCount);
+struct Object *stringNewFromCString(struct Gc *gc, char *characters);
 struct Object *stringFromArray(struct Gc *gc, struct Array *array);
 struct Object *stringToArray(struct Gc *gc, struct String *string);
 Integer stringCompare(struct String *string1, struct String *string2);
@@ -28,7 +29,7 @@ Integer stringHash(struct String *string);
 
 void stringAppendCharacter(struct String *string, char character);
 void stringPrint(struct String *string);
-void stringFree(struct String *string);
+void stringFree(struct Gc *gc, struct String *string);
 
 
 #endif

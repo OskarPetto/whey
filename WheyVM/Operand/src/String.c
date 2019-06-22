@@ -1,40 +1,42 @@
 #include "../String.h"
 #include "../Object.h"
 #include "../Integer.h"
+#include "../Gc.h"
 
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
-static struct Object *stringNewWithSize(struct Gc *gc, Integer characterCount)
+struct Object *stringNew(struct Gc *gc, Integer characterCount)
 {
     struct Object *string = objectNew(gc, OBJECT_TYPE_STRING);
+    gcRequestMemory(gc, sizeof(struct String) + characterCount * sizeof(Char));
     string->value.string = (struct String *) malloc(sizeof(struct String));
     assert(string->value.string != NULL);
     string->value.string->characterCount = characterCount;
-    string->value.string->characters = (char *) malloc(characterCount * sizeof (char));
+    string->value.string->characters = (Char *) malloc(characterCount * sizeof (Char));
     assert(string->value.string->characters != NULL);
     
     return string;
 }
 
-struct Object *stringNew(struct Gc *gc, char *characters)
+struct Object *stringNewFromCString(struct Gc *gc, char *characters)
 {
-    struct Object *string = stringNewWithSize(gc, strlen(characters));
+    struct Object *string = stringNew(gc, strlen(characters));
 
-    memcpy(string->value.string->characters, characters, string->value.string->characterCount * sizeof(char)); // no terminating null
+    memcpy(string->value.string->characters, characters, string->value.string->characterCount * sizeof(Char)); // no terminating null
 
     return string;
 }
 
 struct Object *stringFromArray(struct Gc *gc, struct Array *array)
 {
-    struct Object *string = stringNewWithSize(gc, array->objectCount);
+    struct Object *string = stringNew(gc, array->objectCount);
 
     for (Integer i = 0; i < array->objectCount; i++)
     {
-        string->value.string->characters[i] = (char) array->objects[i]->value.integerValue;
+        string->value.string->characters[i] = (Char) array->objects[i]->value.integerValue;
     }
     
     return string;
@@ -42,7 +44,7 @@ struct Object *stringFromArray(struct Gc *gc, struct Array *array)
 
 struct Object *stringToArray(struct Gc *gc, struct String *string)
 {
-    struct Object *array = arrayNew(gc, string->characterCount);
+    struct Object *array = arrayNew(gc, string->characterCount, string->characterCount);
 
     for (Integer i = 0; i < string->characterCount; i++)
     {
@@ -75,17 +77,17 @@ Integer stringCompare(struct String *string1, struct String *string2)
 
 struct Object *stringConcatenate(struct Gc *gc, struct String *string1, struct String *string2)
 {
-    struct Object *concat = stringNewWithSize(gc, string1->characterCount + string2->characterCount);
-    memcpy(concat->value.string->characters, string1->characters, string1->characterCount * sizeof(char)); // no terminating null
-    memcpy(&concat->value.string->characters[string1->characterCount], string2->characters, string2->characterCount * sizeof(char)); // no terminating null
+    struct Object *concat = stringNew(gc, string1->characterCount + string2->characterCount);
+    memcpy(concat->value.string->characters, string1->characters, string1->characterCount * sizeof(Char)); // no terminating null
+    memcpy(&concat->value.string->characters[string1->characterCount], string2->characters, string2->characterCount * sizeof(Char)); // no terminating null
 
     return concat;
 }
 
 struct Object *stringSubstring(struct Gc *gc, struct String *string, Integer lowerIndex, Integer upperIndex)
 {
-    struct Object *subString = stringNewWithSize(gc, upperIndex - lowerIndex);
-    memcpy(subString->value.string->characters, &string->characters[lowerIndex], subString->value.string->characterCount); // no terminating null
+    struct Object *subString = stringNew(gc, upperIndex - lowerIndex);
+    memcpy(subString->value.string->characters, &string->characters[lowerIndex], subString->value.string->characterCount * sizeof(Char)); // no terminating null
     return subString;
 }
 
@@ -134,7 +136,7 @@ struct Object *stringReplace(struct Gc *gc, struct String *string, struct String
 
     Integer newSize = string->characterCount + occurrencesCount * (replacementString->characterCount - stringToReplace->characterCount);
 
-    struct Object *replacedString = stringNewWithSize(gc, newSize);
+    struct Object *replacedString = stringNew(gc, newSize);
     
     Integer newStringIndex = 0;
     Integer oldStringIndex = 0;
@@ -176,8 +178,8 @@ struct Object *stringReplace(struct Gc *gc, struct String *string, struct String
 
 struct Object *stringCopy(struct Gc *gc, struct String *string)
 {
-    struct Object *copy = stringNewWithSize(gc, string->characterCount);
-    memcpy(copy->value.string->characters, string->characters, string->characterCount * sizeof(char)); // no terminating null
+    struct Object *copy = stringNew(gc, string->characterCount);
+    memcpy(copy->value.string->characters, string->characters, string->characterCount * sizeof(Char)); // no terminating null
 
     return copy;
 }
@@ -214,7 +216,7 @@ Integer stringHash(struct String *string)
 
 void stringAppendCharacter(struct String *string, char character)
 {
-    string->characters = (char *) realloc(string->characters, string->characterCount + 1);
+    string->characters = (Char *) realloc(string->characters, (string->characterCount + 1) * sizeof(Char));
     assert(string->characters != NULL);
     string->characters[string->characterCount] = character;
     string->characterCount++;
@@ -229,8 +231,9 @@ void stringPrint(struct String *string)
     printf("\n");
 }
 
-void stringFree(struct String *string)
+void stringFree(struct Gc *gc, struct String *string)
 {
+    gcReleaseMemory(gc, sizeof(struct String) + string->characterCount * sizeof(Char));
     free(string->characters);
     free(string);
 }

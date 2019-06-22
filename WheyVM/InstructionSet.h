@@ -1,76 +1,5 @@
-#ifndef OPCODE_H
-#define OPCODE_H
-
-#define OP_HALT 0x00
-#define OP_JMP 0x01
-#define OP_JMPT 0x02
-#define OP_JMPF 0x03
-
-#define OP_LOAD 0x10
-#define OP_STORE 0x11
-#define OP_CALL 0x12
-#define OP_RETURN 0x13
-
-#define OP_CONST 0x20
-#define OP_PRINT 0x21
-#define OP_POP 0x22
-
-#define OP_EQ 0x30
-#define OP_NEQ 0x31
-#define OP_GT 0x32
-#define OP_GTE 0x33
-#define OP_LT 0x34
-#define OP_LTE 0x35
-
-#define OP_ADD 0x40
-#define OP_SUB 0x41
-#define OP_MUL 0x42
-#define OP_DIV 0x43
-#define OP_NEG 0x44
-#define OP_INC 0x45
-#define OP_DEC 0x46
-#define OP_AND 0x47
-#define OP_OR 0x48
-#define OP_NOT 0x49
-
-#define OP_ONULL 0x50
-#define OP_OCOPY 0x51
-#define OP_OEQUALS 0x52
-#define OP_OHASH 0x53
-#define OP_OTOSTRING 0x54
-
-#define OP_ANEW 0x60
-#define OP_ASIZE 0x61
-#define OP_AGET 0x62
-#define OP_ASET 0x63
-#define OP_AINSERT 0x64
-#define OP_AINSERTALL 0x65
-#define OP_AREMOVE 0x66
-#define OP_AFOREACH 0x67
-
-#define OP_MNEW 0x70
-#define OP_MSIZE 0x71
-#define OP_MGET 0x72
-#define OP_MPUT 0x73
-#define OP_MPUTALL 0x74
-#define OP_MREMOVE 0x75
-#define OP_MHASKEY 0x76
-#define OP_MENTRIES 0x77
-
-#define OP_PNEW 0x80
-#define OP_PGETFST 0x81
-#define OP_PGETSND 0x82
-#define OP_PSETFST 0x83
-#define OP_PSETSND 0x84
-
-#define OP_SLENGTH 0x90
-#define OP_SFROMARRAY 0x91
-#define OP_STOARRAY 0x92
-#define OP_SCOMPARE 0x93
-#define OP_SCONCAT 0x94
-#define OP_SSUBS 0x95
-#define OP_SINDEXOF 0x96
-#define OP_SREPLACE 0x97
+#ifndef INSTRUCTION_SET_H
+#define INSTRUCTION_SET_H
 
 struct WheyVM;
 
@@ -82,6 +11,7 @@ void opHalt(struct WheyVM *wvm);
 void opJump(struct WheyVM *wvm);
 void opJumpTrue(struct WheyVM *wvm);
 void opJumpFalse(struct WheyVM *wvm);
+
 void opLoad(struct WheyVM *wvm);
 void opStore(struct WheyVM *wvm);
 void opCall(struct WheyVM *wvm);
@@ -89,27 +19,39 @@ void opReturn(struct WheyVM *wvm);
 void opConstant(struct WheyVM *wvm);
 void opPrint(struct WheyVM *wvm);
 void opPop(struct WheyVM *wvm);
+
 void opEqual(struct WheyVM *wvm);
 void opNotEqual(struct WheyVM *wvm);
 void opGreaterThan(struct WheyVM *wvm);
 void opGreaterThanOrEqual(struct WheyVM *wvm);
 void opLessThan(struct WheyVM *wvm);
 void opLessThanOrEqual(struct WheyVM *wvm);
+
 void opAdd(struct WheyVM *wvm);
 void opSubtract(struct WheyVM *wvm);
 void opMultiply(struct WheyVM *wvm);
 void opDivide(struct WheyVM *wvm);
+void opPower(struct WheyVM *wvm);
 void opNegate(struct WheyVM *wvm);
-void opIncrement(struct WheyVM *wvm);
-void opDecrement(struct WheyVM *wvm);
-void opAnd(struct WheyVM *wvm);
-void opOr(struct WheyVM *wvm);
-void opNot(struct WheyVM *wvm);
+
+void opIntegerToDouble(struct WheyVM *wvm);
+void opIntegerIncrement(struct WheyVM *wvm);
+void opIntegerDecrement(struct WheyVM *wvm);
+void opIntegerModulo(struct WheyVM *wvm);
+void opIntegerAnd(struct WheyVM *wvm);
+void opIntegerOr(struct WheyVM *wvm);
+void opIntegerNot(struct WheyVM *wvm);
+
+void opDoubleToInteger(struct WheyVM *wvm);
+void opDoubleCeil(struct WheyVM *wvm);
+void opDoubleFloor(struct WheyVM *wvm);
+
 void opObjectNull(struct WheyVM *wvm);
 void opObjectCopy(struct WheyVM *wvm);
 void opObjectEquals(struct WheyVM *wvm);
 void opObjectHash(struct WheyVM *wvm);
 void opObjectToString(struct WheyVM *wvm);
+
 void opArrayNew(struct WheyVM *wvm);
 void opArraySize(struct WheyVM *wvm);
 void opArrayGet(struct WheyVM *wvm);
@@ -118,6 +60,10 @@ void opArrayInsert(struct WheyVM *wvm);
 void opArrayInsertAll(struct WheyVM *wvm);
 void opArrayRemove(struct WheyVM *wvm);
 void opArrayForEach(struct WheyVM *wvm);
+void opArrayMap(struct WheyVM *wvm);
+void opArrayFilter(struct WheyVM *wvm);
+void opArrayReduce(struct WheyVM *wvm);
+
 void opMapNew(struct WheyVM *wvm);
 void opMapSize(struct WheyVM *wvm);
 void opMapGet(struct WheyVM *wvm);
@@ -126,11 +72,13 @@ void opMapPutAll(struct WheyVM *wvm);
 void opMapRemove(struct WheyVM *wvm);
 void opMapHasKey(struct WheyVM *wvm);
 void opMapEntries(struct WheyVM *wvm);
+
 void opPairNew(struct WheyVM *wvm);
 void opPairGetFirst(struct WheyVM *wvm);
 void opPairGetSecond(struct WheyVM *wvm);
 void opPairSetFirst(struct WheyVM *wvm);
 void opPairSetSecond(struct WheyVM *wvm);
+
 void opStringLength(struct WheyVM *wvm);
 void opStringFromArray(struct WheyVM *wvm);
 void opStringToArray(struct WheyVM *wvm);
@@ -162,9 +110,9 @@ Instruction const instructionSet[256] =
         /* 0x11 */ &opStore,
         /* 0x12 */ &opCall,
         /* 0x13 */ &opReturn,
-        /* 0x14 */ &opUnknown,
-        /* 0x15 */ &opUnknown,
-        /* 0x16 */ &opUnknown,
+        /* 0x14 */ &opConstant,
+        /* 0x15 */ &opPrint,
+        /* 0x16 */ &opPop,
         /* 0x17 */ &opUnknown,
         /* 0x18 */ &opUnknown,
         /* 0x19 */ &opUnknown,
@@ -174,12 +122,12 @@ Instruction const instructionSet[256] =
         /* 0x1D */ &opUnknown,
         /* 0x1E */ &opUnknown,
         /* 0x1F */ &opUnknown,
-        /* 0x20 */ &opConstant,
-        /* 0x21 */ &opPrint,
-        /* 0x22 */ &opPop,
-        /* 0x23 */ &opUnknown,
-        /* 0x24 */ &opUnknown,
-        /* 0x25 */ &opUnknown,
+        /* 0x20 */ &opEqual,
+        /* 0x21 */ &opNotEqual,
+        /* 0x22 */ &opGreaterThan,
+        /* 0x23 */ &opGreaterThanOrEqual,
+        /* 0x24 */ &opLessThan,
+        /* 0x25 */ &opLessThanOrEqual,
         /* 0x26 */ &opUnknown,
         /* 0x27 */ &opUnknown,
         /* 0x28 */ &opUnknown,
@@ -190,12 +138,12 @@ Instruction const instructionSet[256] =
         /* 0x2D */ &opUnknown,
         /* 0x2E */ &opUnknown,
         /* 0x2F */ &opUnknown,
-        /* 0x30 */ &opEqual,
-        /* 0x31 */ &opNotEqual,
-        /* 0x32 */ &opGreaterThan,
-        /* 0x33 */ &opGreaterThanOrEqual,
-        /* 0x34 */ &opLessThan,
-        /* 0x35 */ &opLessThanOrEqual,
+        /* 0x30 */ &opAdd,
+        /* 0x31 */ &opSubtract,
+        /* 0x32 */ &opMultiply,
+        /* 0x33 */ &opDivide,
+        /* 0x34 */ &opPower,
+        /* 0x35 */ &opNegate,
         /* 0x36 */ &opUnknown,
         /* 0x37 */ &opUnknown,
         /* 0x38 */ &opUnknown,
@@ -206,27 +154,27 @@ Instruction const instructionSet[256] =
         /* 0x3D */ &opUnknown,
         /* 0x3E */ &opUnknown,
         /* 0x3F */ &opUnknown,
-        /* 0x40 */ &opAdd,
-        /* 0x41 */ &opSubtract,
-        /* 0x42 */ &opMultiply,
-        /* 0x43 */ &opDivide,
-        /* 0x44 */ &opNegate,
-        /* 0x45 */ &opIncrement,
-        /* 0x46 */ &opDecrement,
-        /* 0x47 */ &opAnd,
-        /* 0x48 */ &opOr,
-        /* 0x49 */ &opNot,
+        /* 0x40 */ &opIntegerToDouble, 
+        /* 0x41 */ &opIntegerIncrement,
+        /* 0x42 */ &opIntegerDecrement,
+        /* 0x43 */ &opIntegerModulo,
+        /* 0x44 */ &opIntegerAnd,
+        /* 0x45 */ &opIntegerOr,
+        /* 0x46 */ &opIntegerNot,
+        /* 0x47 */ &opUnknown,
+        /* 0x48 */ &opUnknown,
+        /* 0x49 */ &opUnknown,
         /* 0x4A */ &opUnknown,
         /* 0x4B */ &opUnknown,
         /* 0x4C */ &opUnknown,
         /* 0x4D */ &opUnknown,
         /* 0x4E */ &opUnknown,
         /* 0x4F */ &opUnknown,
-        /* 0x50 */ &opObjectNull,
-        /* 0x51 */ &opObjectCopy,
-        /* 0x52 */ &opObjectEquals,
-        /* 0x53 */ &opObjectHash,
-        /* 0x54 */ &opObjectToString,
+        /* 0x50 */ &opDoubleToInteger,
+        /* 0x51 */ &opDoubleCeil,
+        /* 0x52 */ &opDoubleFloor,
+        /* 0x53 */ &opUnknown,
+        /* 0x54 */ &opUnknown,
         /* 0x55 */ &opUnknown,
         /* 0x56 */ &opUnknown,
         /* 0x57 */ &opUnknown,
@@ -238,14 +186,14 @@ Instruction const instructionSet[256] =
         /* 0x5D */ &opUnknown,
         /* 0x5E */ &opUnknown,
         /* 0x5F */ &opUnknown,
-        /* 0x60 */ &opArrayNew,
-        /* 0x61 */ &opArraySize,
-        /* 0x62 */ &opArrayGet,
-        /* 0x63 */ &opArraySet,
-        /* 0x64 */ &opArrayInsert,
-        /* 0x65 */ &opArrayInsertAll,
-        /* 0x66 */ &opArrayRemove,
-        /* 0x67 */ &opArrayForEach,
+        /* 0x60 */ &opObjectNull,
+        /* 0x61 */ &opObjectCopy,
+        /* 0x62 */ &opObjectEquals,
+        /* 0x63 */ &opObjectHash,
+        /* 0x64 */ &opObjectToString,
+        /* 0x65 */ &opUnknown,
+        /* 0x66 */ &opUnknown,
+        /* 0x67 */ &opUnknown,
         /* 0x68 */ &opUnknown,
         /* 0x69 */ &opUnknown,
         /* 0x6A */ &opUnknown,
@@ -254,30 +202,30 @@ Instruction const instructionSet[256] =
         /* 0x6D */ &opUnknown,
         /* 0x6E */ &opUnknown,
         /* 0x6F */ &opUnknown,
-        /* 0x70 */ &opMapNew,
-        /* 0x71 */ &opMapSize,
-        /* 0x72 */ &opMapGet,
-        /* 0x73 */ &opMapPut,
-        /* 0x74 */ &opMapPutAll,
-        /* 0x75 */ &opMapRemove,
-        /* 0x76 */ &opMapHasKey,
-        /* 0x77 */ &opMapEntries,
-        /* 0x78 */ &opUnknown,
-        /* 0x79 */ &opUnknown,
-        /* 0x7A */ &opUnknown,
+        /* 0x70 */ &opArrayNew,
+        /* 0x71 */ &opArraySize,
+        /* 0x72 */ &opArrayGet,
+        /* 0x73 */ &opArraySet,
+        /* 0x74 */ &opArrayInsert,
+        /* 0x75 */ &opArrayInsertAll,
+        /* 0x76 */ &opArrayRemove,
+        /* 0x77 */ &opArrayForEach,
+        /* 0x78 */ &opArrayMap,
+        /* 0x79 */ &opArrayFilter,
+        /* 0x7A */ &opArrayReduce,
         /* 0x7B */ &opUnknown,
         /* 0x7C */ &opUnknown,
         /* 0x7D */ &opUnknown,
         /* 0x7E */ &opUnknown,
         /* 0x7F */ &opUnknown,
-        /* 0x80 */ &opPairNew,
-        /* 0x81 */ &opPairGetFirst,
-        /* 0x82 */ &opPairGetSecond,
-        /* 0x83 */ &opPairSetFirst,
-        /* 0x84 */ &opPairSetSecond,
-        /* 0x85 */ &opUnknown,
-        /* 0x86 */ &opUnknown,
-        /* 0x87 */ &opUnknown,
+        /* 0x80 */ &opMapNew,
+        /* 0x81 */ &opMapSize,
+        /* 0x82 */ &opMapGet,
+        /* 0x83 */ &opMapPut,
+        /* 0x84 */ &opMapPutAll,
+        /* 0x85 */ &opMapRemove,
+        /* 0x86 */ &opMapHasKey,
+        /* 0x87 */ &opMapEntries,
         /* 0x88 */ &opUnknown,
         /* 0x89 */ &opUnknown,
         /* 0x8A */ &opUnknown,
@@ -286,14 +234,14 @@ Instruction const instructionSet[256] =
         /* 0x8D */ &opUnknown,
         /* 0x8E */ &opUnknown,
         /* 0x8F */ &opUnknown,
-        /* 0x90 */ &opStringLength,
-        /* 0x91 */ &opStringFromArray,
-        /* 0x92 */ &opStringToArray,
-        /* 0x93 */ &opStringCompare,
-        /* 0x94 */ &opStringConcatenate,
-        /* 0x95 */ &opStringSubstring,
-        /* 0x96 */ &opStringIndexOf,
-        /* 0x97 */ &opStringReplace,
+        /* 0x90 */ &opPairNew,
+        /* 0x91 */ &opPairGetFirst,
+        /* 0x92 */ &opPairGetSecond,
+        /* 0x93 */ &opPairSetFirst,
+        /* 0x94 */ &opPairSetSecond,
+        /* 0x95 */ &opUnknown,
+        /* 0x96 */ &opUnknown,
+        /* 0x97 */ &opUnknown,
         /* 0x98 */ &opUnknown,
         /* 0x99 */ &opUnknown,
         /* 0x9A */ &opUnknown,
@@ -302,14 +250,14 @@ Instruction const instructionSet[256] =
         /* 0x9D */ &opUnknown,
         /* 0x9E */ &opUnknown,
         /* 0x9F */ &opUnknown,
-        /* 0xA0 */ &opUnknown,
-        /* 0xA1 */ &opUnknown,
-        /* 0xA2 */ &opUnknown,
-        /* 0xA3 */ &opUnknown,
-        /* 0xA4 */ &opUnknown,
-        /* 0xA5 */ &opUnknown,
-        /* 0xA6 */ &opUnknown,
-        /* 0xA7 */ &opUnknown,
+        /* 0xA0 */ &opStringLength,
+        /* 0xA1 */ &opStringFromArray,
+        /* 0xA2 */ &opStringToArray,
+        /* 0xA3 */ &opStringCompare,
+        /* 0xA4 */ &opStringConcatenate,
+        /* 0xA5 */ &opStringSubstring,
+        /* 0xA6 */ &opStringIndexOf,
+        /* 0xA7 */ &opStringReplace,
         /* 0xA8 */ &opUnknown,
         /* 0xA9 */ &opUnknown,
         /* 0xAA */ &opUnknown,

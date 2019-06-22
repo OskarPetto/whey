@@ -8,7 +8,7 @@ struct Function *functionNew(uint8_t *bytes, uint32_t *byteIndex)
 {
     struct Function *function = (struct Function *)malloc(sizeof(struct Function));
     assert(function != NULL);
-    function->argumentCount = bytes[*byteIndex];
+    function->localsCount = bytes[*byteIndex];
     (*byteIndex)++;
     memcpy(&(function->codeSize), &bytes[*byteIndex], 2);
     (*byteIndex) += 2;

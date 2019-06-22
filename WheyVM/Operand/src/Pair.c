@@ -8,6 +8,7 @@
 struct Object *pairNew(struct Gc *gc, struct Object *first, struct Object *second)
 {
     struct Object *pair = objectNew(gc, OBJECT_TYPE_PAIR);
+    gcRequestMemory(gc, sizeof(struct Pair));
     pair->value.pair = (struct Pair *) malloc(sizeof(struct Pair));
     assert(pair->value.pair != NULL); 
     pair->value.pair->first = first;
@@ -46,14 +47,14 @@ Integer pairHash(struct Pair *pair)
 
 struct Object *pairToString(struct Gc *gc, struct Pair *pair)
 {
-    struct Object *stringObject = stringNew(NULL, "(");
+    struct Object *stringObject = stringNewFromCString(NULL, "(");
 
     struct Object *subStringObject1 = objectToString(NULL, pair->first);
     
     struct Object *temp = stringConcatenate(NULL, stringObject->value.string, subStringObject1->value.string);
 
-    objectFree(stringObject);
-    objectFree(subStringObject1);
+    objectFree(NULL, stringObject);
+    objectFree(NULL, subStringObject1);
     stringObject = temp;
 
     stringAppendCharacter(stringObject->value.string, ',');
@@ -62,16 +63,14 @@ struct Object *pairToString(struct Gc *gc, struct Pair *pair)
     
     temp = stringConcatenate(NULL, stringObject->value.string, subStringObject2->value.string);
     
-    objectFree(stringObject);
-    objectFree(subStringObject2);
+    objectFree(NULL, stringObject);
+    objectFree(NULL, subStringObject2);
     stringObject = temp;
 
     stringAppendCharacter(stringObject->value.string, ')');
 
-    if (gc != NULL)
-    {
-        gcRegisterObject(gc, stringObject);
-    }
+    gcRequestMemory(gc, sizeof(struct Object) + sizeof(struct String) + stringObject->value.string->characterCount * sizeof(Char));
+    gcRegisterObject(gc, stringObject);
 
     return stringObject;
 }
