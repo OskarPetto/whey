@@ -29,63 +29,65 @@ int main(int argc, char **argv) {
         {
             case 's':
                 temp = strtol(optarg, NULL, 10);
-                if (temp <= 0)
+                if (temp < 0)
                 {
-                    fprintf(stderr, "Call stack size %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "call stack size %ld must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("Call stack size set to: %ld\n", temp);
+                printf("call stack size set to: %ld.\n", temp);
                 callStackSize = temp;
                 break;
 
             case 'o':
                 temp = strtol(optarg, NULL, 10);
-                if (temp <= 0)
+                if (temp < 0)
                 {
-                    fprintf(stderr, "Operand stack size %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "operand stack size %ld must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("Operand stack size set to: %ld\n", temp);
+                printf("operand stack size set to: %ld.\n", temp);
                 operandStackSize = temp;
                 break;
 
             case 'm':
                 temp = strtol(optarg, NULL, 10);
-                if (temp <= 0)
+                if (temp < 0)
                 {
-                    fprintf(stderr, "Memory size %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "gc-memory size %ld must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("Memory size set to: %ld\n", temp);
+                printf("gc-memory size set to: %ld.\n", temp);
                 memorySize = temp;
                 break;
 
             case 'l':
                 doubleTemp = strtod(optarg, NULL);
-                if (doubleTemp <= 0 || doubleTemp > 1)
+                if (doubleTemp < 0 || doubleTemp > 1)
                 {
-                    fprintf(stderr, "Load factor %f must be between 0 and 1.\n", doubleTemp);
+                    fprintf(stderr, "load factor %f must be between 0 and 1.\n", doubleTemp);
                     return 1;
                 }
-                printf("Load factor set to: %f\n", doubleTemp);
+                printf("load factor set to: %f.\n", doubleTemp);
                 loadFactor = doubleTemp;
                 break;
 
             case 'd':
                 state = WHEYVM_STATE_DEBUG;
-                printf("Running in debug mode\n");
+                printf("running in debug mode.\n");
                 break;
         
             default:
-                fprintf(stderr, "Unexpected option %c\n", opt);
+                fprintf(stderr, "unexpected option %c.\n", opt);
                 return 1;
         }
     }
 
     if (argc - optind != 1) {
-        fprintf(stderr, "One filename must be given.\n");
+        fprintf(stderr, "one filename must be given.\n");
         return 1;
     }
+
+    printf("running program: \"%s\".\n", argv[optind]);
 
     struct WcFile *program = wcFileNew(argv[optind]);
 
