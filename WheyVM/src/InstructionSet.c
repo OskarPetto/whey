@@ -176,6 +176,12 @@ void opCall(struct WheyVM *wvm)
     struct Function *nextFunction = wcFileGetFunction(wvm->wcFile, functionIndex);
 
     struct Frame *nextFrame = frameNew(nextFunction);
+
+    for (uint8_t i = 0; i < nextFunction->argumentCount; i++)
+    {
+        frameSetLocal(nextFrame, i, wvm->operandStack[wvm->operandStackPointer--]); // pass function arguments
+    }
+
     wvm->callStack[++wvm->callStackPointer] = nextFrame;
 }
 
