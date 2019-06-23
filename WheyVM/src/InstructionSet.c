@@ -43,13 +43,13 @@
         switch (operand1.type)                                                                                                                   \
         {                                                                                                                                        \
         case OPERAND_TYPE_INTEGER:                                                                                                               \
-            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand1.value.integerValue operator operand2.value.integerValue); \
+            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand2.value.integerValue operator operand1.value.integerValue); \
             break;                                                                                                                               \
         case OPERAND_TYPE_DOUBLE:                                                                                                                \
-            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand1.value.doubleValue operator operand2.value.doubleValue);   \
+            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand2.value.doubleValue operator operand1.value.doubleValue);   \
             break;                                                                                                                               \
         case OPERAND_TYPE_REFERENCE:                                                                                                             \
-            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand1.value.reference operator operand2.value.reference);       \
+            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand2.value.reference operator operand1.value.reference);       \
             break;                                                                                                                               \
         }                                                                                                                                        \
     } while (0)
@@ -65,10 +65,10 @@
         switch (operand1.type)                                                                                                                   \
         {                                                                                                                                        \
         case OPERAND_TYPE_INTEGER:                                                                                                               \
-            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand1.value.integerValue operator operand2.value.integerValue); \
+            wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand2.value.integerValue operator operand1.value.integerValue); \
             break;                                                                                                                               \
         case OPERAND_TYPE_DOUBLE:                                                                                                                \
-            wvm->operandStack[wvm->operandStackPointer].value.doubleValue = (operand1.value.doubleValue operator operand2.value.doubleValue);    \
+            wvm->operandStack[wvm->operandStackPointer].value.doubleValue = (operand2.value.doubleValue operator operand1.value.doubleValue);    \
             break;                                                                                                                               \
         }                                                                                                                                        \
     } while (0)
@@ -80,7 +80,7 @@
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                               \
         assert(operand1.type == OPERAND_TYPE_INTEGER);                                                                                       \
         assert(operand2.type == OPERAND_TYPE_INTEGER);                                                                                       \
-        wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand1.value.integerValue operator operand2.value.integerValue); \
+        wvm->operandStack[wvm->operandStackPointer].value.integerValue = (operand2.value.integerValue operator operand1.value.integerValue); \
     } while (0)
 
 #define OP_INTEGER_UNARY(wvm, operator)                                                                       \
@@ -283,6 +283,7 @@ void opGreaterThan(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
+
     OP_COMPARISON(wvm, >);
 }
 

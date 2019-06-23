@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 Instruction instructionSet[256] =
     {
@@ -276,7 +277,7 @@ static void wvmExecute(struct WheyVM *wvm)
             break;
 
         unsigned char instruction = wvm->callStack[wvm->callStackPointer]->function->byteCode[wvm->callStack[wvm->callStackPointer]->codePointer];
-        
+
         instructionSet[instruction](wvm);
 
     }

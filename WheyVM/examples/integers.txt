@@ -5,11 +5,15 @@ BADEAFFE                            # checkSum
 01                                  # CONSTANT_TYPE_INTEGER
 04 00 00 40                         # 1073741828
 01 00                               # functionCount
-00                                  # argumentCount
-0B 00                               # byteCount
-14 01 00                            # opConstant 4
-11 01                               # store 1
-10 01                               # load 1 
-10 01                               # load 1 
-30                                  # add
+01                                  # localsCount
+12 00                               # byteCount
+14 00 00                            # opConstant 4
+11 00                               # store 0 (4)
+10 00                               # load 0 (4)
+10 00                               # load 0 (4)
+34                                  # power 
+15                                  # print
+14 01 00                            # opConstant 1073741828
+10 00                               # load 0 (4)
+23                                  # greater or equal
 15                                  # print

@@ -1,0 +1,29 @@
+BADEAFFE                            # checkSum
+02 00                               # constantCount
+01                                  # CONSTANT_TYPE_INTEGER
+00 00 00 00                         # 0
+01                                  # CONSTANT_TYPE_INTEGER
+64 00 00 00                         # 100
+01 00                               # functionCount
+02                                  # localsCount
+24 00                               # byteCount
+14 00 00                            # opConstant 0
+11 00                               # store 0
+10 00                               # load 0
+11 01                               # store 1
+# LOOP 
+10 00                               # load 0
+14 01 00                            # opConstant 1
+22                                  # greater than 
+02 12 00                            # jump true 18
+10 00                               # load 0
+10 01                               # load 1
+30                                  # add
+11 01                               # store 1
+10 00                               # load 0
+41                                  # increment 
+11 00                               # store 0
+01 EB FF                            # jump -21
+# END LOOP
+10 01                               # load 1
+15                                  # print

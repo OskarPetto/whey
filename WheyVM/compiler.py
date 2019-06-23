@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     code = open(sys.argv[1], 'r').read()
     code = re.sub('\#.*\n', "", code)
-    
+
     byteArray = bytes.fromhex(code)
 
     outFile = open(sys.argv[1].replace('.txt', '.wc'), 'wb')
