@@ -24,6 +24,7 @@ struct Frame *frameNewWithIterator(struct Function *function, struct Object *arr
     frame->iterator->index = 0;
     frame->locals[0].type = OPERAND_TYPE_REFERENCE;
     frame->locals[0].value.reference = array->value.array->objects[0];
+    return frame;
 }
 
 

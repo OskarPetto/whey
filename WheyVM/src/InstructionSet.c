@@ -9,7 +9,7 @@
 #include <string.h>
 #include <math.h>
 
-#define STOP(wvm) wvm->state %= WHEYVM_STATE_STOPPED 
+#define STOP(wvm) wvm->state %= WHEYVM_STATE_STOPPED
 
 #define CURRENT_FRAME(wvm) ((wvm->callStack[wvm->callStackPointer]))
 
@@ -21,8 +21,7 @@
         assert(relativeLocation != 0);                                                    \
         uint16_t newLocation = frame->codePointer + relativeLocation;                     \
         assert(newLocation >= 0 && newLocation < frame->function->codeSize);              \
-        \    
-    frame->codePointer = newLocation;                                                     \
+        frame->codePointer = newLocation;                                                 \
     } while (0)
 
 #define OP_COMPARISON(wvm, operator)                                                                                                             \
@@ -983,7 +982,7 @@ void opStringSubstring(struct WheyVM *wvm)
     assert(string.type == OPERAND_TYPE_REFERENCE);
     assert(string.value.reference->type == OBJECT_TYPE_STRING);
 
-    wvm->operandStackPointer-=2;
+    wvm->operandStackPointer -= 2;
 
     wvm->operandStack[wvm->operandStackPointer].value.reference = stringSubstring(wvm->gc, string.value.reference->value.string, integer2.value.integerValue, integer1.value.integerValue);
 }
@@ -1004,7 +1003,7 @@ void opStringIndexOf(struct WheyVM *wvm)
     assert(string2.type == OPERAND_TYPE_REFERENCE);
     assert(string2.value.reference->type == OBJECT_TYPE_STRING);
 
-    wvm->operandStackPointer-=2;
+    wvm->operandStackPointer -= 2;
 
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
     wvm->operandStack[wvm->operandStackPointer].value.integerValue = stringIndexOf(string2.value.reference->value.string, string1.value.reference->value.string, integer1.value.integerValue);
@@ -1027,8 +1026,7 @@ void opStringReplace(struct WheyVM *wvm)
     assert(string3.type == OPERAND_TYPE_REFERENCE);
     assert(string3.value.reference->type == OBJECT_TYPE_STRING);
 
-    wvm->operandStackPointer-=2;
+    wvm->operandStackPointer -= 2;
 
     wvm->operandStack[wvm->operandStackPointer].value.reference = stringReplace(wvm->gc, string3.value.reference->value.string, string2.value.reference->value.string, string1.value.reference->value.string);
-
 }
