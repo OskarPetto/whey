@@ -4,15 +4,15 @@ A stack based VM that support the following operands
 - Integer
 - Double 
 - Reference
-<a/>
-    where a reference points to an Object, which can be 
+
+where a reference points to an Object, which can be 
 - Integer 
 - Double 
 - String 
 - Array 
 - Map 
 - Pair 
-<a/>
-    The memory claimed by objects are freed with a simple mark and sweep garbage collector. 
+
+The memory claimed by objects are freed with a simple mark and sweep garbage collector. 
 ## Fileformat
 The instructions are provided in a file format calles WcFile. 
