@@ -14,10 +14,13 @@ BADEAFFE                            # checkSum
 00 00 00 00 00 00 F0 3F             # 1.0
 03 00                               # functionCount
 01                                  # argumentCount
+01                                  # localsCount
 0A 00                               # byteCount
 01 02 03 04 05 06 07 08 09 0A       # nonsense
 00                                  # argumentCount
+00                                  # localsCount
 00 00                               # byteCount
-05                                  # argumentCount
+02                                  # argumentCount
+05                                  # localsCount
 01 00                               # byteCount
 01                                  # nonsense

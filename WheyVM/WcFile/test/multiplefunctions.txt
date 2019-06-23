@@ -1,11 +1,14 @@
 BADEAFFE                            # checkSum
 00 00                               # constantCount
 03 00                               # functionCount
+00                                  # argumentCount
 01                                  # localsCount
 0A 00                               # byteCount
 01 02 03 04 05 06 07 08 09 0A       # nonsense
+00                                  # argumentCount
 00                                  # localsCount
 00 00                               # byteCount
+04                                  # argumentCount
 05                                  # localsCount
 01 00                               # byteCount
 01                                  # nonsense
