@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <getopt.h>
-#include "WcFile/WcFile.h"
-#include "WheyVM.h"
+#include "../WcFile/WcFile.h"
+#include "../WheyVM.h"
 
 #include <stdlib.h>
 #include <errno.h>
@@ -20,57 +20,55 @@ int main(int argc, char **argv) {
     uint16_t operandStackSize = DEFAULT_OPERAND_STACK_SIZE;
     uint32_t memorySize = DEFAULT_MEMORY_SIZE;
     double loadFactor = DEFAULT_LOAD_FACTOR;
+    int64_t temp;
+    double doubleTemp;
 
     while((opt = getopt(argc, argv, "s:o:m:l:d")) != -1)  
     {  
         switch (opt)
         {
             case 's':
-                char *end;
-                int64_t temp = strtol(optarg, end, 10);
+                temp = strtol(optarg, NULL, 10);
                 if (temp <= 0)
                 {
-                    fprintf(stderr, "Call stack size %d must be a postive integer.\n", temp);
+                    fprintf(stderr, "Call stack size %ld must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("Call stack size set to: %d\n", temp);
+                printf("Call stack size set to: %ld\n", temp);
                 callStackSize = temp;
                 break;
 
             case 'o':
-                char *end;
-                int64_t temp = strtol(optarg, end, 10);
+                temp = strtol(optarg, NULL, 10);
                 if (temp <= 0)
                 {
-                    fprintf(stderr, "Operand stack size %d must be a postive integer.\n", temp);
+                    fprintf(stderr, "Operand stack size %ld must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("Operand stack size set to: %d\n", temp);
+                printf("Operand stack size set to: %ld\n", temp);
                 operandStackSize = temp;
                 break;
 
             case 'm':
-                char *end;
-                int64_t temp = strtol(optarg, end, 10);
+                temp = strtol(optarg, NULL, 10);
                 if (temp <= 0)
                 {
-                    fprintf(stderr, "Memory size %d must be a postive integer.\n", temp);
+                    fprintf(stderr, "Memory size %ld must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("Memory size set to: %d\n", temp);
+                printf("Memory size set to: %ld\n", temp);
                 memorySize = temp;
                 break;
 
             case 'l':
-                char *end;
-                double temp = strtod(optarg, end);
-                if (temp <= 0 || temp > 1)
+                doubleTemp = strtod(optarg, NULL);
+                if (doubleTemp <= 0 || doubleTemp > 1)
                 {
-                    fprintf(stderr, "Load factor %d must be between 0 and 1.\n", temp);
+                    fprintf(stderr, "Load factor %f must be between 0 and 1.\n", doubleTemp);
                     return 1;
                 }
-                printf("Load factor set to: %f\n", temp);
-                loadFactor = temp;
+                printf("Load factor set to: %f\n", doubleTemp);
+                loadFactor = doubleTemp;
                 break;
 
             case 'd':
@@ -86,6 +84,7 @@ int main(int argc, char **argv) {
 
     if (argc - optind != 1) {
         fprintf(stderr, "One filename must be given.\n");
+        return 1;
     }
 
     struct WcFile *program = wcFileNew(argv[optind]);

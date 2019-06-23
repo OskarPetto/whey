@@ -2,6 +2,15 @@
 #include "../WheyVM.h"
 #include "../Frame.h"
 #include "../Operand/Operand.h"
+#include "../Operand/Array.h"
+#include "../Operand/Double.h"
+#include "../Operand/Gc.h"
+#include "../Operand/Integer.h"
+#include "../Operand/Map.h"
+#include "../Operand/Object.h"
+#include "../Operand/Pair.h"
+#include "../Operand/String.h"
+#include "../Operand/Types.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -99,7 +108,6 @@ void opUnknown(struct WheyVM *wvm)
 
 void opHalt(struct WheyVM *wvm)
 {
-    struct Frame *frame = CURRENT_FRAME(wvm);
     STOP(wvm);
 }
 
@@ -326,7 +334,6 @@ void opDivide(struct WheyVM *wvm)
     frame->codePointer++;
     struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];
     struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];
-    CAST_TO_DOUBLE(operand1, operand2);
     assert(operand1.type == operand2.type);
     assert(operand1.type != OPERAND_TYPE_REFERENCE);
     wvm->operandStack[wvm->operandStackPointer].type = operand1.type;
@@ -350,7 +357,6 @@ void opPower(struct WheyVM *wvm)
     frame->codePointer++;
     struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];
     struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];
-    CAST_TO_DOUBLE(operand1, operand2);
     assert(operand1.type == operand2.type);
     assert(operand1.type != OPERAND_TYPE_REFERENCE);
     wvm->operandStack[wvm->operandStackPointer].type = operand1.type;
@@ -574,7 +580,7 @@ void opArraySize(struct WheyVM *wvm)
     assert(operand.type == OPERAND_TYPE_REFERENCE);
     assert(operand.value.reference->type == OBJECT_TYPE_ARRAY);
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
-    wvm->operandStack[wvm->operandStackPointer].value.integerValue = arraySize(operand.value.reference->value.array);
+    wvm->operandStack[wvm->operandStackPointer].value.integerValue = operand.value.reference->value.array->objectCount;
 }
 
 void opArrayGet(struct WheyVM *wvm)
@@ -798,7 +804,7 @@ void opMapHasKey(struct WheyVM *wvm)
     wvm->operandStackPointer--;
 
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
-    wvm->operandStack[wvm->operandStackPointer].value.reference = mapHasKey(map.value.reference->value.map, key.value.reference);
+    wvm->operandStack[wvm->operandStackPointer].value.integerValue = mapHasKey(map.value.reference->value.map, key.value.reference);
 }
 
 void opMapEntries(struct WheyVM *wvm)
@@ -903,7 +909,7 @@ void opStringLength(struct WheyVM *wvm)
     assert(string.value.reference->type == OBJECT_TYPE_STRING);
 
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
-    wvm->operandStack[wvm->operandStackPointer].value.reference = string.value.reference->value.string->characterCount;
+    wvm->operandStack[wvm->operandStackPointer].value.integerValue = string.value.reference->value.string->characterCount;
 }
 
 void opStringFromArray(struct WheyVM *wvm)
