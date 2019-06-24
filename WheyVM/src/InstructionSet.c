@@ -200,7 +200,7 @@ void opReturn(struct WheyVM *wvm)
         return;
     }
 
-    if (wvm->callStackPointer == 0)
+    if (wvm->callStackPointer == -1)
     {
         STOP(wvm);
     }
@@ -563,20 +563,14 @@ void opObjectUnbox(struct WheyVM *wvm)
 void opArrayNew(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
-
-    uint16_t constantIndex;
-    memcpy(&constantIndex, &frame->function->byteCode[frame->codePointer + 1], 2);
-    frame->codePointer += 3;
-    struct Constant *constant = wcFileGetConstant(wvm->wcFile, constantIndex);
-
-    wvm->operandStackPointer++;
-
-    assert(constant->type == CONSTANT_TYPE_INTEGER);
-    assert(constant->value.integerConstant >= 0);
-    Integer size = constant->value.integerConstant;
+    frame->codePointer++;
+    
+    struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
+    assert(operand.type == OPERAND_TYPE_INTEGER);
+    assert(operand.value.integerValue >= 0);
 
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
-    wvm->operandStack[wvm->operandStackPointer].value.reference = arrayNew(wvm->gc, size, size);
+    wvm->operandStack[wvm->operandStackPointer].value.reference = arrayNew(wvm->gc, operand.value.integerValue, operand.value.integerValue);
 }
 
 void opArraySize(struct WheyVM *wvm)
