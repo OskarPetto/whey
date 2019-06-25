@@ -55,7 +55,7 @@ void gcRequestMemory(struct Gc *gc, uint32_t size)
 
     if (gc->size > gc->maxSize)
     {
-        fprintf(stderr, "Out of memory with %d/%d, while allocating %d bytes.\n", gc->size, gc->maxSize, size);
+        fprintf(stderr, "Out of memory with %d/%d after allocating %d bytes.\n", gc->size, gc->maxSize, size);
         gc->outOfMemory = 1;
     }
 }
