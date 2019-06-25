@@ -8,7 +8,7 @@
 #define CONSTANT_TYPE_STRING             0x04
 
 typedef double DoubleConstant;
-typedef int32_t IntegerConstant; 
+typedef int64_t IntegerConstant; 
 
 struct StringConstant
 {

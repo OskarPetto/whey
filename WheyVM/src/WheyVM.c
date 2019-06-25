@@ -71,7 +71,7 @@ Instruction instructionSet[256] =
         /* 0x3D */ &opUnknown,
         /* 0x3E */ &opUnknown,
         /* 0x3F */ &opUnknown,
-        /* 0x40 */ &opIntegerToDouble, 
+        /* 0x40 */ &opIntegerToDouble,
         /* 0x41 */ &opIntegerIncrement,
         /* 0x42 */ &opIntegerDecrement,
         /* 0x43 */ &opIntegerModulo,
@@ -262,8 +262,7 @@ Instruction instructionSet[256] =
         /* 0xFC */ &opUnknown,
         /* 0xFD */ &opUnknown,
         /* 0xFE */ &opUnknown,
-        /* 0xFF */ &opUnknown
-};
+        /* 0xFF */ &opUnknown};
 
 char *instructionStrings[256] =
     {
@@ -331,7 +330,7 @@ char *instructionStrings[256] =
         /* 0x3D */ "opUnknown",
         /* 0x3E */ "opUnknown",
         /* 0x3F */ "opUnknown",
-        /* 0x40 */ "opIntegerToDouble", 
+        /* 0x40 */ "opIntegerToDouble",
         /* 0x41 */ "opIntegerIncrement",
         /* 0x42 */ "opIntegerDecrement",
         /* 0x43 */ "opIntegerModulo",
@@ -522,31 +521,28 @@ char *instructionStrings[256] =
         /* 0xFC */ "opUnknown",
         /* 0xFD */ "opUnknown",
         /* 0xFE */ "opUnknown",
-        /* 0xFF */ "opUnknown"
-};
-
+        /* 0xFF */ "opUnknown"};
 
 static void wvmMark(struct WheyVM *wvm)
 {
-   for (int32_t i = 0; i <= wvm->operandStackPointer; i++)
-   {
-       frameMark(wvm->callStack[i]);
-   }
+    for (int32_t i = 0; i <= wvm->callStackPointer; i++)
+    {
+        frameMark(wvm->callStack[i]);
+    }
 
-   for (int32_t i = 0; i <= wvm->operandStackPointer; i++)
-   {
-       struct Operand operand = wvm->operandStack[i];
-       if (operand.type == OPERAND_TYPE_REFERENCE)
-       {
-           objectMark(operand.value.reference);
-       }
-   }
-   
-    
+    for (int32_t i = 0; i <= wvm->operandStackPointer; i++)
+    {
+        struct Operand operand = wvm->operandStack[i];
+        if (operand.type == OPERAND_TYPE_REFERENCE)
+        {
+            objectMark(operand.value.reference);
+        }
+    }
 }
 
 static void wvmExecute(struct WheyVM *wvm)
 {
+
     struct Function *mainFunction = wcFileGetFunction(wvm->wcFile, 0);
 
     wvm->callStack[++wvm->callStackPointer] = frameNew(mainFunction);
@@ -560,38 +556,37 @@ static void wvmExecute(struct WheyVM *wvm)
 
         instructionSet[instruction](wvm);
 
-        if (gcShouldMarkAndSweep(wvm->gc)) 
+        if (gcShouldMarkAndSweep(wvm->gc))
         {
-            if (wvm->state & WHEYVM_STATE_DEBUG)
-            {
-                printf("memory before mark and sweep: %d/%d bytes.\n", wvm->gc->size, wvm->gc->maxSize);
-            }
 
             wvmMark(wvm);
             gcSweep(wvm->gc);
 
             if (wvm->state & WHEYVM_STATE_DEBUG)
             {
-                printf("memory after mark and sweep: %d/%d bytes.\n", wvm->gc->size, wvm->gc->maxSize);
+                printf("%lu: garbage collected %lu objects with %lu bytes.\n", wvm->time, wvm->gc->freeCount, wvm->gc->claimedSize);
             }
-        }
-    }
 
+        }
+
+        wvm->time++;
+    }
 }
 
-void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint8_t state)
+void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state)
 {
     struct WheyVM *wvm = (struct WheyVM *)malloc(sizeof(struct WheyVM));
     assert(wvm != NULL);
     wvm->callStack = (struct Frame **)malloc(callStackSize * sizeof(struct Frame *));
-    assert(wvm->callStack != NULL);    
+    assert(wvm->callStack != NULL);
     wvm->callStackPointer = -1;
+    wvm->time = 0;
 
     wvm->operandStack = (struct Operand *)malloc(operandStackSize * sizeof(struct Operand));
     assert(wvm->operandStack != NULL);
     wvm->operandStackPointer = -1;
 
-    wvm->gc = gcNew(gcMemorySize, gcLoadFactor);
+    wvm->gc = gcNew(gcMemorySize, gcLoadFactor, coolDown);
 
     wvm->wcFile = wcFile;
     wvm->state = state;
@@ -602,7 +597,7 @@ void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStack
     {
         frameFree(wvm->callStack[i]);
     }
-    
+
     free(wvm->callStack);
     free(wvm->operandStack);
 

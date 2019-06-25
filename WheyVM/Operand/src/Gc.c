@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Gc *gcNew(uint32_t maxSize, double loadFactor)
+struct Gc *gcNew(uint32_t maxSize, double loadFactor, uint16_t coolDown)
 {
     struct Gc *gc = (struct Gc *)malloc(sizeof(struct Gc));
     assert(gc != NULL);
@@ -16,6 +16,9 @@ struct Gc *gcNew(uint32_t maxSize, double loadFactor)
     gc->size = 0;
     gc->loadFactor = loadFactor;
     gc->outOfMemory = 0;
+    gc->coolDown = coolDown;
+    gc->timeSinceLastMarkAndSweep = coolDown;
+    gc->claimedSize = 0;
     return gc;
 }
 
@@ -52,7 +55,7 @@ void gcRequestMemory(struct Gc *gc, uint32_t size)
 
     if (gc->size > gc->maxSize)
     {
-        fprintf(stderr, "Out of memory with %d/%d, while requesting %d bytes.\n", gc->size, gc->maxSize, size);
+        fprintf(stderr, "Out of memory with %d/%d, while allocating %d bytes.\n", gc->size, gc->maxSize, size);
         gc->outOfMemory = 1;
     }
 }
@@ -63,16 +66,32 @@ void gcReleaseMemory(struct Gc *gc, uint32_t size)
         return;
 
     gc->size -= size;
-
 }
 
 uint8_t gcShouldMarkAndSweep(struct Gc *gc)
 {
-    return gc->size >= (uint32_t)(gc->maxSize * gc->loadFactor);
+    if (gc->size >= (uint32_t)(gc->maxSize * gc->loadFactor))
+    {
+        if (gc->timeSinceLastMarkAndSweep == gc->coolDown)
+        {
+
+            gc->timeSinceLastMarkAndSweep = 0;
+            return 1;
+        }
+        else
+        {
+            gc->timeSinceLastMarkAndSweep++;
+            return 0;
+        }
+    }
+
+    return 0;
 }
 
 void gcSweep(struct Gc *gc)
 {
+    uint32_t oldSize = gc->size;
+
     struct GcObject *curr = gc->head;
     struct GcObject *prev = NULL;
 
@@ -103,6 +122,8 @@ void gcSweep(struct Gc *gc)
 
         curr = next;
     }
+
+    gc->claimedSize += (oldSize - gc->size);
 }
 
 void gcFree(struct Gc *gc)

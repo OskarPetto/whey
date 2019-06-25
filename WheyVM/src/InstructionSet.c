@@ -252,7 +252,7 @@ void opPrint(struct WheyVM *wvm)
     switch (operand.type)
     {
     case OPERAND_TYPE_INTEGER:
-        printf("%d\n", operand.value.integerValue);
+        printf("%ld\n", operand.value.integerValue);
         break;
     case OPERAND_TYPE_DOUBLE:
         printf("%.10e\n", operand.value.doubleValue);

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define INTEGER_STRING_BUFFER_SIZE 50
+#define INTEGER_STRING_BUFFER_SIZE 100
 
 struct Object *integerNew(struct Gc *gc, Integer value)
 {
@@ -18,7 +18,7 @@ struct Object *integerToString(struct Gc *gc, Integer integer)
 {
     char buffer[INTEGER_STRING_BUFFER_SIZE];
 
-    snprintf(buffer, INTEGER_STRING_BUFFER_SIZE, "%d", integer);
+    snprintf(buffer, INTEGER_STRING_BUFFER_SIZE, "%ld", integer);
 
     struct Object *stringObject = stringNewFromCString(gc, buffer);
 

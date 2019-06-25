@@ -11,6 +11,7 @@
 #define DEFAULT_OPERAND_STACK_SIZE 100
 #define DEFAULT_MEMORY_SIZE 10000
 #define DEFAULT_LOAD_FACTOR 0.6
+#define DEFAULT_COOL_DOWN 1000
 
 int main(int argc, char **argv) {
 
@@ -20,13 +21,25 @@ int main(int argc, char **argv) {
     uint16_t operandStackSize = DEFAULT_OPERAND_STACK_SIZE;
     uint32_t memorySize = DEFAULT_MEMORY_SIZE;
     double loadFactor = DEFAULT_LOAD_FACTOR;
+    uint16_t coolDown = DEFAULT_COOL_DOWN;
     int64_t temp;
     double doubleTemp;
 
-    while((opt = getopt(argc, argv, "s:o:m:l:d")) != -1)  
+    while((opt = getopt(argc, argv, "c:s:o:m:l:d")) != -1)  
     {  
         switch (opt)
         {
+            case 'c':
+                temp = strtol(optarg, NULL, 10);
+                if (temp < 0)
+                {
+                    fprintf(stderr, "cooldown %ld must be a postive integer.\n", temp);
+                    return 1;
+                }
+                printf("cooldown set to: %ld.\n", temp);
+                coolDown = temp;
+                break;
+
             case 's':
                 temp = strtol(optarg, NULL, 10);
                 if (temp < 0)
@@ -91,7 +104,7 @@ int main(int argc, char **argv) {
 
     struct WcFile *program = wcFileNew(argv[optind]);
 
-    wvmRun(program, callStackSize, operandStackSize, memorySize, loadFactor, state);
+    wvmRun(program, callStackSize, operandStackSize, memorySize, loadFactor, coolDown, state);
 
     wcFileFree(program);
 

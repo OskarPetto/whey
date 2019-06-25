@@ -1,9 +1,9 @@
 BADEAFFE                            # checkSum
 02 00                               # constantCount
 01                                  # CONSTANT_TYPE_INTEGER
-00 00 00 00                         # 0
+00 00 00 00 00 00 00 00             # 0
 01                                  # CONSTANT_TYPE_INTEGER
-64 00 00 00                         # 100
+64 00 00 00 00 00 00 00             # 100
 01 00                               # functionCount
 00                                  # argumentCount
 02                                  # localsCount

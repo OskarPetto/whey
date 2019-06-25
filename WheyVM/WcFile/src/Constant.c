@@ -14,13 +14,13 @@ struct Constant *constantNew(uint8_t *bytes, uint32_t *byteIndex)
     switch (constant->type)
     {
     case CONSTANT_TYPE_INTEGER:
-        memcpy(&(constant->value.integerConstant), &bytes[*byteIndex], 4);
-        (*byteIndex) += 4;
+        memcpy(&(constant->value.integerConstant), &bytes[*byteIndex], sizeof(IntegerConstant));
+        (*byteIndex) += sizeof(IntegerConstant);
         break;
 
     case CONSTANT_TYPE_DOUBLE:
-        memcpy(&(constant->value.doubleConstant), &bytes[*byteIndex], 8);
-        (*byteIndex) += 8;
+        memcpy(&(constant->value.doubleConstant), &bytes[*byteIndex], sizeof(DoubleConstant));
+        (*byteIndex) += sizeof(DoubleConstant);
         break;
 
     case CONSTANT_TYPE_STRING:

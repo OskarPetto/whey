@@ -1070,7 +1070,7 @@ void testDoubleToString()
 void testGcNew()
 {
     printf("testGcNew: ");
-    struct Gc *gc = gcNew(1, 0.5);
+    struct Gc *gc = gcNew(1, 0.5, 0);
 
     assert(gc->freeCount == 0);
     assert(gc->newCount == 0);
@@ -1084,7 +1084,7 @@ void testGcNew()
 void testGcRegisterObject()
 {
     printf("testGcRegisterObject: ");
-    struct Gc *gc = gcNew(150, 0.4);
+    struct Gc *gc = gcNew(150, 0.4, 0);
     struct Object *array1 = arrayNew(gc, 3, 3);
     struct Object *integer1 = integerNew(gc, 7);
     struct Object *integer2 = integerNew(gc, 98);
@@ -1117,7 +1117,7 @@ void testGcRegisterObject()
 void testGcRegisterObjectFull1()
 {
     printf("testGcRegisterObjectFull1: ");
-    struct Gc *gc = gcNew(sizeof(struct Object) + sizeof(struct Array), 0.5);
+    struct Gc *gc = gcNew(sizeof(struct Object) + sizeof(struct Array), 0.5, 0);
     arrayNew(gc, 3, 3);
     assert(gc->outOfMemory == 1);
     assert(gc->size == sizeof(struct Object) + sizeof(struct Array) + 3 * sizeof(struct Object *));
@@ -1130,7 +1130,7 @@ void testGcRegisterObjectFull1()
 void testGcRegisterObjectFull2()
 {
     printf("testGcRegisterObjectFull2: ");
-    struct Gc *gc = gcNew(2 * sizeof(struct Object), 0.5);
+    struct Gc *gc = gcNew(2 * sizeof(struct Object), 0.5, 0);
     integerNew(gc, 23);
     assert(gc->outOfMemory == 0);
     assert(gc->size == sizeof(struct Object));
@@ -1151,7 +1151,7 @@ void testGcRegisterObjectFull2()
 void testGcRequestMemory()
 {
     printf("testGcRequestMemory: ");
-    struct Gc *gc = gcNew(1000, 0.5);
+    struct Gc *gc = gcNew(1000, 0.5, 0);
     arrayNew(gc, 23, 23);
     assert(gc->size == sizeof(struct Object) + sizeof(struct Array) + 23 * sizeof(struct Object *));
     uint32_t oldSize = gc->size;
@@ -1192,7 +1192,7 @@ void testGcRequestMemory()
 void testGcReleaseMemory()
 {
     printf("testGcReleaseMemory: ");
-    struct Gc *gc = gcNew(1000, 0.5);
+    struct Gc *gc = gcNew(1000, 0.5, 0);
     struct Object *array = arrayNew(gc, 4, 4);
     assert(gc->size == sizeof(struct Object) + sizeof(struct Array) + 4 * sizeof(struct Object *));
     uint32_t oldSize = gc->size;
@@ -1250,7 +1250,7 @@ void testGcReleaseMemory()
 void testGcShouldMarkAndSweep()
 {
     printf("testGcShouldMarkAndSweep: ");
-    struct Gc *gc = gcNew(3 * sizeof(struct Object), 0.5);
+    struct Gc *gc = gcNew(3 * sizeof(struct Object), 0.5, 0);
     integerNew(gc, 23);
     assert(gcShouldMarkAndSweep(gc) == 0);
     assert(gc->size == sizeof(struct Object));
@@ -1268,7 +1268,7 @@ void testGcShouldMarkAndSweep()
 void testGcSweep()
 {
     printf("testGcSweep: ");
-    struct Gc *gc = gcNew(250, 0.6);
+    struct Gc *gc = gcNew(250, 0.6, 0);
     struct Object *array1 = arrayNew(gc, 3, 3);
     struct Object *integer1 = integerNew(gc, 7);
     struct Object *integer2 = integerNew(gc, 98);
@@ -1330,7 +1330,7 @@ void testGcSweep()
 void testGcFree()
 {
     printf("testGcFree: ");
-    struct Gc *gc = gcNew(100, 0.6);
+    struct Gc *gc = gcNew(100, 0.6, 0);
     gcFree(gc);
     printf("OK\n");
 }
@@ -1807,7 +1807,7 @@ void testMapCopy()
 void testMapEquals()
 {
     printf("testMapEquals: ");
-    struct Gc *gc = gcNew(1000, 0.9);
+    struct Gc *gc = gcNew(1000, 0.9, 0);
     struct Object *map1 = mapNew(gc);
     struct Object *map2 = mapNew(gc);
 
@@ -1857,7 +1857,7 @@ void testMapEquals()
 void testMapHash()
 {
     printf("testMapHash: ");
-    struct Gc *gc = gcNew(1000, 0.9);
+    struct Gc *gc = gcNew(1000, 0.9, 0);
     struct Object *map1 = mapNew(gc);
 
     struct Object *string1 = stringNewFromCString(gc, "hier");
@@ -1977,7 +1977,7 @@ void testMapFree()
 void testObjectCopy()
 {
     printf("testObjectCopy: ");
-    struct Gc *gc = gcNew(10000, 0.9);
+    struct Gc *gc = gcNew(10000, 0.9, 0);
 
     struct Object *object = getComplexObject(gc);
 
@@ -2069,7 +2069,7 @@ void testObjectCopy()
 void testObjectEquals()
 {
     printf("testObjectEquals: ");
-    struct Gc *gc = gcNew(10000, 0.9);
+    struct Gc *gc = gcNew(10000, 0.9, 0);
     struct Object *object = getComplexObject(gc);
     
     struct Object *copy = objectCopy(gc, object);
@@ -2096,7 +2096,7 @@ void testObjectEquals()
 void testObjectHash()
 {
     printf("testObjectHash: ");
-    struct Gc *gc = gcNew(10000, 0.7);
+    struct Gc *gc = gcNew(10000, 0.7, 0);
     struct Object *object = getComplexObject(gc);
     
     struct Object *copy = objectCopy(gc, object);
@@ -2121,7 +2121,7 @@ void testObjectHash()
 void testObjectToString()
 {
     printf("testObjectToString: ");
-    struct Gc *gc = gcNew(10000, 0.7);
+    struct Gc *gc = gcNew(10000, 0.7, 0);
     struct Object *object = getComplexObject(gc);
     
     struct Object *string = objectToString(gc, object);
@@ -2138,7 +2138,7 @@ void testObjectToString()
 void testObjectNew()
 {
     printf("testObjectNew: ");
-    struct Gc *gc = gcNew(16, 0.7);
+    struct Gc *gc = gcNew(16, 0.7, 0);
     
     objectNew(gc, 200);
 
@@ -2159,7 +2159,7 @@ void testObjectNew()
 void testObjectMark()
 {
     printf("testObjectMark: ");
-    struct Gc *gc = gcNew(10000, 0.7);
+    struct Gc *gc = gcNew(10000, 0.7, 0);
     struct Object *object = getComplexObject(gc);
 
     uint32_t oldSize = gc->size;
@@ -2182,7 +2182,7 @@ void testObjectMark()
 void testObjectFree()
 {
     printf("testObjectFree: ");
-    struct Gc *gc = gcNew(10000, 0.7);
+    struct Gc *gc = gcNew(10000, 0.7, 0);
     getComplexObject(gc);
 
     gcSweep(gc);

@@ -1,18 +1,18 @@
 BADEAFFE                            # checkSum
 04 00                               # constantCount
 01                                  # CONSTANT_TYPE_INTEGER
-00 00 00 00                         # 0
+00 00 00 00 00 00 00 00             # 0
 01                                  # CONSTANT_TYPE_INTEGER
-01 00 00 00                         # 1
+01 00 00 00 00 00 00 00             # 1
 01                                  # CONSTANT_TYPE_INTEGER
-02 00 00 00                         # 2
+02 00 00 00 00 00 00 00             # 2
 01                                  # CONSTANT_TYPE_INTEGER
-64 00 00 00                         # 100
-03 00                               # functionCount
+E8 03 00 00 00 00 00 00             # 100
+02 00                               # functionCount
 # main
 00                                  # argumentCount
 02                                  # localsCount
-32 00                               # byteCount
+31 00                               # byteCount
 14 02 00                            # constant 2
 11 00                               # store 0
 14 00 00                            # constant 0
@@ -40,7 +40,8 @@ BADEAFFE                            # checkSum
 01 E1 FF                            # jump -31
 # end loop
 10 01                               # load 1
-77 02 00                            # foreach call 2
+64                                  # object to string 
+15                                  # print
 # isPrime(x)
 01                                  # argumentCount
 02                                  # localsCount
@@ -67,12 +68,4 @@ BADEAFFE                            # checkSum
 13                                  # return
 # return true
 14 01 00                            # constant 1
-13                                  # return
-# (x) => {} 
-01                                  # argumentCount
-01                                  # localsCount
-05 00                               # byteCount
-10 00                               # load 0
-66                                  # object unbox
-15                                  # print
 13                                  # return

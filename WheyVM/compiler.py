@@ -8,6 +8,8 @@ if __name__ == "__main__":
         exit(1)
 
     code = open(sys.argv[1], 'r').read()
+    if code[len(code) - 1] != '\n':
+        code = code + '\n'
     code = re.sub('\#.*\n', "", code)
 
     byteArray = bytes.fromhex(code)
