@@ -200,7 +200,7 @@ void opReturn(struct WheyVM *wvm)
         return;
     }
 
-    if (wvm->callStackPointer == -1)
+    if (wvm->callStackPointer == 0)
     {
         STOP(wvm);
     }
@@ -564,7 +564,7 @@ void opArrayNew(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
-    
+
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_INTEGER);
     assert(operand.value.integerValue >= 0);
@@ -687,6 +687,12 @@ void opArrayForEach(struct WheyVM *wvm)
     if (array.value.reference->value.array->objectCount > 0)
     {
         struct Frame *nextFrame = frameNewWithIterator(nextFunction, array.value.reference);
+
+        for (uint8_t i = 1; i < nextFunction->argumentCount; i++)
+        {
+            nextFrame->locals[i] = wvm->operandStack[wvm->operandStackPointer--];
+        }
+
         wvm->callStack[++wvm->callStackPointer] = nextFrame;
     }
 }

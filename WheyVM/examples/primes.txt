@@ -9,6 +9,11 @@ BADEAFFE                            # checkSum
 01                                  # CONSTANT_TYPE_INTEGER
 E8 03 00 00 00 00 00 00             # 100
 02 00                               # functionCount
+#
+#
+#
+#
+#
 # main
 00                                  # argumentCount
 02                                  # localsCount
@@ -18,7 +23,7 @@ E8 03 00 00 00 00 00 00             # 100
 14 00 00                            # constant 0
 70                                  # new array
 11 01                               # store 1
-# LOOP 
+# loop until max number 
 10 00                               # load 0
 14 03 00                            # constant 3
 22                                  # greater than 
@@ -42,13 +47,20 @@ E8 03 00 00 00 00 00 00             # 100
 10 01                               # load 1
 64                                  # object to string 
 15                                  # print
+#
+#
+#
+#
+#
+#
+#
 # isPrime(x)
 01                                  # argumentCount
 02                                  # localsCount
 29 00                               # byteCount
 14 02 00                            # constant 2
 11 01                               # store 1
-# loop 
+# loop until current
 10 01                               # load 1
 10 00                               # load 0
 23                                  # greater than or equal
@@ -63,6 +75,7 @@ E8 03 00 00 00 00 00 00             # 100
 41                                  # increment 
 11 01                               # store 1
 01 E7 FF                            # jump -25
+# end loop 
 # return false
 14 00 00                            # constant 0
 13                                  # return
