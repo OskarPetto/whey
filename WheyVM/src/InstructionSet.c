@@ -36,6 +36,7 @@
 #define OP_COMPARISON(wvm, operator)                                                                                                             \
     do                                                                                                                                           \
     {                                                                                                                                            \
+        assert(wvm->operandStackPointer > 0);                                                                                                    \
         struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];                                                                 \
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                                   \
         assert(operand1.type == operand2.type);                                                                                                  \
@@ -57,6 +58,7 @@
 #define OP_ARITHMETIC(wvm, operator)                                                                                                             \
     do                                                                                                                                           \
     {                                                                                                                                            \
+        assert(wvm->operandStackPointer > 0);                                                                                                    \
         struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];                                                                 \
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                                   \
         assert(operand1.type == operand2.type);                                                                                                  \
@@ -76,6 +78,7 @@
 #define OP_INTEGER_BINARY(wvm, operator)                                                                                                     \
     do                                                                                                                                       \
     {                                                                                                                                        \
+        assert(wvm->operandStackPointer > 0);                                                                                                \
         struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];                                                             \
         struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];                                                               \
         assert(operand1.type == OPERAND_TYPE_INTEGER);                                                                                       \
@@ -86,6 +89,7 @@
 #define OP_INTEGER_UNARY(wvm, operator)                                                                       \
     do                                                                                                        \
     {                                                                                                         \
+        assert(wvm->operandStackPointer >= 0);                                                                \
         struct Operand operand = wvm->operandStack[wvm->operandStackPointer];                                 \
         assert(operand.type == OPERAND_TYPE_INTEGER);                                                         \
         wvm->operandStack[wvm->operandStackPointer].value.integerValue = operator operand.value.integerValue; \
@@ -94,6 +98,7 @@
 #define OP_DOUBLE_UNARY(wvm, fun)                                                                       \
     do                                                                                                  \
     {                                                                                                   \
+        assert(wvm->operandStackPointer >= 0);                                                          \
         struct Operand operand = wvm->operandStack[wvm->operandStackPointer];                           \
         assert(operand.type == OPERAND_TYPE_DOUBLE);                                                    \
         wvm->operandStack[wvm->operandStackPointer].value.doubleValue = fun(operand.value.doubleValue); \
@@ -164,6 +169,7 @@ void opStore(struct WheyVM *wvm)
     struct Frame *frame = CURRENT_FRAME(wvm);
     uint8_t localIndex = frame->function->byteCode[++frame->codePointer];
     frame->codePointer++;
+    assert(wvm->operandStackPointer >= 0);
     frameSetLocal(frame, localIndex, wvm->operandStack[wvm->operandStackPointer--]);
 }
 
@@ -179,6 +185,7 @@ void opCall(struct WheyVM *wvm)
 
     for (uint8_t i = 0; i < nextFunction->argumentCount; i++)
     {
+        assert(wvm->operandStackPointer >= 0);
         frameSetLocal(nextFrame, i, wvm->operandStack[wvm->operandStackPointer--]); // pass function arguments
     }
 
@@ -187,6 +194,8 @@ void opCall(struct WheyVM *wvm)
 
 void opReturn(struct WheyVM *wvm)
 {
+    assert(wvm->callStackPointer >= 0);
+
     struct Frame *frame = CURRENT_FRAME(wvm);
 
     if (frame->iterator != NULL && frame->iterator->index + 1 < frame->iterator->array->value.array->objectCount)
@@ -204,11 +213,8 @@ void opReturn(struct WheyVM *wvm)
     {
         STOP(wvm);
     }
-    else
-    {
-        wvm->callStackPointer--;
-    }
 
+    wvm->callStackPointer--;
     frameFree(frame);
 }
 
@@ -247,6 +253,8 @@ void opPrint(struct WheyVM *wvm)
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
 
+    assert(wvm->operandStackPointer >= 0);
+
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer--];
 
     switch (operand.type)
@@ -268,6 +276,7 @@ void opPop(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
     frame->codePointer++;
+    assert(wvm->operandStackPointer >= 0);
     wvm->operandStackPointer--;
 }
 
@@ -338,6 +347,7 @@ void opMultiply(struct WheyVM *wvm)
 void opDivide(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
     struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];
     struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];
@@ -361,6 +371,7 @@ void opDivide(struct WheyVM *wvm)
 void opPower(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
     struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];
     struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];
@@ -382,6 +393,7 @@ void opPower(struct WheyVM *wvm)
 void opNegate(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type != OPERAND_TYPE_REFERENCE);
@@ -400,6 +412,7 @@ void opNegate(struct WheyVM *wvm)
 void opIntegerToDouble(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     assert(wvm->operandStack[wvm->operandStackPointer].type == OPERAND_TYPE_INTEGER);
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_DOUBLE;
@@ -451,6 +464,7 @@ void opIntegerNot(struct WheyVM *wvm)
 void opDoubleToInteger(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     assert(wvm->operandStack[wvm->operandStackPointer].type == OPERAND_TYPE_DOUBLE);
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_INTEGER;
@@ -483,6 +497,7 @@ void opObjectNull(struct WheyVM *wvm)
 void opObjectCopy(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_REFERENCE);
@@ -492,6 +507,7 @@ void opObjectCopy(struct WheyVM *wvm)
 void opObjectEquals(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
     struct Operand operand1 = wvm->operandStack[wvm->operandStackPointer--];
     struct Operand operand2 = wvm->operandStack[wvm->operandStackPointer];
@@ -504,6 +520,7 @@ void opObjectEquals(struct WheyVM *wvm)
 void opObjectHash(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_REFERENCE);
@@ -514,6 +531,7 @@ void opObjectHash(struct WheyVM *wvm)
 void opObjectToString(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_REFERENCE);
@@ -523,6 +541,7 @@ void opObjectToString(struct WheyVM *wvm)
 void opObjectBox(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_INTEGER || operand.type == OPERAND_TYPE_DOUBLE);
@@ -542,6 +561,7 @@ void opObjectBox(struct WheyVM *wvm)
 void opObjectUnbox(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_REFERENCE);
@@ -576,6 +596,7 @@ void opArrayNew(struct WheyVM *wvm)
 void opArraySize(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_REFERENCE);
@@ -587,6 +608,7 @@ void opArraySize(struct WheyVM *wvm)
 void opArrayGet(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
     struct Operand index = wvm->operandStack[wvm->operandStackPointer];
     assert(index.type == OPERAND_TYPE_INTEGER);
@@ -601,6 +623,7 @@ void opArrayGet(struct WheyVM *wvm)
 void opArraySet(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 1);
     frame->codePointer++;
     struct Operand value = wvm->operandStack[wvm->operandStackPointer];
     assert(value.type == OPERAND_TYPE_REFERENCE);
@@ -619,6 +642,7 @@ void opArraySet(struct WheyVM *wvm)
 void opArrayInsert(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 1);
     frame->codePointer++;
     struct Operand value = wvm->operandStack[wvm->operandStackPointer];
     assert(value.type == OPERAND_TYPE_REFERENCE);
@@ -637,6 +661,7 @@ void opArrayInsert(struct WheyVM *wvm)
 void opArrayInsertAll(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
     struct Operand array1 = wvm->operandStack[wvm->operandStackPointer];
     assert(array1.type == OPERAND_TYPE_REFERENCE);
@@ -657,6 +682,7 @@ void opArrayInsertAll(struct WheyVM *wvm)
 void opArrayRemove(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
 
     struct Operand index = wvm->operandStack[wvm->operandStackPointer];
@@ -690,6 +716,7 @@ void opArrayForEach(struct WheyVM *wvm)
 
         for (uint8_t i = 1; i < nextFunction->argumentCount; i++)
         {
+            assert(wvm->operandStackPointer >= 0);
             nextFrame->locals[i] = wvm->operandStack[wvm->operandStackPointer--];
         }
 
@@ -711,6 +738,7 @@ void opMapNew(struct WheyVM *wvm)
 void opMapSize(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
 
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
@@ -724,6 +752,7 @@ void opMapSize(struct WheyVM *wvm)
 void opMapGet(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
     frame->codePointer++;
 
     struct Operand key = wvm->operandStack[wvm->operandStackPointer];
@@ -742,6 +771,8 @@ void opMapGet(struct WheyVM *wvm)
 void opMapPut(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 1);
+
     frame->codePointer++;
 
     struct Operand value = wvm->operandStack[wvm->operandStackPointer];
@@ -763,6 +794,8 @@ void opMapPut(struct WheyVM *wvm)
 void opMapPutAll(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand map1 = wvm->operandStack[wvm->operandStackPointer];
@@ -781,6 +814,8 @@ void opMapPutAll(struct WheyVM *wvm)
 void opMapRemove(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand key = wvm->operandStack[wvm->operandStackPointer];
@@ -799,6 +834,8 @@ void opMapRemove(struct WheyVM *wvm)
 void opMapHasKey(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand key = wvm->operandStack[wvm->operandStackPointer];
@@ -817,6 +854,8 @@ void opMapHasKey(struct WheyVM *wvm)
 void opMapEntries(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
+
     frame->codePointer++;
 
     struct Operand map = wvm->operandStack[wvm->operandStackPointer];
@@ -830,6 +869,8 @@ void opMapEntries(struct WheyVM *wvm)
 void opPairNew(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand first = wvm->operandStack[wvm->operandStackPointer];
@@ -847,6 +888,8 @@ void opPairNew(struct WheyVM *wvm)
 void opPairGetFirst(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
+
     frame->codePointer++;
 
     struct Operand pair = wvm->operandStack[wvm->operandStackPointer];
@@ -860,6 +903,8 @@ void opPairGetFirst(struct WheyVM *wvm)
 void opPairGetSecond(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
+
     frame->codePointer++;
 
     struct Operand pair = wvm->operandStack[wvm->operandStackPointer];
@@ -873,6 +918,8 @@ void opPairGetSecond(struct WheyVM *wvm)
 void opPairSetFirst(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand first = wvm->operandStack[wvm->operandStackPointer];
@@ -891,6 +938,8 @@ void opPairSetFirst(struct WheyVM *wvm)
 void opPairSetSecond(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand second = wvm->operandStack[wvm->operandStackPointer];
@@ -909,6 +958,8 @@ void opPairSetSecond(struct WheyVM *wvm)
 void opStringLength(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
+
     frame->codePointer++;
 
     struct Operand string = wvm->operandStack[wvm->operandStackPointer];
@@ -922,6 +973,8 @@ void opStringLength(struct WheyVM *wvm)
 void opStringFromArray(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
+
     frame->codePointer++;
 
     struct Operand array = wvm->operandStack[wvm->operandStackPointer];
@@ -934,6 +987,8 @@ void opStringFromArray(struct WheyVM *wvm)
 void opStringToArray(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer >= 0);
+
     frame->codePointer++;
 
     struct Operand string = wvm->operandStack[wvm->operandStackPointer];
@@ -946,6 +1001,8 @@ void opStringToArray(struct WheyVM *wvm)
 void opStringCompare(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];
@@ -965,6 +1022,8 @@ void opStringCompare(struct WheyVM *wvm)
 void opStringConcatenate(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
     frame->codePointer++;
 
     struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];
@@ -983,6 +1042,8 @@ void opStringConcatenate(struct WheyVM *wvm)
 void opStringSubstring(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 1);
+
     frame->codePointer++;
 
     struct Operand integer1 = wvm->operandStack[wvm->operandStackPointer];
@@ -1003,6 +1064,8 @@ void opStringSubstring(struct WheyVM *wvm)
 void opStringIndexOf(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 1);
+
     frame->codePointer++;
 
     struct Operand integer1 = wvm->operandStack[wvm->operandStackPointer];
@@ -1025,6 +1088,8 @@ void opStringIndexOf(struct WheyVM *wvm)
 void opStringReplace(struct WheyVM *wvm)
 {
     struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 1);
+
     frame->codePointer++;
 
     struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];

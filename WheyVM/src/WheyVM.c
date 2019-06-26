@@ -547,19 +547,22 @@ static void wvmExecute(struct WheyVM *wvm)
 
     wvm->callStack[++wvm->callStackPointer] = frameNew(mainFunction);
 
-    while (wvm->callStack[wvm->callStackPointer]->codePointer < wvm->callStack[wvm->callStackPointer]->function->codeSize)
+    while (!(wvm->state & WHEYVM_STATE_STOPPED))
     {
-        if (wvm->state & WHEYVM_STATE_STOPPED)
+        if (wvm->callStackPointer < 0 || wvm->callStack[wvm->callStackPointer]->codePointer >= wvm->callStack[wvm->callStackPointer]->function->codeSize)
             break;
 
         unsigned char instruction = wvm->callStack[wvm->callStackPointer]->function->byteCode[wvm->callStack[wvm->callStackPointer]->codePointer];
 
         instructionSet[instruction](wvm);
 
+        //printf("%s\n", instructionStrings[instruction]);
+
         if (gcShouldMarkAndSweep(wvm->gc))
         {
 
             wvmMark(wvm);
+
             gcSweep(wvm->gc);
 
             if (wvm->state & WHEYVM_STATE_DEBUG)

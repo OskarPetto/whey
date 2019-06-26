@@ -7,7 +7,7 @@ BADEAFFE                            # checkSum
 01 00                               # functionCount
 00                                  # argumentCount
 02                                  # localsCount
-24 00                               # byteCount
+25 00                               # byteCount
 14 00 00                            # opConstant 0
 11 00                               # store 0
 10 00                               # load 0
@@ -28,3 +28,4 @@ BADEAFFE                            # checkSum
 # END LOOP
 10 01                               # load 1
 15                                  # print
+13                                  # return

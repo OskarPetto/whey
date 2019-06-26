@@ -17,7 +17,7 @@ E8 03 00 00 00 00 00 00             # 100
 # main
 00                                  # argumentCount
 02                                  # localsCount
-31 00                               # byteCount
+32 00                               # byteCount
 14 02 00                            # constant 2
 11 00                               # store 0
 14 00 00                            # constant 0
@@ -47,6 +47,7 @@ E8 03 00 00 00 00 00 00             # 100
 10 01                               # load 1
 64                                  # object to string 
 15                                  # print
+13                                  # return
 #
 #
 #
