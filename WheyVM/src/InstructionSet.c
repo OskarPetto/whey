@@ -18,7 +18,7 @@
 #include <string.h>
 #include <math.h>
 
-#define STOP(wvm) wvm->state %= WHEYVM_STATE_STOPPED
+#define STOP(wvm) wvm->state |= WHEYVM_STATE_STOPPED
 
 #define CURRENT_FRAME(wvm) ((wvm->callStack[wvm->callStackPointer]))
 
@@ -543,8 +543,10 @@ void opObjectBox(struct WheyVM *wvm)
     struct Frame *frame = CURRENT_FRAME(wvm);
     assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
+
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_INTEGER || operand.type == OPERAND_TYPE_DOUBLE);
+
     wvm->operandStack[wvm->operandStackPointer].type = OPERAND_TYPE_REFERENCE;
 
     switch (operand.type)
@@ -563,6 +565,7 @@ void opObjectUnbox(struct WheyVM *wvm)
     struct Frame *frame = CURRENT_FRAME(wvm);
     assert(wvm->operandStackPointer >= 0);
     frame->codePointer++;
+
     struct Operand operand = wvm->operandStack[wvm->operandStackPointer];
     assert(operand.type == OPERAND_TYPE_REFERENCE);
     assert(operand.value.reference->type == OBJECT_TYPE_INTEGER || operand.value.reference->type == OBJECT_TYPE_DOUBLE);
@@ -1107,4 +1110,23 @@ void opStringReplace(struct WheyVM *wvm)
     wvm->operandStackPointer -= 2;
 
     wvm->operandStack[wvm->operandStackPointer].value.reference = stringReplace(wvm->gc, string3.value.reference->value.string, string2.value.reference->value.string, string1.value.reference->value.string);
+}
+
+void opStringSplit(struct WheyVM *wvm) {
+    struct Frame *frame = CURRENT_FRAME(wvm);
+    assert(wvm->operandStackPointer > 0);
+
+    frame->codePointer++;
+
+    struct Operand string1 = wvm->operandStack[wvm->operandStackPointer];
+    assert(string1.type == OPERAND_TYPE_REFERENCE);
+    assert(string1.value.reference->type == OBJECT_TYPE_STRING);
+
+    struct Operand string2 = wvm->operandStack[wvm->operandStackPointer - 1];
+    assert(string2.type == OPERAND_TYPE_REFERENCE);
+    assert(string2.value.reference->type == OBJECT_TYPE_STRING);
+
+    wvm->operandStackPointer--;
+
+    wvm->operandStack[wvm->operandStackPointer].value.reference = stringSplit(wvm->gc, string2.value.reference->value.string, string1.value.reference->value.string);
 }

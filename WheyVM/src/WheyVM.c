@@ -175,7 +175,7 @@ Instruction instructionSet[256] =
         /* 0xA5 */ &opStringSubstring,
         /* 0xA6 */ &opStringIndexOf,
         /* 0xA7 */ &opStringReplace,
-        /* 0xA8 */ &opUnknown,
+        /* 0xA8 */ &opStringSplit,
         /* 0xA9 */ &opUnknown,
         /* 0xAA */ &opUnknown,
         /* 0xAB */ &opUnknown,
@@ -434,7 +434,7 @@ char *instructionStrings[256] =
         /* 0xA5 */ "opStringSubstring",
         /* 0xA6 */ "opStringIndexOf",
         /* 0xA7 */ "opStringReplace",
-        /* 0xA8 */ "opUnknown",
+        /* 0xA8 */ "opStringSplit",
         /* 0xA9 */ "opUnknown",
         /* 0xAA */ "opUnknown",
         /* 0xAB */ "opUnknown",
@@ -540,27 +540,50 @@ static void wvmMark(struct WheyVM *wvm)
     }
 }
 
-static void wvmExecute(struct WheyVM *wvm)
+static int wvmExecute(struct WheyVM *wvm)
 {
-
     struct Function *mainFunction = wcFileGetFunction(wvm->wcFile, 0);
 
     wvm->callStack[++wvm->callStackPointer] = frameNew(mainFunction);
 
     while (!(wvm->state & WHEYVM_STATE_STOPPED))
     {
-        if (wvm->callStackPointer < 0 || wvm->callStack[wvm->callStackPointer]->codePointer >= wvm->callStack[wvm->callStackPointer]->function->codeSize)
+        if (wvm->callStackPointer < 0)
+        {
+            fprintf(stderr, "Call stack pointer is negative.\n");
+            return 1;
             break;
+        }
+
+        if (wvm->callStack[wvm->callStackPointer]->codePointer >= wvm->callStack[wvm->callStackPointer]->function->codeSize) 
+        {
+            fprintf(stderr, "No return reached.\n");
+            return 1;
+            break;
+        }          
+
+        if (wvm->operandStackPointer >= wvm->operandStackSize)
+        {
+            fprintf(stderr, "Operand stack overflow.\n");
+            return 1;
+            break;            
+        }
+
+        if (wvm->callStackPointer >= wvm->callStackSize)
+        {
+            fprintf(stderr, "Call stack overflow.\n");
+            return 1;
+            break;            
+        }
 
         unsigned char instruction = wvm->callStack[wvm->callStackPointer]->function->byteCode[wvm->callStack[wvm->callStackPointer]->codePointer];
 
-        instructionSet[instruction](wvm);
+        //printf("%s: %d \n", instructionStrings[instruction], wvm->operandStackPointer);
 
-        //printf("%s\n", instructionStrings[instruction]);
+        instructionSet[instruction](wvm);
 
         if (gcShouldMarkAndSweep(wvm->gc))
         {
-
             wvmMark(wvm);
 
             gcSweep(wvm->gc);
@@ -574,17 +597,22 @@ static void wvmExecute(struct WheyVM *wvm)
 
         wvm->time++;
     }
+
+    return 0;
 }
 
-void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state)
+int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state)
 {
     struct WheyVM *wvm = (struct WheyVM *)malloc(sizeof(struct WheyVM));
     assert(wvm != NULL);
+    
+    wvm->callStackSize = callStackSize;
     wvm->callStack = (struct Frame **)malloc(callStackSize * sizeof(struct Frame *));
     assert(wvm->callStack != NULL);
     wvm->callStackPointer = -1;
     wvm->time = 0;
 
+    wvm->operandStackSize = operandStackSize;
     wvm->operandStack = (struct Operand *)malloc(operandStackSize * sizeof(struct Operand));
     assert(wvm->operandStack != NULL);
     wvm->operandStackPointer = -1;
@@ -594,7 +622,7 @@ void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStack
     wvm->wcFile = wcFile;
     wvm->state = state;
 
-    wvmExecute(wvm);
+    int returnStatus = wvmExecute(wvm);
 
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {
@@ -607,4 +635,6 @@ void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStack
     gcFree(wvm->gc);
 
     free(wvm);
+
+    return returnStatus;
 }

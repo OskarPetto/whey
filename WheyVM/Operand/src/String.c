@@ -15,6 +15,7 @@ struct Object *stringNew(struct Gc *gc, Integer characterCount)
     string->value.string = (struct String *) malloc(sizeof(struct String));
     assert(string->value.string != NULL);
     string->value.string->characterCount = characterCount;
+    
     string->value.string->characters = (Char *) malloc(characterCount * sizeof (Char));
     assert(string->value.string->characters != NULL);
     
@@ -174,6 +175,24 @@ struct Object *stringReplace(struct Gc *gc, struct String *string, struct String
     }
 
     return replacedString;
+}
+
+struct Object *stringSplit(struct Gc *gc, struct String *string1, struct String *string2)
+{
+    struct Object *array = arrayNew(gc, 0, 0);
+
+    Integer last = 0;
+    Integer curr = -1;
+
+    while((curr = stringIndexOf(string1, string2, last)) >= 0)
+    {
+        arrayInsert(gc, array->value.array, array->value.array->objectCount, stringSubstring(gc, string1, last, curr));
+        last = curr + string2->characterCount;
+    }
+
+    arrayInsert(gc, array->value.array, array->value.array->objectCount, stringSubstring(gc, string1, last, string1->characterCount));
+
+    return array;
 }
 
 struct Object *stringCopy(struct Gc *gc, struct String *string)

@@ -104,9 +104,9 @@ int main(int argc, char **argv) {
 
     struct WcFile *program = wcFileNew(argv[optind]);
 
-    wvmRun(program, callStackSize, operandStackSize, memorySize, loadFactor, coolDown, state);
+    int returnStatus = wvmRun(program, callStackSize, operandStackSize, memorySize, loadFactor, coolDown, state);
 
     wcFileFree(program);
 
-    return 0;
+    return returnStatus;
 }

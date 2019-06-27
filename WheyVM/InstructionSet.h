@@ -86,5 +86,6 @@ void opStringConcatenate(struct WheyVM *wvm);
 void opStringSubstring(struct WheyVM *wvm);
 void opStringIndexOf(struct WheyVM *wvm);
 void opStringReplace(struct WheyVM *wvm);
+void opStringSplit(struct WheyVM *wvm);
 
 #endif

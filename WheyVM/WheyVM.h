@@ -15,10 +15,12 @@ struct WheyVM
     struct Operand *operandStack;
 
     int32_t operandStackPointer;
+    int32_t operandStackSize;
 
     struct Frame **callStack;
 
     int32_t callStackPointer;
+    int32_t callStackSize;
 
     struct Gc *gc;
 
@@ -29,6 +31,6 @@ struct WheyVM
     uint64_t time;
 };
 
-void wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state);
+int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state);
 
 #endif

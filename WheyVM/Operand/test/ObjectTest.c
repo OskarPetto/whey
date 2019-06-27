@@ -913,6 +913,81 @@ void testStringReplace()
     printf("OK\n");
 }
 
+void testStringSplit()
+{
+    printf("testStringSplit: ");
+    struct Gc *gc = gcNew(10000, 0.9, 0);
+    struct Object *string1 = stringNewFromCString(gc, "hallo ich heisse oskar");
+    struct Object *string2 = stringNewFromCString(gc, " ");
+    struct Object *stringNotFound = stringNewFromCString(gc, "lol");
+    struct Object *array = stringSplit(gc, string1->value.string, string2->value.string);
+
+    assert(array->value.array->objectCount == 4);
+    assert(array->value.array->objects[0]->type == OBJECT_TYPE_STRING);
+    assert(array->value.array->objects[0]->value.string->characterCount == 5);
+
+    assert(array->value.array->objects[1]->type == OBJECT_TYPE_STRING);
+    assert(array->value.array->objects[1]->value.string->characterCount == 3);
+
+    assert(array->value.array->objects[2]->type == OBJECT_TYPE_STRING);
+    assert(array->value.array->objects[2]->value.string->characterCount == 6);
+
+    assert(array->value.array->objects[3]->type == OBJECT_TYPE_STRING);
+    assert(array->value.array->objects[3]->value.string->characterCount == 5);
+
+    struct Object *arrayOne = stringSplit(gc, string1->value.string, stringNotFound->value.string);
+    assert(arrayOne->value.array->objectCount == 1);
+    assert(arrayOne->value.array->objects[0]->value.string->characterCount == string1->value.string->characterCount);
+
+
+    struct Object *string3 = stringNewFromCString(gc, "mann o mann o mann o mann o");
+    struct Object *string4 = stringNewFromCString(gc, "o");
+    struct Object *string5 = stringNewFromCString(gc, "mann");
+
+
+    struct Object *array1 = stringSplit(gc, string3->value.string, string4->value.string);
+
+    assert(array1->value.array->objectCount == 5);
+    assert(array1->value.array->objects[0]->type == OBJECT_TYPE_STRING);
+    assert(array1->value.array->objects[0]->value.string->characterCount == 5);
+
+    assert(array1->value.array->objects[1]->type == OBJECT_TYPE_STRING);
+    assert(array1->value.array->objects[1]->value.string->characterCount == 6);
+
+    assert(array1->value.array->objects[2]->type == OBJECT_TYPE_STRING);
+    assert(array1->value.array->objects[2]->value.string->characterCount == 6);
+
+    assert(array1->value.array->objects[3]->type == OBJECT_TYPE_STRING);
+    assert(array1->value.array->objects[3]->value.string->characterCount == 6);
+
+    assert(array1->value.array->objects[4]->type == OBJECT_TYPE_STRING);
+    assert(array1->value.array->objects[4]->value.string->characterCount == 0);
+
+    struct Object *array2 = stringSplit(gc, string3->value.string, string5->value.string);
+
+    assert(array2->value.array->objectCount == 5);
+    assert(array2->value.array->objects[0]->type == OBJECT_TYPE_STRING);
+    assert(array2->value.array->objects[0]->value.string->characterCount == 0);
+
+    assert(array2->value.array->objects[1]->type == OBJECT_TYPE_STRING);
+    assert(array2->value.array->objects[1]->value.string->characterCount == 3);
+
+    assert(array2->value.array->objects[2]->type == OBJECT_TYPE_STRING);
+    assert(array2->value.array->objects[2]->value.string->characterCount == 3);
+
+    assert(array2->value.array->objects[3]->type == OBJECT_TYPE_STRING);
+    assert(array2->value.array->objects[3]->value.string->characterCount == 3);
+
+    assert(array2->value.array->objects[4]->type == OBJECT_TYPE_STRING);
+    assert(array2->value.array->objects[4]->value.string->characterCount == 2);
+
+    gcSweep(gc);
+
+    gcFree(gc);
+
+    printf("OK\n");
+}
+
 void testStringCopy()
 {
     printf("testStringCopy: ");
@@ -2381,6 +2456,7 @@ int main(int argc, char* argv[])
     testStringSubstring();
     testStringIndexOf();
     testStringReplace();
+    testStringSplit();
     testStringCopy();
     testStringEquals();
     testStringHash();

@@ -102,7 +102,6 @@ void gcSweep(struct Gc *gc)
         if (curr->object->mark == OBJECT_MARK_TRUE)
         {
             curr->object->mark = OBJECT_MARK_FALSE;
-            prev = curr;
         }
         else
         {
@@ -120,6 +119,7 @@ void gcSweep(struct Gc *gc)
             }
         }
 
+        prev = curr;
         curr = next;
     }
 

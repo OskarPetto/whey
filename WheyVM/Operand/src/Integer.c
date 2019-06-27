@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define INTEGER_STRING_BUFFER_SIZE 100
+#define INTEGER_STRING_BUFFER_SIZE 50
 
 struct Object *integerNew(struct Gc *gc, Integer value)
 {

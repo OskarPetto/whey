@@ -22,6 +22,7 @@ struct Object *stringConcatenate(struct Gc *gc, struct String *string1, struct S
 struct Object *stringSubstring(struct Gc *gc, struct String *string, Integer lowerIndex, Integer upperIndex);
 Integer stringIndexOf(struct String *string1, struct String *string2, Integer fromIndex);
 struct Object *stringReplace(struct Gc *gc, struct String *string, struct String *stringToReplace, struct String *replacementString);
+struct Object *stringSplit(struct Gc *gc, struct String *string1, struct String *string2);
 
 struct Object *stringCopy(struct Gc *gc, struct String *string);
 Integer stringEquals(struct String *string1, struct String *string2);

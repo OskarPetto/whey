@@ -50,8 +50,8 @@ void frameMark(struct Frame *frame)
         {
             objectMark(current.value.reference);
         }
+
     }
-    
 }
 
 void frameFree(struct Frame *frame)
