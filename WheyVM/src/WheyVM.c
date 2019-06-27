@@ -592,7 +592,7 @@ static int wvmExecute(struct WheyVM *wvm)
 
             if (wvm->state & WHEYVM_STATE_DEBUG)
             {
-                printf("%lu: %d objects marked in %d frames and the operand stack.\n", wvm->time, count, wvm->callStackPointer + 1);
+                printf("%lu: %d objects marked with %ld bytes used.\n", wvm->time, count, wvm->gc->size);
             }
 
             gcSweep(wvm->gc);
