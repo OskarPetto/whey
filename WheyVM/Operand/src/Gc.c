@@ -109,9 +109,10 @@ void gcSweep(struct Gc *gc)
         else
         {
             curr->object->mark = OBJECT_MARK_FALSE;
+            prev = curr;
+
         }
 
-        prev = curr;
         curr = next;
     }
 
