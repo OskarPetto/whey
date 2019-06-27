@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h> 
 
 Instruction instructionSet[256] =
     {
@@ -556,28 +557,24 @@ static int wvmExecute(struct WheyVM *wvm)
         {
             fprintf(stderr, "Call stack pointer is negative.\n");
             return 1;
-            break;
         }
 
         if (wvm->callStack[wvm->callStackPointer]->codePointer >= wvm->callStack[wvm->callStackPointer]->function->codeSize) 
         {
             fprintf(stderr, "No return reached.\n");
             return 1;
-            break;
         }          
 
         if (wvm->operandStackPointer >= wvm->operandStackSize)
         {
             fprintf(stderr, "Operand stack overflow.\n");
             return 1;
-            break;            
         }
 
         if (wvm->callStackPointer >= wvm->callStackSize)
         {
             fprintf(stderr, "Call stack overflow.\n");
             return 1;
-            break;            
         }
 
         unsigned char instruction = wvm->callStack[wvm->callStackPointer]->function->byteCode[wvm->callStack[wvm->callStackPointer]->codePointer];
@@ -590,15 +587,11 @@ static int wvmExecute(struct WheyVM *wvm)
         {
             uint32_t count = wvmMark(wvm);
 
-            if (wvm->state & WHEYVM_STATE_DEBUG)
-            {
-                printf("%lu: %d objects marked with %ld bytes used.\n", wvm->time, count, wvm->gc->size);
-            }
-
             gcSweep(wvm->gc);
 
             if (wvm->state & WHEYVM_STATE_DEBUG)
             {
+                printf("%lu: %d objects marked with %d bytes used.\n", wvm->time, count, wvm->gc->size);
                 printf("%lu: garbage collected %lu objects with %lu bytes.\n", wvm->time, wvm->gc->freeCount, wvm->gc->claimedSize);
             }
 
@@ -631,7 +624,16 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     wvm->wcFile = wcFile;
     wvm->state = state;
 
+    clock_t begin = clock();
+
     int returnStatus = wvmExecute(wvm);
+
+    clock_t end = clock();
+
+    if (wvm->state & WHEYVM_STATE_DEBUG) 
+    {
+        printf("%lu: finished program execution in %f seconds.\n", wvm->time, ((double) (end - begin))/CLOCKS_PER_SEC);
+    }
 
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {
