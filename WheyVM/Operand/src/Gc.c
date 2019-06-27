@@ -24,7 +24,7 @@ struct Gc *gcNew(uint32_t maxSize, double loadFactor, uint16_t coolDown)
 
 void gcRegisterObject(struct Gc *gc, struct Object *object)
 {
-    if (gc == NULL)
+    if (gc == NULL || object == NULL)
         return;
 
     gc->newCount++;
@@ -33,16 +33,8 @@ void gcRegisterObject(struct Gc *gc, struct Object *object)
     assert(newHead != NULL);
 
     newHead->object = object;
-
-    if (gc->head != NULL)
-    {
-        newHead->next = gc->head;
-    }
-    else
-    {
-        newHead->next = NULL;
-    }
-
+    newHead->next = gc->head;
+  
     gc->head = newHead;
 }
 
@@ -99,16 +91,8 @@ void gcSweep(struct Gc *gc)
     {
         struct GcObject *next = curr->next;
 
-        if (curr->object->mark == OBJECT_MARK_TRUE)
+        if (curr->object == NULL || curr->object->mark == OBJECT_MARK_FALSE)
         {
-            curr->object->mark = OBJECT_MARK_FALSE;
-        }
-        else
-        {
-            gc->freeCount++;
-            objectFree(gc, curr->object);
-            free(curr);
-
             if (prev == NULL)
             {
                 gc->head = next;
@@ -117,6 +101,14 @@ void gcSweep(struct Gc *gc)
             {
                 prev->next = next;
             }
+
+            gc->freeCount++;
+            objectFree(gc, curr->object);
+            free(curr);
+        }
+        else
+        {
+            curr->object->mark = OBJECT_MARK_FALSE;
         }
 
         prev = curr;
@@ -128,15 +120,5 @@ void gcSweep(struct Gc *gc)
 
 void gcFree(struct Gc *gc)
 {
-    struct GcObject *curr = gc->head;
-
-    while (curr != NULL)
-    {
-        objectFree(gc, curr->object);
-        struct GcObject *temp = curr->next;
-        free(curr);
-        curr = temp;
-    }
-
     free(gc);
 }

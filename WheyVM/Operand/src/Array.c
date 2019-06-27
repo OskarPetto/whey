@@ -192,12 +192,15 @@ struct Object *arrayToString(struct Gc *gc, struct Array *array)
     return stringObject;    
 }
 
-void arrayMark(struct Array *array)
+uint32_t arrayMark(struct Array *array)
 {
+    uint32_t count = 0;
     for (Integer i = 0; i < array->objectCount; i++)
     {
-        objectMark(array->objects[i]);
+        count += objectMark(array->objects[i]);
     }
+
+    return count;
 }
 
 void arrayFree(struct Gc *gc, struct Array *array)

@@ -21,6 +21,6 @@ Integer pairEquals(struct Pair *pair1, struct Pair *pair2);
 Integer pairHash(struct Pair *pair);
 struct Object *pairToString(struct Gc *gc, struct Pair *pair);
 
-void pairMark(struct Pair *pair);
+uint32_t pairMark(struct Pair *pair);
 
 #endif

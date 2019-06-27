@@ -75,8 +75,7 @@ struct Object *pairToString(struct Gc *gc, struct Pair *pair)
     return stringObject;
 }
 
-void pairMark(struct Pair *pair)
+uint32_t pairMark(struct Pair *pair)
 {
-    objectMark(pair->first);
-    objectMark(pair->second);
+    return objectMark(pair->first) + objectMark(pair->second);
 }

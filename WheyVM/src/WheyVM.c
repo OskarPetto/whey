@@ -523,11 +523,13 @@ char *instructionStrings[256] =
         /* 0xFE */ "opUnknown",
         /* 0xFF */ "opUnknown"};
 
-static void wvmMark(struct WheyVM *wvm)
+static uint32_t wvmMark(struct WheyVM *wvm)
 {
+    uint32_t count = 0;
+
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {
-        frameMark(wvm->callStack[i]);
+        count += frameMark(wvm->callStack[i]);
     }
 
     for (int32_t i = 0; i <= wvm->operandStackPointer; i++)
@@ -535,9 +537,11 @@ static void wvmMark(struct WheyVM *wvm)
         struct Operand operand = wvm->operandStack[i];
         if (operand.type == OPERAND_TYPE_REFERENCE)
         {
-            objectMark(operand.value.reference);
+            count += objectMark(operand.value.reference);
         }
     }
+
+    return count;
 }
 
 static int wvmExecute(struct WheyVM *wvm)
@@ -584,7 +588,12 @@ static int wvmExecute(struct WheyVM *wvm)
 
         if (gcShouldMarkAndSweep(wvm->gc))
         {
-            wvmMark(wvm);
+            uint32_t count = wvmMark(wvm);
+
+            if (wvm->state & WHEYVM_STATE_DEBUG)
+            {
+                printf("%lu: %d objects marked in %d frames and the operand stack.\n", wvm->time, count, wvm->callStackPointer + 1);
+            }
 
             gcSweep(wvm->gc);
 
@@ -632,6 +641,7 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     free(wvm->callStack);
     free(wvm->operandStack);
 
+    gcSweep(wvm->gc);
     gcFree(wvm->gc);
 
     free(wvm);

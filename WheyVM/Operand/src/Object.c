@@ -155,28 +155,27 @@ struct Object *objectNew(struct Gc *gc, uint8_t type)
     return object;
 }
 
-void objectMark(struct Object *object)
+uint32_t objectMark(struct Object *object)
 {
     if (object == NULL)
-        return;
+        return 0;
 
     if (object->mark == OBJECT_MARK_TRUE)
-        return;
+        return 0;
 
     object->mark = OBJECT_MARK_TRUE;
 
     switch (object->type)
     {
     case OBJECT_TYPE_ARRAY:
-        arrayMark(object->value.array);
-        break;
+        return arrayMark(object->value.array);
     case OBJECT_TYPE_MAP:
-        mapMark(object->value.map);
-        break;
+        return mapMark(object->value.map);
     case OBJECT_TYPE_PAIR:
-        pairMark(object->value.pair);
-        break;
+        return pairMark(object->value.pair);
     }
+
+    return 1;
 }
 
 void objectFree(struct Gc *gc, struct Object *object)

@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -O3 -Wall -std=c99
+CFLAGS = -O3 -Wall -std=c99 -g
 
 OPERAND_SRC_DIR = ./Operand/src
 OPERAND_INC_DIR = ./Operand
