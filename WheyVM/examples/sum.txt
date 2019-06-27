@@ -5,6 +5,7 @@ BADEAFFE                            # checkSum
 01                                  # CONSTANT_TYPE_INTEGER
 64 00 00 00 00 00 00 00             # 100
 01 00                               # functionCount
+# main
 00                                  # argumentCount
 02                                  # localsCount
 25 00                               # byteCount
