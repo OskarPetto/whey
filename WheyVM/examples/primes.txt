@@ -7,7 +7,7 @@ BADEAFFE                            # checkSum
 01                                  # CONSTANT_TYPE_INTEGER
 02 00 00 00 00 00 00 00             # 2
 01                                  # CONSTANT_TYPE_INTEGER
-E8 03 00 00 00 00 00 00             # 1000
+10 27 00 00 00 00 00 00             # 10000
 02 00                               # functionCount
 #
 #

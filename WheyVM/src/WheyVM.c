@@ -583,6 +583,8 @@ static int wvmExecute(struct WheyVM *wvm)
 
         instructionSet[instruction](wvm);
 
+        wvm->executedInstructions++;
+
         if (gcShouldMarkAndSweep(wvm->gc))
         {
             uint32_t count = wvmMark(wvm);
@@ -591,13 +593,12 @@ static int wvmExecute(struct WheyVM *wvm)
 
             if (wvm->state & WHEYVM_STATE_DEBUG)
             {
-                printf("%lu: %d objects marked with %d bytes used.\n", wvm->time, count, wvm->gc->size);
-                printf("%lu: garbage collected %lu objects with %lu bytes.\n", wvm->time, wvm->gc->freeCount, wvm->gc->claimedSize);
+                printf("instruction %lu: %d objects marked with %d bytes used.\n", wvm->executedInstructions, count, wvm->gc->size);
+                printf("instruction %lu: garbage collected %lu objects with %lu bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->claimedSize);
             }
 
         }
 
-        wvm->time++;
     }
 
     return 0;
@@ -612,7 +613,7 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     wvm->callStack = (struct Frame **)malloc(callStackSize * sizeof(struct Frame *));
     assert(wvm->callStack != NULL);
     wvm->callStackPointer = -1;
-    wvm->time = 0;
+    wvm->executedInstructions = 0;
 
     wvm->operandStackSize = operandStackSize;
     wvm->operandStack = (struct Operand *)malloc(operandStackSize * sizeof(struct Operand));
@@ -630,10 +631,7 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
 
     clock_t end = clock();
 
-    if (wvm->state & WHEYVM_STATE_DEBUG) 
-    {
-        printf("%lu: finished program execution in %f seconds.\n", wvm->time, ((double) (end - begin))/CLOCKS_PER_SEC);
-    }
+    printf("instruction %lu: finished program execution in %f seconds.\n", wvm->executedInstructions, ((double) (end - begin))/CLOCKS_PER_SEC);
 
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {

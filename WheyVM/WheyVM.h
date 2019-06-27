@@ -28,7 +28,7 @@ struct WheyVM
 
     uint8_t state;
 
-    uint64_t time;
+    uint64_t executedInstructions;
 };
 
 int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state);
