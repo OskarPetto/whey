@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
 
 enable_testing()
 
+option(TIMING "Enableds instruction timing" OFF)
+
 project(whey VERSION 0.1 LANGUAGES C)
 
 set(WC_FILE_SOURCES WcFile/src/Constant.c WcFile/src/Function.c WcFile/src/WcFile.c)
@@ -23,6 +25,10 @@ add_executable(whey
   src/InstructionSet.c
   src/main.c
   src/WheyVM.c)
+
+if(TIMING)
+  target_compile_definitions(whey PRIVATE INSTRUCTION_TIMING)
+endif()
 
 add_executable(operand_test ${OPERAND_SOURCES} Operand/test/ObjectTest.c)
 

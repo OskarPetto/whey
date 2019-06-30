@@ -551,39 +551,71 @@ static int wvmExecute(struct WheyVM *wvm)
 
     wvm->callStack[++wvm->callStackPointer] = frameNew(mainFunction);
 
+    //Performance timings
+
+#ifdef INSTRUCTION_TIMING
+    int instructionCount[256];
+    clock_t instructionTimings[256];
+    for(int i = 0; i < 256; ++i)
+    {
+        instructionCount[i] = 0;
+        instructionTimings[i] = 0;
+    }
+#endif
+
+
+
+    //Invariants go here, to avoid constant wvm-> lookups
+    int32_t const operandStackSize = wvm->operandStackSize;
+    int32_t const callStackSize = wvm->callStackSize;
+
     while (!(wvm->state & WHEYVM_STATE_STOPPED))
     {
-        if (wvm->callStackPointer < 0)
+        int32_t const stack = wvm->callStackPointer;
+        struct Frame* const currentFrame = wvm->callStack[stack];
+        struct Function* const currentFunction = currentFrame->function;
+        uint16_t const codePointer = currentFrame->codePointer;
+
+        if (stack < 0)
         {
             fprintf(stderr, "Call stack pointer is negative.\n");
             return 1;
         }
 
-        if (wvm->callStack[wvm->callStackPointer]->codePointer >= wvm->callStack[wvm->callStackPointer]->function->codeSize) 
+        if (codePointer >= currentFunction->codeSize) 
         {
             fprintf(stderr, "No return reached.\n");
             return 1;
         }          
 
-        if (wvm->operandStackPointer >= wvm->operandStackSize)
+        if (wvm->operandStackPointer >= operandStackSize)
         {
             fprintf(stderr, "Operand stack overflow.\n");
             return 1;
         }
 
-        if (wvm->callStackPointer >= wvm->callStackSize)
+        if (stack >= callStackSize)
         {
             fprintf(stderr, "Call stack overflow.\n");
             return 1;
         }
 
-        unsigned char instruction = wvm->callStack[wvm->callStackPointer]->function->byteCode[wvm->callStack[wvm->callStackPointer]->codePointer];
+        unsigned char const instruction = currentFunction->byteCode[codePointer];
 
         //printf("%s: %d \n", instructionStrings[instruction], wvm->operandStackPointer);
 
-        instructionSet[instruction](wvm);
+#ifdef INSTRUCTION_TIMING
+        clock_t begin = clock();
+#endif
+        instructionSet[instruction](wvm,currentFrame);
 
-        wvm->executedInstructions++;
+#ifdef INSTRUCTION_TIMING
+        clock_t end = clock();
+        instructionTimings[instruction] += (end - begin);
+        instructionCount[instruction] += 1;
+#endif
+
+        ++wvm->executedInstructions;
 
         if (gcShouldMarkAndSweep(wvm->gc))
         {
@@ -596,10 +628,18 @@ static int wvmExecute(struct WheyVM *wvm)
                 printf("instruction %lu: %d objects marked with %d bytes used.\n", wvm->executedInstructions, count, wvm->gc->size);
                 printf("instruction %lu: garbage collected %lu objects with %lu bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->claimedSize);
             }
-
         }
 
     }
+
+#ifdef INSTRUCTION_TIMING
+    printf("Instruction time\n");
+    for(int i = 0; i < 256; ++i)
+    {
+        if(instructionTimings[i] == 0) continue;
+        printf("instructionTimings %s took %f seconds, was called %d times \n", instructionStrings[i], ((double) (instructionTimings[i]))/CLOCKS_PER_SEC,instructionCount[i]);
+    }
+#endif
 
     return 0;
 }

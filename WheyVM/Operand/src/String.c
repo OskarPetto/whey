@@ -243,11 +243,7 @@ void stringAppendCharacter(struct String *string, char character)
 
 void stringPrint(struct String *string)
 {
-    for (Integer i = 0; i < string->characterCount; i++)
-    {
-        printf("%c", string->characters[i]);
-    }
-    printf("\n");
+    printf("%.*s\n", string->characterCount, string->characters);
 }
 
 void stringFree(struct Gc *gc, struct String *string)
