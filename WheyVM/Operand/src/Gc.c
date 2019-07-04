@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-struct Gc *gcNew(uint32_t maxSize, double loadFactor, uint16_t coolDown)
+#define GC_COOLDOWN 100
+
+struct Gc *gcNew(uint32_t maxSize, double loadFactor)
 {
     struct Gc *gc = (struct Gc *)malloc(sizeof(struct Gc));
     assert(gc != NULL);
@@ -16,8 +18,8 @@ struct Gc *gcNew(uint32_t maxSize, double loadFactor, uint16_t coolDown)
     gc->size = 0;
     gc->loadFactor = loadFactor;
     gc->outOfMemory = 0;
-    gc->coolDown = coolDown;
-    gc->timeSinceLastMarkAndSweep = coolDown;
+    gc->sizeBeforeLastMarkAndSweep = 0;
+    gc->timeSinceLastMarkAndSweep = 0;
     gc->allocatedSize = 0;
     gc->claimedSize = 0;
     return gc;
@@ -35,7 +37,7 @@ void gcRegisterObject(struct Gc *gc, struct Object *object)
 
     newHead->object = object;
     newHead->next = gc->head;
-  
+
     gc->head = newHead;
 }
 
@@ -66,17 +68,20 @@ uint8_t gcShouldMarkAndSweep(struct Gc *gc)
 {
     if (gc->size >= (uint32_t)(gc->maxSize * gc->loadFactor))
     {
-        if (gc->timeSinceLastMarkAndSweep == gc->coolDown)
+        if (gc->sizeBeforeLastMarkAndSweep != gc->size)
         {
+            if (gc->timeSinceLastMarkAndSweep == GC_COOLDOWN)
+            {
+                gc->sizeBeforeLastMarkAndSweep = gc->size;
+                gc->timeSinceLastMarkAndSweep = 0;
+                return 1;
+            }
 
-            gc->timeSinceLastMarkAndSweep = 0;
-            return 1;
-        }
-        else
-        {
-            gc->timeSinceLastMarkAndSweep++;
+            ++gc->timeSinceLastMarkAndSweep;
             return 0;
         }
+
+        return 0;
     }
 
     return 0;
@@ -110,7 +115,6 @@ void gcSweep(struct Gc *gc)
         {
             curr->object->mark = OBJECT_MARK_FALSE;
             prev = curr;
-
         }
 
         curr = next;

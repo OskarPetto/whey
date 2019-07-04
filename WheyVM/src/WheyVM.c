@@ -646,7 +646,7 @@ static int wvmExecute(struct WheyVM *wvm)
     return 0;
 }
 
-int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint16_t coolDown, uint8_t state)
+int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint8_t state)
 {
     struct WheyVM *wvm = (struct WheyVM *)malloc(sizeof(struct WheyVM));
     assert(wvm != NULL);
@@ -662,7 +662,7 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     assert(wvm->operandStack != NULL);
     wvm->operandStackPointer = -1;
 
-    wvm->gc = gcNew(gcMemorySize, gcLoadFactor, coolDown);
+    wvm->gc = gcNew(gcMemorySize, gcLoadFactor);
 
     wvm->wcFile = wcFile;
     wvm->state = state;
@@ -672,11 +672,6 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     int returnStatus = wvmExecute(wvm);
 
     clock_t end = clock();
-
-    if (returnStatus == 0)
-    {
-        printf("instruction %"PRIu64": finished program execution in %f seconds.\n", wvm->executedInstructions, ((double) (end - begin))/CLOCKS_PER_SEC);
-    }
 
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {
@@ -690,10 +685,16 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
 
     if (wvm->state & WHEYVM_STATE_DEBUG)
     {
-        printf("instruction %"PRIu64": garbage collected %"PRIu64"/%"PRIu64" objects with %"PRIu64"/%"PRIu64" bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->newCount, wvm->gc->claimedSize, wvm->gc->allocatedSize); 
+        printf("instruction %"PRIu64": garbage collected %"PRIu64"/%"PRIu64" objects with %"PRIu64"/%"PRIu64" bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->newCount, wvm->gc->claimedSize, wvm->gc->allocatedSize);
     }
- 
+
     gcFree(wvm->gc);
+
+    if (returnStatus == 0)
+    {
+        printf("instruction %"PRIu64": finished program execution in %f seconds.\n", wvm->executedInstructions, ((double) (end - begin))/CLOCKS_PER_SEC);
+    }
+
 
     free(wvm);
 

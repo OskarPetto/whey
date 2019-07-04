@@ -22,13 +22,13 @@ struct Gc
     uint32_t maxSize;
     double loadFactor;
     uint8_t outOfMemory;
-    uint16_t coolDown;
-    uint16_t timeSinceLastMarkAndSweep;
+    uint64_t sizeBeforeLastMarkAndSweep;
+    uint64_t timeSinceLastMarkAndSweep;
     uint64_t allocatedSize;
     uint64_t claimedSize;
 };
 
-struct Gc *gcNew(uint32_t maxSize, double loadFactor, uint16_t coolDown);
+struct Gc *gcNew(uint32_t maxSize, double loadFactor);
 void gcRegisterObject(struct Gc *gc, struct Object *object);
 void gcRequestMemory(struct Gc *gc, uint32_t size);
 void gcReleaseMemory(struct Gc *gc, uint32_t size);

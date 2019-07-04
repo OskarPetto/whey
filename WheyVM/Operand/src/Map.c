@@ -36,7 +36,7 @@ static struct Object *mapWithBucketCount(struct Gc *gc, Integer initialBucketCou
 
 static void mapResize(struct Gc *gc, struct Map *map, Integer newBucketCount)
 {
-    gcRequestMemory(gc, newBucketCount * sizeof(struct MapEntry *));
+    gcRequestMemory(gc, (newBucketCount - map->bucketCount) * sizeof(struct MapEntry *));
     struct MapEntry **buckets = (struct MapEntry **)calloc(newBucketCount, sizeof(struct MapEntry *));
     assert(buckets != NULL);
 
@@ -72,7 +72,6 @@ static void mapResize(struct Gc *gc, struct Map *map, Integer newBucketCount)
         }
     }
 
-    gcReleaseMemory(gc, map->bucketCount * sizeof(struct MapEntry *));
     free(map->buckets);
     map->buckets = buckets;
     map->bucketCount = newBucketCount;

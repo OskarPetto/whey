@@ -36,11 +36,11 @@ void arrayInsert(struct Gc *gc, struct Array *array, Integer index, struct Objec
 
     if (array->objectCount > array->slotCount)
     {
-        gcReleaseMemory(gc, array->slotCount * sizeof(struct Object *));
+        uint64_t oldSize = array->slotCount * sizeof(struct Object *);
 
         array->slotCount = getNextLargerSlotCount(array->objectCount);
 
-        gcRequestMemory(gc, array->slotCount * sizeof(struct Object *));
+        gcRequestMemory(gc, array->slotCount * sizeof(struct Object *) - oldSize);
 
         array->objects = (struct Object **)realloc(array->objects,
                                                    array->slotCount * sizeof(struct Object *));
@@ -76,12 +76,11 @@ void arrayInsertAll(struct Gc *gc, struct Array *array, Integer index, struct Ar
 
     if (newObjectCount > array->slotCount)
     {
-
-        gcReleaseMemory(gc, array->slotCount * sizeof(struct Object *));
+        uint64_t oldSize = array->slotCount * sizeof(struct Object *);
 
         array->slotCount = getNextLargerSlotCount(newObjectCount);
 
-        gcRequestMemory(gc, array->slotCount * sizeof(struct Object *));
+        gcRequestMemory(gc, array->slotCount * sizeof(struct Object *) - oldSize);
 
         array->objects = (struct Object **)realloc(array->objects,
                                                    array->slotCount * sizeof(struct Object *));
