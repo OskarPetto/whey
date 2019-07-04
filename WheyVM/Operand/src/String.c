@@ -243,7 +243,7 @@ void stringAppendCharacter(struct String *string, char character)
 
 void stringPrint(struct String *string)
 {
-    printf("%.*s\n", string->characterCount, string->characters);
+    printf("%.*s\n", (int32_t) string->characterCount, string->characters);
 }
 
 void stringFree(struct Gc *gc, struct String *string)

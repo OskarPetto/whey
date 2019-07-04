@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h> 
+#include <inttypes.h>
 
 Instruction instructionSet[256] =
     {
@@ -524,13 +525,11 @@ char *instructionStrings[256] =
         /* 0xFE */ "opUnknown",
         /* 0xFF */ "opUnknown"};
 
-static uint32_t wvmMark(struct WheyVM *wvm)
+static void wvmMark(struct WheyVM *wvm)
 {
-    uint32_t count = 0;
-
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {
-        count += frameMark(wvm->callStack[i]);
+        frameMark(wvm->callStack[i]);
     }
 
     for (int32_t i = 0; i <= wvm->operandStackPointer; i++)
@@ -538,11 +537,9 @@ static uint32_t wvmMark(struct WheyVM *wvm)
         struct Operand operand = wvm->operandStack[i];
         if (operand.type == OPERAND_TYPE_REFERENCE)
         {
-            count += objectMark(operand.value.reference);
+            objectMark(operand.value.reference);
         }
     }
-
-    return count;
 }
 
 static int wvmExecute(struct WheyVM *wvm)
@@ -600,6 +597,12 @@ static int wvmExecute(struct WheyVM *wvm)
             return 1;
         }
 
+        if (wvm->gc->outOfMemory == 1)
+        {
+            fprintf(stderr, "Out of memory with %d/%d.\n", wvm->gc->size, wvm->gc->maxSize);
+            return 1;
+        }
+
         unsigned char const instruction = currentFunction->byteCode[codePointer];
 
         //printf("%s: %d \n", instructionStrings[instruction], wvm->operandStackPointer);
@@ -619,14 +622,13 @@ static int wvmExecute(struct WheyVM *wvm)
 
         if (gcShouldMarkAndSweep(wvm->gc))
         {
-            uint32_t count = wvmMark(wvm);
+            wvmMark(wvm);
 
             gcSweep(wvm->gc);
 
             if (wvm->state & WHEYVM_STATE_DEBUG)
             {
-                printf("instruction %lu: %d objects marked with %d bytes used.\n", wvm->executedInstructions, count, wvm->gc->size);
-                printf("instruction %lu: garbage collected %lu objects with %lu bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->claimedSize);
+                printf("instruction %"PRIu64": garbage collected %"PRIu64"/%"PRIu64" objects with %"PRIu64"/%"PRIu64" bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->newCount, wvm->gc->claimedSize, wvm->gc->allocatedSize);
             }
         }
 
@@ -671,7 +673,10 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
 
     clock_t end = clock();
 
-    printf("instruction %lu: finished program execution in %f seconds.\n", wvm->executedInstructions, ((double) (end - begin))/CLOCKS_PER_SEC);
+    if (returnStatus == 0)
+    {
+        printf("instruction %"PRIu64": finished program execution in %f seconds.\n", wvm->executedInstructions, ((double) (end - begin))/CLOCKS_PER_SEC);
+    }
 
     for (int32_t i = 0; i <= wvm->callStackPointer; i++)
     {
@@ -682,6 +687,12 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     free(wvm->operandStack);
 
     gcSweep(wvm->gc);
+
+    if (wvm->state & WHEYVM_STATE_DEBUG)
+    {
+        printf("instruction %"PRIu64": garbage collected %"PRIu64"/%"PRIu64" objects with %"PRIu64"/%"PRIu64" bytes.\n", wvm->executedInstructions, wvm->gc->freeCount, wvm->gc->newCount, wvm->gc->claimedSize, wvm->gc->allocatedSize); 
+    }
+ 
     gcFree(wvm->gc);
 
     free(wvm);

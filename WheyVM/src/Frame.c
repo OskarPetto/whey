@@ -34,39 +34,35 @@ struct Frame *frameNewWithIterator(struct Function *function, struct Object *arr
 }
 
 
-void frameGetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *result)
+struct Operand frameGetLocal(struct Frame *frame, uint8_t localIndex)
 {
     assert(localIndex < frame->function->localsCount);
-    memcpy(result,&frame->locals[localIndex],sizeof(struct Operand));
+    return frame->locals[localIndex];
 }
 
-void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand* local)
+void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand operand)
 {
     assert(localIndex < frame->function->localsCount);
-    memcpy(&frame->locals[localIndex],local,sizeof(struct Operand));
+    frame->locals[localIndex] = operand;
 }
 
-uint32_t frameMark(struct Frame *frame)
+void frameMark(struct Frame *frame)
 {
-    uint32_t count = 0;
-
     for (uint8_t i = 0; i < frame->function->localsCount; i++)
     {
         struct Operand current = frame->locals[i];
 
         if (current.type == OPERAND_TYPE_REFERENCE)
         { 
-            count += objectMark(current.value.reference);
+            objectMark(current.value.reference);
         }
 
     }
 
     if (frame->iterator != NULL)
     {
-        count += objectMark(frame->iterator->array);
+        objectMark(frame->iterator->array);
     }
-
-    return count;
 }
 
 void frameFree(struct Frame *frame)

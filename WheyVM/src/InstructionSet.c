@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <inttypes.h>
 
 #define STOP(wvm) wvm->state |= WHEYVM_STATE_STOPPED
 
@@ -154,7 +155,7 @@ void opLoad(struct WheyVM *wvm, struct Frame *frame)
 {
     uint8_t localIndex = frame->function->byteCode[++frame->codePointer];
     ++frame->codePointer;
-    frameGetLocal(frame, localIndex,&wvm->operandStack[++wvm->operandStackPointer]);
+    wvm->operandStack[++wvm->operandStackPointer] = frameGetLocal(frame, localIndex);
 }
 
 void opStore(struct WheyVM *wvm, struct Frame *frame)
@@ -162,7 +163,7 @@ void opStore(struct WheyVM *wvm, struct Frame *frame)
     uint8_t localIndex = frame->function->byteCode[++frame->codePointer];
     frame->codePointer++;
     assert(wvm->operandStackPointer >= 0);
-    frameSetLocal(frame, localIndex, &wvm->operandStack[wvm->operandStackPointer--]);
+    frameSetLocal(frame, localIndex, wvm->operandStack[wvm->operandStackPointer--]);
 }
 
 void opCall(struct WheyVM *wvm, struct Frame *frame)
@@ -177,7 +178,7 @@ void opCall(struct WheyVM *wvm, struct Frame *frame)
     for (uint8_t i = 0; i < nextFunction->argumentCount; i++)
     {
         assert(wvm->operandStackPointer >= 0);
-        frameSetLocal(nextFrame, i, &wvm->operandStack[wvm->operandStackPointer--]); // pass function arguments
+        frameSetLocal(nextFrame, i, wvm->operandStack[wvm->operandStackPointer--]); // pass function arguments
     }
 
     wvm->callStack[++wvm->callStackPointer] = nextFrame;
@@ -194,7 +195,7 @@ void opReturn(struct WheyVM *wvm, struct Frame *frame)
         struct Operand operand;
         operand.type = OPERAND_TYPE_REFERENCE;
         operand.value.reference = frame->iterator->array->value.array->objects[frame->iterator->index];
-        frameSetLocal(frame, 0, &operand);
+        frameSetLocal(frame, 0, operand);
         return;
     }
 
@@ -244,7 +245,7 @@ void opPrint(struct WheyVM *wvm, struct Frame *frame)
     switch (operand.type)
     {
     case OPERAND_TYPE_INTEGER:
-        printf("%ld\n", operand.value.integerValue);
+        printf("%"PRId64"\n", operand.value.integerValue);
         break;
     case OPERAND_TYPE_DOUBLE:
         printf("%.10e\n", operand.value.doubleValue);

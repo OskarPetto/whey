@@ -22,10 +22,10 @@ struct Frame *frameNew(struct Function *function);
 
 struct Frame *frameNewWithIterator(struct Function *function, struct Object *array);
 
-void frameGetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *result);
-void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *local);
+struct Operand frameGetLocal(struct Frame *frame, uint8_t localIndex);
+void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand operand);
 
-uint32_t frameMark(struct Frame *frame);
+void frameMark(struct Frame *frame);
 
 void frameFree(struct Frame *frame);
 

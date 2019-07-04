@@ -36,7 +36,7 @@ Integer mapEquals(struct Map *map1, struct Map *map2);
 Integer mapHash(struct Map *map);
 struct Object *mapToString(struct Gc *gc, struct Map *map);
 
-uint32_t mapMark(struct Map *map);
+void mapMark(struct Map *map);
 void mapFree(struct Gc *gc, struct Map *map);
 
 

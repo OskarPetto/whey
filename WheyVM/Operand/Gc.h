@@ -24,6 +24,7 @@ struct Gc
     uint8_t outOfMemory;
     uint16_t coolDown;
     uint16_t timeSinceLastMarkAndSweep;
+    uint64_t allocatedSize;
     uint64_t claimedSize;
 };
 

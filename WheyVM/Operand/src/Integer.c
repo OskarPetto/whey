@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 #define INTEGER_STRING_BUFFER_SIZE 50
 
@@ -18,7 +19,7 @@ struct Object *integerToString(struct Gc *gc, Integer integer)
 {
     char buffer[INTEGER_STRING_BUFFER_SIZE];
 
-    snprintf(buffer, INTEGER_STRING_BUFFER_SIZE, "%ld", integer);
+    snprintf(buffer, INTEGER_STRING_BUFFER_SIZE, "%"PRId64, integer);
 
     struct Object *stringObject = stringNewFromCString(gc, buffer);
 

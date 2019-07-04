@@ -41,7 +41,7 @@ Integer objectHash(struct Object *object);
 struct Object *objectToString(struct Gc *gc, struct Object *object);
 
 struct Object *objectNew(struct Gc *gc, uint8_t type);
-uint32_t objectMark(struct Object *object);
+void objectMark(struct Object *object);
 void objectFree(struct Gc *gc, struct Object *object);
 
 #endif

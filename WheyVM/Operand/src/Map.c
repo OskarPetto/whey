@@ -370,24 +370,20 @@ struct Object *mapToString(struct Gc *gc, struct Map *map)
     return stringObject;
 }
 
-uint32_t mapMark(struct Map *map)
+void mapMark(struct Map *map)
 {
-    uint32_t count = 0;
-
     for (Integer i = 0; i < map->bucketCount; i++)
     {
         struct MapEntry *currEntry = map->buckets[i];
 
         while (currEntry != NULL)
         {
-            count += objectMark(currEntry->key);
-            count += objectMark(currEntry->value);
+            objectMark(currEntry->key);
+            objectMark(currEntry->value);
 
             currEntry = currEntry->next;
         }
     }
-
-    return count;
 }
 
 void mapFree(struct Gc *gc, struct Map *map)

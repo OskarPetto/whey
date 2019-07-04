@@ -24,7 +24,7 @@ Integer arrayEquals(struct Array *array1, struct Array *array2);
 Integer arrayHash(struct Array *array);
 struct Object *arrayToString(struct Gc *gc, struct Array *array);
 
-uint32_t arrayMark(struct Array *array);
+void arrayMark(struct Array *array);
 void arrayFree(struct Gc *gc, struct Array *array);
 
 

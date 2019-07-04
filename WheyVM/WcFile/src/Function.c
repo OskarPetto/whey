@@ -15,7 +15,7 @@ struct Function *functionNew(uint8_t *bytes, uint32_t *byteIndex)
     memcpy(&codeSize, &bytes[index], 2);
     index += 2;
 
-    char* memory = malloc(sizeof(struct Function) + codeSize * sizeof(unsigned char));
+    unsigned char* memory = malloc(sizeof(struct Function) + codeSize * sizeof(unsigned char));
     assert(memory != NULL);
     struct Function *function = (struct Function *)memory;
     function->argumentCount = argumentCount;

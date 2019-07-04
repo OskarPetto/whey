@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define DEFAULT_CALL_STACK_SIZE 1000
 #define DEFAULT_OPERAND_STACK_SIZE 100
@@ -33,10 +34,10 @@ int main(int argc, char **argv) {
                 temp = strtol(optarg, NULL, 10);
                 if (temp < 0)
                 {
-                    fprintf(stderr, "cooldown %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "cooldown %"PRId64" must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("cooldown set to: %ld.\n", temp);
+                printf("cooldown set to: %"PRId64".\n", temp);
                 coolDown = temp;
                 break;
 
@@ -44,10 +45,10 @@ int main(int argc, char **argv) {
                 temp = strtol(optarg, NULL, 10);
                 if (temp < 0)
                 {
-                    fprintf(stderr, "call stack size %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "call stack size %"PRId64" must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("call stack size set to: %ld.\n", temp);
+                printf("call stack size set to: %"PRId64".\n", temp);
                 callStackSize = temp;
                 break;
 
@@ -55,10 +56,10 @@ int main(int argc, char **argv) {
                 temp = strtol(optarg, NULL, 10);
                 if (temp < 0)
                 {
-                    fprintf(stderr, "operand stack size %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "operand stack size %"PRId64" must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("operand stack size set to: %ld.\n", temp);
+                printf("operand stack size set to: %"PRId64".\n", temp);
                 operandStackSize = temp;
                 break;
 
@@ -66,10 +67,10 @@ int main(int argc, char **argv) {
                 temp = strtol(optarg, NULL, 10);
                 if (temp < 0)
                 {
-                    fprintf(stderr, "gc-memory size %ld must be a postive integer.\n", temp);
+                    fprintf(stderr, "gc-memory size %"PRId64" must be a postive integer.\n", temp);
                     return 1;
                 }
-                printf("gc-memory size set to: %ld.\n", temp);
+                printf("gc-memory size set to: %"PRId64".\n", temp);
                 memorySize = temp;
                 break;
 

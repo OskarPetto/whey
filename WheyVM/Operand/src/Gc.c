@@ -18,6 +18,7 @@ struct Gc *gcNew(uint32_t maxSize, double loadFactor, uint16_t coolDown)
     gc->outOfMemory = 0;
     gc->coolDown = coolDown;
     gc->timeSinceLastMarkAndSweep = coolDown;
+    gc->allocatedSize = 0;
     gc->claimedSize = 0;
     return gc;
 }
@@ -44,10 +45,10 @@ void gcRequestMemory(struct Gc *gc, uint32_t size)
         return;
 
     gc->size += size;
+    gc->allocatedSize += size;
 
     if (gc->size > gc->maxSize)
     {
-        fprintf(stderr, "Out of memory with %d/%d after allocating %d bytes.\n", gc->size, gc->maxSize, size);
         gc->outOfMemory = 1;
     }
 }
