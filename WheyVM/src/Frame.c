@@ -2,13 +2,19 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct Frame *frameNew(struct Function *function)
 {
-    struct Frame *frame = (struct Frame *) malloc(sizeof(struct Frame));
+    char* memory = malloc(sizeof(struct Frame) + function->localsCount * sizeof(struct Operand));
+    struct Frame *frame = (struct Frame *) memory;
     assert(frame != NULL);
-    frame->locals = (struct Operand *) calloc(function->localsCount, sizeof(struct Operand));
-    assert(frame->locals != NULL);
+
+    struct Operand *locals = (struct Operand *) (memory + sizeof(struct Frame));
+    assert(locals != NULL);
+
+    memset(locals,0,function->localsCount);
+    frame->locals = locals;
     frame->function = function;
     frame->codePointer = 0;
     frame->iterator = NULL;
@@ -28,16 +34,16 @@ struct Frame *frameNewWithIterator(struct Function *function, struct Object *arr
 }
 
 
-struct Operand frameGetLocal(struct Frame *frame, uint8_t localIndex)
+void frameGetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *result)
 {
     assert(localIndex < frame->function->localsCount);
-    return frame->locals[localIndex];
+    memcpy(result,&frame->locals[localIndex],sizeof(struct Operand));
 }
 
-void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand local)
+void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand* local)
 {
     assert(localIndex < frame->function->localsCount);
-    frame->locals[localIndex] = local;
+    memcpy(&frame->locals[localIndex],local,sizeof(struct Operand));
 }
 
 uint32_t frameMark(struct Frame *frame)
@@ -69,6 +75,5 @@ void frameFree(struct Frame *frame)
     {
         free(frame->iterator);
     }
-    free(frame->locals);
     free(frame);
 }
