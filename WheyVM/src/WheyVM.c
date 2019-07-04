@@ -646,7 +646,7 @@ static int wvmExecute(struct WheyVM *wvm)
     return 0;
 }
 
-int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, double gcLoadFactor, uint8_t state)
+int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackSize, uint64_t gcMemorySize, uint8_t state)
 {
     struct WheyVM *wvm = (struct WheyVM *)malloc(sizeof(struct WheyVM));
     assert(wvm != NULL);
@@ -662,7 +662,7 @@ int wvmRun(struct WcFile *wcFile, uint16_t callStackSize, uint16_t operandStackS
     assert(wvm->operandStack != NULL);
     wvm->operandStackPointer = -1;
 
-    wvm->gc = gcNew(gcMemorySize, gcLoadFactor);
+    wvm->gc = gcNew(gcMemorySize);
 
     wvm->wcFile = wcFile;
     wvm->state = state;

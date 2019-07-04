@@ -6,8 +6,9 @@
 #include <stdio.h>
 
 #define GC_TOLERANCE 0.01
+#define GC_LOAD_FACTOR 0.6
 
-struct Gc *gcNew(uint32_t maxSize, double loadFactor)
+struct Gc *gcNew(uint32_t maxSize)
 {
     struct Gc *gc = (struct Gc *)malloc(sizeof(struct Gc));
     assert(gc != NULL);
@@ -15,10 +16,11 @@ struct Gc *gcNew(uint32_t maxSize, double loadFactor)
     gc->newCount = 0;
     gc->freeCount = 0;
     gc->maxSize = maxSize;
+    gc->treshold =  (uint32_t) (maxSize * GC_LOAD_FACTOR);
     gc->size = 0;
-    gc->loadFactor = loadFactor;
     gc->outOfMemory = 0;
     gc->sizeBeforeLastMarkAndSweep = 0;
+    gc->tolerance = (uint32_t) (maxSize * GC_TOLERANCE);
     gc->allocatedSize = 0;
     gc->claimedSize = 0;
     return gc;
@@ -65,11 +67,9 @@ void gcReleaseMemory(struct Gc *gc, uint32_t size)
 
 uint8_t gcShouldMarkAndSweep(struct Gc *gc)
 {
-    if (gc->size >= (uint32_t)(gc->maxSize * gc->loadFactor))
+    if (gc->size > gc->treshold)
     {
-        uint64_t tolerance = (uint64_t) (gc->maxSize * GC_TOLERANCE);
-
-        if (gc->sizeBeforeLastMarkAndSweep > gc->size + tolerance || gc->sizeBeforeLastMarkAndSweep < gc->size - tolerance)
+        if (gc->sizeBeforeLastMarkAndSweep > gc->size + gc->tolerance || gc->sizeBeforeLastMarkAndSweep < gc->size - gc->tolerance)
         {
             gc->sizeBeforeLastMarkAndSweep = gc->size;
             return 1;

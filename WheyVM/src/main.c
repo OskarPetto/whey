@@ -11,7 +11,6 @@
 #define DEFAULT_CALL_STACK_SIZE 1000
 #define DEFAULT_OPERAND_STACK_SIZE 100
 #define DEFAULT_MEMORY_SIZE 10000
-#define DEFAULT_LOAD_FACTOR 0.5
 
 int main(int argc, char **argv) {
 
@@ -20,11 +19,9 @@ int main(int argc, char **argv) {
     uint16_t callStackSize = DEFAULT_CALL_STACK_SIZE;
     uint16_t operandStackSize = DEFAULT_OPERAND_STACK_SIZE;
     uint32_t memorySize = DEFAULT_MEMORY_SIZE;
-    double loadFactor = DEFAULT_LOAD_FACTOR;
     int64_t temp;
-    double doubleTemp;
 
-    while((opt = getopt(argc, argv, "s:o:m:l:d")) != -1)  
+    while((opt = getopt(argc, argv, "s:o:m:d")) != -1)  
     {  
         switch (opt)
         {
@@ -61,17 +58,6 @@ int main(int argc, char **argv) {
                 memorySize = temp;
                 break;
 
-            case 'l':
-                doubleTemp = strtod(optarg, NULL);
-                if (doubleTemp < 0 || doubleTemp > 1)
-                {
-                    fprintf(stderr, "load factor %f must be between 0 and 1.\n", doubleTemp);
-                    return 1;
-                }
-                printf("load factor set to: %f.\n", doubleTemp);
-                loadFactor = doubleTemp;
-                break;
-
             case 'd':
                 state = WHEYVM_STATE_DEBUG;
                 printf("running in debug mode.\n");
@@ -92,7 +78,7 @@ int main(int argc, char **argv) {
 
     struct WcFile *program = wcFileNew(argv[optind]);
 
-    int returnStatus = wvmRun(program, callStackSize, operandStackSize, memorySize, loadFactor, state);
+    int returnStatus = wvmRun(program, callStackSize, operandStackSize, memorySize, state);
 
     wcFileFree(program);
 
