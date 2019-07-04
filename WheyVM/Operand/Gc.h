@@ -23,7 +23,6 @@ struct Gc
     double loadFactor;
     uint8_t outOfMemory;
     uint64_t sizeBeforeLastMarkAndSweep;
-    uint64_t timeSinceLastMarkAndSweep;
     uint64_t allocatedSize;
     uint64_t claimedSize;
 };

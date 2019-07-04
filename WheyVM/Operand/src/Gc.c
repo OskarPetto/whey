@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define GC_COOLDOWN 300
+#define GC_TOLERANCE 0.01
 
 struct Gc *gcNew(uint32_t maxSize, double loadFactor)
 {
@@ -19,7 +19,6 @@ struct Gc *gcNew(uint32_t maxSize, double loadFactor)
     gc->loadFactor = loadFactor;
     gc->outOfMemory = 0;
     gc->sizeBeforeLastMarkAndSweep = 0;
-    gc->timeSinceLastMarkAndSweep = 0;
     gc->allocatedSize = 0;
     gc->claimedSize = 0;
     return gc;
@@ -68,17 +67,12 @@ uint8_t gcShouldMarkAndSweep(struct Gc *gc)
 {
     if (gc->size >= (uint32_t)(gc->maxSize * gc->loadFactor))
     {
-        if (gc->sizeBeforeLastMarkAndSweep != gc->size)
-        {
-            if (gc->timeSinceLastMarkAndSweep == GC_COOLDOWN)
-            {
-                gc->sizeBeforeLastMarkAndSweep = gc->size;
-                gc->timeSinceLastMarkAndSweep = 0;
-                return 1;
-            }
+        uint64_t tolerance = (uint64_t) (gc->maxSize * GC_TOLERANCE);
 
-            ++gc->timeSinceLastMarkAndSweep;
-            return 0;
+        if (gc->sizeBeforeLastMarkAndSweep > gc->size + tolerance || gc->sizeBeforeLastMarkAndSweep < gc->size - tolerance)
+        {
+            gc->sizeBeforeLastMarkAndSweep = gc->size;
+            return 1;
         }
 
         return 0;
