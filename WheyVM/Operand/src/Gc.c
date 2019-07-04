@@ -59,6 +59,7 @@ void gcReleaseMemory(struct Gc *gc, uint32_t size)
         return;
 
     gc->size -= size;
+    gc->claimedSize += size;
 }
 
 uint8_t gcShouldMarkAndSweep(struct Gc *gc)
@@ -83,8 +84,6 @@ uint8_t gcShouldMarkAndSweep(struct Gc *gc)
 
 void gcSweep(struct Gc *gc)
 {
-    uint32_t oldSize = gc->size;
-
     struct GcObject *curr = gc->head;
     struct GcObject *prev = NULL;
 
@@ -116,8 +115,6 @@ void gcSweep(struct Gc *gc)
 
         curr = next;
     }
-
-    gc->claimedSize += (oldSize - gc->size);
 }
 
 void gcFree(struct Gc *gc)
