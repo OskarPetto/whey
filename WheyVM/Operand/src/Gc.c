@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define GC_COOLDOWN 100
+#define GC_COOLDOWN 300
 
 struct Gc *gcNew(uint32_t maxSize, double loadFactor)
 {
