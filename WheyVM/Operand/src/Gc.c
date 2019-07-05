@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 #define GC_TOLERANCE 0.01
-#define GC_LOAD_FACTOR 0.6
+#define GC_LOAD_FACTOR 0.5
 
 struct Gc *gcNew(uint32_t maxSize)
 {

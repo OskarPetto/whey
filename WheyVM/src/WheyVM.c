@@ -599,7 +599,7 @@ static int wvmExecute(struct WheyVM *wvm)
 
         if (wvm->gc->outOfMemory == 1)
         {
-            fprintf(stderr, "Out of memory with %d/%d.\n", wvm->gc->size, wvm->gc->maxSize);
+            fprintf(stderr, "Out of memory with %d/%d. Set memory with the 'm' option\n", wvm->gc->size, wvm->gc->maxSize);
             return 1;
         }
 

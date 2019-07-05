@@ -10,7 +10,7 @@
 
 #define DEFAULT_CALL_STACK_SIZE 1000
 #define DEFAULT_OPERAND_STACK_SIZE 100
-#define DEFAULT_MEMORY_SIZE 10000
+#define DEFAULT_MEMORY_SIZE 100000
 
 int main(int argc, char **argv) {
 

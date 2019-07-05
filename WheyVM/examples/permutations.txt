@@ -1,8 +1,8 @@
 BADEAFFE                            # checkSum
 02 00                               # constantCount
 04                                  # CONSTANT_TYPE_STRING
-04 00                               # characterCount
-77 68 65 79                         # whey
+06 00                               # characterCount
+57 68 65 79 56 4D                   # WheyVM
 01                                  # CONSTANT_TYPE_INTEGER
 00 00 00 00 00 00 00 00             # 0
 03 00                               # functionCount
