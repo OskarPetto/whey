@@ -34,16 +34,16 @@ struct Frame *frameNewWithIterator(struct Function *function, struct Object *arr
 }
 
 
-struct Operand frameGetLocal(struct Frame *frame, uint8_t localIndex)
+void frameGetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *operand)
 {
     assert(localIndex < frame->function->localsCount);
-    return frame->locals[localIndex];
+    memcpy(operand, &frame->locals[localIndex], sizeof(struct Operand));
 }
 
-void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand operand)
+void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *operand)
 {
     assert(localIndex < frame->function->localsCount);
-    frame->locals[localIndex] = operand;
+    memcpy(&frame->locals[localIndex], operand, sizeof(struct Operand));
 }
 
 void frameMark(struct Frame *frame)

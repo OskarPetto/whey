@@ -22,8 +22,8 @@ struct Frame *frameNew(struct Function *function);
 
 struct Frame *frameNewWithIterator(struct Function *function, struct Object *array);
 
-struct Operand frameGetLocal(struct Frame *frame, uint8_t localIndex);
-void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand operand);
+void frameGetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *operand);
+void frameSetLocal(struct Frame *frame, uint8_t localIndex, struct Operand *operand);
 
 void frameMark(struct Frame *frame);
 

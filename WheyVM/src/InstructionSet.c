@@ -155,7 +155,7 @@ void opLoad(struct WheyVM *wvm, struct Frame *frame)
 {
     uint8_t localIndex = frame->function->byteCode[++frame->codePointer];
     ++frame->codePointer;
-    wvm->operandStack[++wvm->operandStackPointer] = frameGetLocal(frame, localIndex);
+    frameGetLocal(frame, localIndex, &wvm->operandStack[++wvm->operandStackPointer]);
 }
 
 void opStore(struct WheyVM *wvm, struct Frame *frame)
@@ -163,7 +163,7 @@ void opStore(struct WheyVM *wvm, struct Frame *frame)
     uint8_t localIndex = frame->function->byteCode[++frame->codePointer];
     frame->codePointer++;
     assert(wvm->operandStackPointer >= 0);
-    frameSetLocal(frame, localIndex, wvm->operandStack[wvm->operandStackPointer--]);
+    frameSetLocal(frame, localIndex, &wvm->operandStack[wvm->operandStackPointer--]);
 }
 
 void opCall(struct WheyVM *wvm, struct Frame *frame)
@@ -178,7 +178,7 @@ void opCall(struct WheyVM *wvm, struct Frame *frame)
     for (uint8_t i = 0; i < nextFunction->argumentCount; i++)
     {
         assert(wvm->operandStackPointer >= 0);
-        frameSetLocal(nextFrame, i, wvm->operandStack[wvm->operandStackPointer--]); // pass function arguments
+        frameSetLocal(nextFrame, i, &wvm->operandStack[wvm->operandStackPointer--]); // pass function arguments
     }
 
     wvm->callStack[++wvm->callStackPointer] = nextFrame;
@@ -195,7 +195,7 @@ void opReturn(struct WheyVM *wvm, struct Frame *frame)
         struct Operand operand;
         operand.type = OPERAND_TYPE_REFERENCE;
         operand.value.reference = frame->iterator->array->value.array->objects[frame->iterator->index];
-        frameSetLocal(frame, 0, operand);
+        frameSetLocal(frame, 0, &operand);
         return;
     }
 
