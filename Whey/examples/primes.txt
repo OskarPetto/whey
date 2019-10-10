@@ -1,0 +1,95 @@
+BADEAFFE                            # checkSum
+06 00                               # constantCount
+03                                  # CONSTANT_TYPE_STRING
+06 00 00 00                         # characterCount
+50 72 69 6D 65 73                   # Primes
+01                                  # CONSTANT_TYPE_INTEGER
+02 00 00 00 00 00 00 00             # 2
+01                                  # CONSTANT_TYPE_INTEGER
+10 27 00 00 00 00 00 00             # 10000
+03                                  # CONSTANT_TYPE_STRING
+07 00 00 00                         # characterCount
+69 73 50 72 69 6D 65                # isPrime
+01                                  # CONSTANT_TYPE_INTEGER
+00 00 00 00 00 00 00 00             # 0
+01                                  # CONSTANT_TYPE_INTEGER
+01 00 00 00 00 00 00 00             # 1
+02 00                               # functionCount
+#
+#
+#
+#
+#
+# main
+00 00                               # nameIndex
+00                                  # argumentCount
+00                                  # returnsSomething
+02                                  # localsCount    
+02                                  # maxOperandCount
+2A 00                               # codeSize
+#
+#
+09 01 00                            # constant 1
+06 00                               # store 0
+2B                                  # new array
+06 01                               # store 1
+# loop until max number 
+04 00                               # load 0
+09 02 00                            # constant 2
+0F                                  # greater than 
+02 26 00                            # jump true 38
+04 00                               # load 0
+07 01 00                            # call 1 (isPrime)
+03 1E 00                            # jump false 30
+# isPrime returned true
+04 01                               # load 1 
+04 00                               # load 0
+34                                  # array push
+# increment counter
+04 00                               # load 0
+1B                                  # increment 
+06 00                               # store 0
+01 08 00                            # jump 8
+# end loop
+04 01                               # load 1
+0C                                  # print
+08                                  # return
+#
+#
+#
+#
+#
+#
+#
+# isPrime(x)
+03 00                               # nameIndex
+01                                  # argumentCount
+01                                  # returnsSomething
+01                                  # localsCount    
+02                                  # maxOperandCount
+29 00                               # codeSize
+#
+#
+09 01 00                            # constant 1
+06 00                               # store 0
+# loop until current
+04 00                               # load 0
+05 00                               # load argument 0
+10                                  # greater than or equal
+02 25 00                            # jump true 37 (return true)
+05 00                               # load argument 0
+04 00                               # load 0
+1D                                  # modulo
+09 04 00                            # constant 4
+0D                                  # equal
+02 21 00                            # jump true 33 (return false)
+04 00                               # load 0
+1B                                  # increment 
+06 00                               # store 0
+01 05 00                            # jump 5
+# return false
+09 04 00                            # constant 4
+08                                  # return
+# return true
+09 05 00                            # constant 5
+08                                  # return

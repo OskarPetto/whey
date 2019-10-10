@@ -1,0 +1,8 @@
+git tag 0.1
+Labeldef instruction with 2 byte label id
+dup instruction istead of two loads
+apush
+apop
+memory pool for gcmalloc
+loadarg instruction
+git tag 0.2

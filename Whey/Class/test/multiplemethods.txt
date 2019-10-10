@@ -1,0 +1,23 @@
+BADEAFFE                            # checkSum
+00 00                               # constantCount
+03 00                               # functionCount
+00 00                               # nameIndex
+02                                  # argumentCount
+00                                  # returnsVoid
+04                                  # localsCount
+05                                  # maxOperandCount
+0A 00                               # byteCount
+01 02 03 04 05 06 07 08 09 0A       # nonsense
+02 00                               # nameIndex
+00                                  # argumentCount
+00                                  # returnsVoid
+0A                                  # localsCount
+01                                  # maxOperandCount
+00 00                               # byteCount
+03 00                               # nameIndex
+00                                  # argumentCount
+01                                  # returnsVoid
+00                                  # localsCount
+01                                  # maxOperandCount
+01 00                               # byteCount
+01                                  # nonsense

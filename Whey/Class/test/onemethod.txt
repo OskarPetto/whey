@@ -1,0 +1,16 @@
+BADEAFFE                            # checkSum
+02 00                               # constantCount
+03                                  # CONSTANT_TYPE_STRING
+0A 00 00 00                         # characterCount
+65 6E 64 69 61 6E 6E 65 73 73       # Endianness
+03                                  # CONSTANT_TYPE_STRING
+0A 00 00 00                         # characterCount
+45 6E 64 69 61 6E 6E 65 73 73       # endianness
+01 00                               # functionCount
+01 01                               # nameIndex
+01                                  # argumentCount
+01                                  # returnsSomething
+02                                  # localsCount
+03                                  # maxOperandCount
+0A 00                               # byteCount
+01 02 03 04 05 06 07 08 09 0A       # nonsense

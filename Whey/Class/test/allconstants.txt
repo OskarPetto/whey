@@ -1,0 +1,15 @@
+BADEAFFE                            # checkSum
+05 00                               # constantCount
+02                                  # CONSTANT_TYPE_DOUBLE
+9A 99 99 99 99 99 F1 3F             # 1.1
+03                                  # CONSTANT_TYPE_STRING
+08 00 00 00                         # characterCount
+42 41 44 45 41 46 46 45             # BADEAFFE
+03                                  # CONSTANT_TYPE_STRING
+10 00 00 00                         # characterCount
+77 77 77 77 77 77 77 77 77 77 77 77 77 77 77 77 # wwwwwwwwwwwwwwww
+01                                  # CONSTANT_TYPE_INTEGER
+04 00 00 40 00 00 00 00             # 1073741828                             
+02                                  # CONSTANT_TYPE_DOUBLE
+00 00 00 00 00 00 F0 3F             # 1.0
+00 00                               # functionCount

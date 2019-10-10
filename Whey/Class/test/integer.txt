@@ -1,0 +1,7 @@
+BADEAFFE                            # checkSum
+02 00                               # constantCount
+01                                  # CONSTANT_TYPE_INTEGER
+04 00 00 00 00 00 00 00             # 4
+01                                  # CONSTANT_TYPE_INTEGER
+04 00 00 40 00 00 00 00             # 1073741828
+00 00                               # functionCount

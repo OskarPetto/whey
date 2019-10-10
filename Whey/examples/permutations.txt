@@ -1,0 +1,121 @@
+BADEAFFE                            # checkSum
+04 00                               # constantCount
+03                                  # CONSTANT_TYPE_STRING
+0B 00 00 00                         # characterCount
+50 65 72 6D 75 74 61 74 69 6f 6E    # Permutations
+01                                  # CONSTANT_TYPE_INTEGER
+00 00 00 00 00 00 00 00             # 0
+03                                  # CONSTANT_TYPE_STRING
+09 00 00 00                         # characterCount
+70 65 72 6D 75 74 61 74 65          # permutate
+03                                  # CONSTANT_TYPE_STRING
+11 00 00 00                         # characterCount
+63 6F 6E 76 65 72 74 43 68 61 72 41 72 72 61 79 73          # convertCharArrays
+03 00                               # functionCount
+#
+00 00                               # nameIndex
+00                                  # argumentCount
+00                                  # returnsSomething
+01                                  # localsCount
+03                                  # maxOperandCount
+16 00                               # codeSize
+# main
+2B                                  # new array
+06 00                               # store 0
+04 00                               # load 0
+09 00 00                            # constant 0
+4D                                  # string to array
+09 01 00                            # constant 1 
+07 01 00                            # call 1
+04 00                               # load 0 
+07 02 00                            # call 2
+0C                                  # print
+08                                  # return
+#
+#
+#
+#
+# 
+02 00                               # nameIndex
+03                                  # argumentCount
+00                                  # returnsSomething
+01                                  # localsCount
+03                                  # maxOperandCount
+3E 00                               # codeSize
+# permutate(permutations, charArray, i)
+05 01                               # load argument 1
+2D                                  # array size
+05 02                               # load argument 2
+0D                                  # equal 
+03 10 00                            # jump false
+05 00                               # load argument 0 
+05 01                               # load argument 1
+27                                  # object copy
+34                                  # array push
+08                                  # return
+05 02                               # load argument 2
+06 00                               # store 0
+# loop 
+04 00                               # load 0 
+05 01                               # load argument 1 
+2D                                  # array size
+11                                  # less than
+03 3D 00                            # jump false
+# swap
+05 01                               # load argument 1 
+04 00                               # load 0
+05 02                               # load argument 2
+37                                  # swap
+05 00                               # load argument 0
+05 01                               # load argument 1
+04 00                               # load 0 
+1B                                  # increment 
+07 01 00                            # recursive call
+# swap back 
+05 01                               # load argument 1 
+04 00                               # load 0
+05 02                               # load argument 2
+37                                  # swap
+04 00                               # load 0 
+1B                                  # increment
+06 00                               # store 0
+01 14 00                            # jump 14
+08                                  # return
+#
+#
+#
+#
+#
+# 
+03 00                               # nameIndex
+01                                  # argumentCount
+01                                  # returnsSomething
+03                                  # localsCount
+03                                  # maxOperandCount
+29 00                               # codeSize
+# convertCharArrays(charArrays)
+2B                                  # array new
+06 00                               # store 0
+05 00                               # load argument 0
+2D                                  # array size 
+06 01                               # store 1
+09 01 00                            # constant 1 
+06 02                               # store 2
+# loop 
+04 02                               # load 2 
+04 01                               # load 1
+11                                  # less than 
+03 26 00                            # jump false end loop
+04 00                               # load 0
+05 00                               # load charArrays 
+04 02                               # load 2 
+2F                                  # array get 
+4C                                  # string from array
+34                                  # array push
+04 02                               # load 2 
+1B                                  # integer increment 
+06 02                               # store 2 
+01 0D 00 
+# end loop
+04 00                               # load 0
+08                                  # return 

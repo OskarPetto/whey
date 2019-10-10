@@ -1,0 +1,37 @@
+BA DE AF FE                         # checkSum
+03 00                               # constantCount
+03                                  # CONSTANT_TYPE_STRING
+03 00 00 00                         # characterCount
+53 75 6D                            # Sum
+01                                  # CONSTANT_TYPE_INTEGER
+00 00 00 00 00 00 00 00             # 0
+01                                  # CONSTANT_TYPE_INTEGER
+A0 86 01 00 00 00 00 00             # 100000
+01 00                               # methodCount
+00 00                               # nameIndex
+00                                  # argumentCount
+00                                  # returnsSomething
+02                                  # localsCount    
+02                                  # maxOperandCount
+25 00                               # codeSize
+09 01 00                            # constant 1
+06 00                               # store 0
+04 00                               # load 0
+06 01                               # store 1
+# LOOP 
+04 00                               # load 0
+09 02 00                            # constant 2
+0F                                  # greater than
+02 21 00                            # jump true 
+04 00                               # load 0
+04 01                               # load 1
+13                                  # add
+06 01                               # store 1
+04 00                               # load 0
+1B                                  # increment
+06 00                               # store 0
+01 09 00                            # jump 9
+# END LOOP
+04 01                               # load 1
+0C                                  # print
+08                                  # return

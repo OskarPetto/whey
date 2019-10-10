@@ -1,0 +1,3 @@
+BADEAFFE                            # checkSum
+00 00                               # constantCount
+00 00                               # functionCount

@@ -1,18 +1,12 @@
-# WheyVM
-## Typesystem
-A stack based VM that support the following operands
-- Integer
-- Double 
-- Reference
+# Whey
+## Installation
 
-where a reference points to an Object, which can be 
-- Integer 
-- Double 
-- String 
-- Array 
-- Map 
-- Pair 
-
-The memory claimed by objects are freed with a simple mark and sweep garbage collector. 
-## Fileformat
-The instructions are provided in a file format calles WcFile. 
+* Go to [https://www.pcre.org/](https://www.pcre.org/) and download pcre2 
+* Extract anywhere and in the pcre2 folder run
+```
+./configure && make && make install
+```
+* Then run use `make` to build Whey and run the first example with 
+```
+./whey examples/sum.wc
+```

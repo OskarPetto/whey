@@ -1,0 +1,35 @@
+BADEAFFE                            # checkSum
+05 00                               # constantCount
+02                                  # CONSTANT_TYPE_DOUBLE
+9A 99 99 99 99 99 F1 3F             # 1.1
+03                                  # CONSTANT_TYPE_STRING
+08 00 00 00                         # characterCount
+42 41 44 45 41 46 46 45             # BADEAFFE
+03                                  # CONSTANT_TYPE_STRING
+10 00 00 00                         # characterCount
+77 77 77 77 77 77 77 77 77 77 77 77 77 77 77 77 # wwwwwwwwwwwwwwww
+01                                  # CONSTANT_TYPE_INTEGER
+04 00 00 40 00 00 00 00             # 1073741828                             
+02                                  # CONSTANT_TYPE_DOUBLE
+00 00 00 00 00 00 F0 3F             # 1.0
+03 00                               # functionCount
+00 00                               # nameIndex
+01                                  # argumentCount
+01                                  # returnsVoid
+02                                  # localsCount
+03                                  # maxOperandCount
+0A 00                               # byteCount
+01 02 03 04 05 06 07 08 09 0A       # nonsense
+00 00                               # nameIndex
+01                                  # argumentCount
+01                                  # returnsVoid
+02                                  # localsCount
+03                                  # maxOperandCount
+00 00                               # byteCount
+00 00                               # nameIndex
+02                                  # argumentCount
+01                                  # returnsVoid
+05                                  # localsCount
+03                                  # maxOperandCount
+01 00                               # byteCount
+01                                  # nonsense
