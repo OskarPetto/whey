@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAGS = -O3 -Wall -std=c11 -g
+CFLAGS = -O3 -Wall -std=c11 -g -D NDEBUG
 LFLAGS = -lm
 
 OBJECT_SRC_DIR = ./Object/src
