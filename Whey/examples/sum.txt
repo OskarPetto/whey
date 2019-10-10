@@ -1,3 +1,4 @@
+# this file calculates the sum of numbers 1 through 100000 using a loop
 BA DE AF FE                         # checkSum
 03 00                               # constantCount
 03                                  # CONSTANT_TYPE_STRING

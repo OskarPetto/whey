@@ -1,3 +1,4 @@
+# this file calculates primes up to 10000 using a O(n^2) algorithm
 BADEAFFE                            # checkSum
 06 00                               # constantCount
 03                                  # CONSTANT_TYPE_STRING

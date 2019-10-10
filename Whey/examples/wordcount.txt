@@ -1,3 +1,4 @@
+# this file counts the word occurrence in a long string
 BADEAFFE                            # checkSum
 0E 00                               # constantCount
 03                                  # CONSTANT_TYPE_STRING

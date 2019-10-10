@@ -1,8 +1,9 @@
+# this file calculates all permutations of 'Permutation'
 BADEAFFE                            # checkSum
 04 00                               # constantCount
 03                                  # CONSTANT_TYPE_STRING
 0B 00 00 00                         # characterCount
-50 65 72 6D 75 74 61 74 69 6f 6E    # Permutations
+50 65 72 6D 75 74 61 74 69 6f 6E    # Permutation
 01                                  # CONSTANT_TYPE_INTEGER
 00 00 00 00 00 00 00 00             # 0
 03                                  # CONSTANT_TYPE_STRING
