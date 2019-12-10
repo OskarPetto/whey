@@ -1,8 +1,6 @@
-git tag 0.1
 Labeldef instruction with 2 byte label id
-dup instruction istead of two loads
-apush
-apop
-memory pool for gcmalloc
-loadarg instruction
-git tag 0.2
+implicit return to save a byte for each function
+map filter reduce
+parallel map filter reduce
+Make object type with name value proerties
+linear memory pool for gcmalloc
