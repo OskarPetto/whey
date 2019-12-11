@@ -1,6 +1,6 @@
-Labeldef instruction with 2 byte label id
 implicit return to save a byte for each function
+exception support
 map filter reduce
 parallel map filter reduce
-Make object type with name value proerties
+async support
 linear memory pool for gcmalloc
