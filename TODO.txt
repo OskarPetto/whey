@@ -1,6 +1,13 @@
+realisable:
+
 implicit return to save a byte for each function
 exception support
 map filter reduce
 parallel map filter reduce
-async support
+reflections
+
+ideas:
+
 linear memory pool for gcmalloc
+threading support
+async support
