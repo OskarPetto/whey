@@ -1,13 +1,16 @@
+
 realisable:
 
+move to C++
 implicit return to save a byte for each function
-exception support
+memory pool for gcmalloc with Cheney's algorithm
 map filter reduce
 parallel map filter reduce
-reflections
+
 
 ideas:
 
-linear memory pool for gcmalloc
+exception support
+reflections
 threading support
 async support
