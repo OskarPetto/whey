@@ -1,8 +1,6 @@
 
 realisable:
 
-move to C++ and CMake
-implicit return to save a byte for each function
 memory pool for gcmalloc with Cheney's algorithm
 map filter reduce
 parallel map filter reduce
