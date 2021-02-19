@@ -1,7 +1,10 @@
 
 realisable:
 
+reimplement in C++
+add instructions: if else loopif endblock
 move GC to Heap module
+dockerize
 memory pool for gcmalloc with Cheney's algorithm
 map filter reduce
 parallel map filter reduce
